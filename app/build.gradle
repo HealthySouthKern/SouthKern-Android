@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "com.sendbird.android.sample"
+        applicationId "com.eddierangel.southkern.android"
         minSdkVersion 14
         targetSdkVersion 25
         versionCode getVersionCode()
@@ -50,6 +50,8 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.2'
     
     // Firebase
-    compile 'com.google.firebase:firebase-messaging:10.2.0'
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    compile 'com.google.firebase:firebase-core:11.8.0'
 }
 apply plugin: 'com.google.gms.google-services'
+
