@@ -32,8 +32,8 @@
         <ImageView
             android:id="@+id/image_login_logo"
             android:src="@drawable/login_logo"
-            android:layout_width="144dp"
-            android:layout_height="144dp"
+            android:layout_width="320dp"
+            android:layout_height="320dp"
             android:layout_gravity="center_horizontal" />
 
         <android.support.design.widget.TextInputLayout

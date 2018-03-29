@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SendBird Sample</string>
+    <string name="app_name">SouthKern</string>
 
     <!-- all -->
     <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>
@@ -9,10 +9,6 @@
 
     <string name="all_group_channels">Group Channels</string>
     <string name="all_open_channels">Open Channels</string>
-
-    <!-- Branding -->
-    <string name="company_name">Building Healthy Communities</string>
-    <string name="south_kern">South Kern</string>
 
     <!-- main -->
     <string name="main_drawer_open">Open navigation drawer</string>

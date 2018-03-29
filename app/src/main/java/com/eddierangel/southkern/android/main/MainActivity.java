@@ -17,6 +17,8 @@ import com.eddierangel.southkern.android.groupchannel.GroupChannelActivity;
 import com.eddierangel.southkern.android.openchannel.OpenChannelActivity;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
                 BaseApplication.VERSION, SendBird.getSDKVersion());
         ((TextView) findViewById(R.id.text_main_versions)).setText(sdkVersion);
+
     }
 
     /**
