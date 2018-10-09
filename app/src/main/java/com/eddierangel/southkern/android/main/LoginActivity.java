@@ -8,14 +8,18 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -68,8 +72,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 PreferenceUtils.setUserId(LoginActivity.this, userId);
                 PreferenceUtils.setNickname(LoginActivity.this, userNickname);
+                String firebaseToken = PreferenceUtils.getFirebaseToken(LoginActivity.this);
 
-                connectToSendBird(userId, userNickname);
+                connectToSendBird(userId, userNickname, firebaseToken);
 
             }
         });
@@ -88,6 +93,17 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // user is signed in
+
+                    // Retrieve firebase token from user.
+                    user.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+                        @Override
+                        public void onSuccess(GetTokenResult result) {
+                            String idToken = result.getToken();
+                            Log.d("token", idToken);
+                            // save token to shared store.
+                            PreferenceUtils.setFirebaseToken(LoginActivity.this, idToken);
+                        }
+                    });
                 } else {
                     // user is signed out
                     startActivityForResult(
@@ -108,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if(PreferenceUtils.getConnected(this)) {
-            connectToSendBird(PreferenceUtils.getUserId(this), PreferenceUtils.getNickname(this));
+            connectToSendBird(PreferenceUtils.getUserId(this), PreferenceUtils.getNickname(this), PreferenceUtils.getFirebaseToken(LoginActivity.this));
         }
     }
 
@@ -116,13 +132,14 @@ public class LoginActivity extends AppCompatActivity {
      * Attempts to connect a user to SendBird.
      * @param userId    The unique ID of the user.
      * @param userNickname  The user's nickname, which will be displayed in chats.
+     * @param firebaseToken The user's firebase token that we will use to connect to sendbird.
      */
-    private void connectToSendBird(final String userId, final String userNickname) {
+    private void connectToSendBird(final String userId, final String userNickname, final String firebaseToken ) {
         // Show the loading indicator
         showProgressBar(true);
         mConnectButton.setEnabled(false);
 
-        SendBird.connect(userId, new SendBird.ConnectHandler() {
+        SendBird.connect(userId, firebaseToken, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
                 // Callback received; hide the progress bar.
