@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private CoordinatorLayout mLoginLayout;
     private TextInputEditText mUserIdConnectEditText, mUserNicknameEditText;
     private Button mConnectButton;
+    private Button mFirebaseLogoutButton;
     private ContentLoadingProgressBar mProgressBar;
 
     // Firebase instance variables
@@ -45,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-
         setContentView(R.layout.activity_login);
 
         mLoginLayout = (CoordinatorLayout) findViewById(R.id.layout_login);
@@ -55,6 +56,14 @@ public class LoginActivity extends AppCompatActivity {
 
         mUserIdConnectEditText.setText(PreferenceUtils.getUserId(this));
         mUserNicknameEditText.setText(PreferenceUtils.getNickname(this));
+
+        mFirebaseLogoutButton = (Button) findViewById(R.id.button_logout_firebase);
+        mFirebaseLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logOut();
+            }
+        });
 
         mConnectButton = (Button) findViewById(R.id.button_login_connect);
         mConnectButton.setOnClickListener(new View.OnClickListener() {
@@ -77,17 +86,14 @@ public class LoginActivity extends AppCompatActivity {
         // A loading indicator
         mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.progress_bar_login);
 
-        // Display current SendBird and app versions in a TextView
-        String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
-                BaseApplication.VERSION, SendBird.getSDKVersion());
-        ((TextView) findViewById(R.id.text_login_versions)).setText(sdkVersion);
-
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // user is signed in
+                    mUserIdConnectEditText.setText(user.getEmail());
+                    mUserNicknameEditText.setText(user.getDisplayName());
                 } else {
                     // user is signed out
                     startActivityForResult(
@@ -215,6 +221,10 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             mProgressBar.hide();
         }
+    }
+
+    private void logOut() {
+        AuthUI.getInstance().signOut(this);
     }
 
     @Override
