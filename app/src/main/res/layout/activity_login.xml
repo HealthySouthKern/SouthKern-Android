@@ -10,21 +10,31 @@
     tools:context=".main.LoginActivity">
 
 
+    <TextView
+        android:id="@+id/text_login_versions"
+        android:text="@string/all_app_version"
+        android:textColor="#8e8e8e"
+        android:textSize="12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginTop="28dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/image_login_logo"
+            android:src="@drawable/login_logo"
             android:layout_width="320dp"
-            android:layout_height="233dp"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="BHC Logo"
-            android:src="@drawable/login_logo" />
+            android:layout_height="320dp"
+            android:layout_gravity="center_horizontal" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -33,11 +43,11 @@
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edittext_login_user_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/login_user_id"
+                android:inputType="textVisiblePassword"
                 android:imeOptions="actionNext"
-                android:inputType="textVisiblePassword" />
+                android:hint="@string/login_user_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
 
         </android.support.design.widget.TextInputLayout>
@@ -50,11 +60,11 @@
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edittext_login_user_nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="@string/login_user_nickname"
+                android:inputType="textVisiblePassword"
                 android:imeOptions="actionDone"
-                android:inputType="textVisiblePassword" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
 
         </android.support.design.widget.TextInputLayout>
@@ -62,18 +72,13 @@
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/button_login_connect"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
             android:text="@string/login_connect"
-            app:theme="@style/AppTheme.ButtonStyle"></android.support.v7.widget.AppCompatButton>
-
-        <Button
-            android:id="@+id/button_logout_firebase"
+            style="@style/Widget.AppCompat.Button.Colored"
+            app:theme="@style/AppTheme.ButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/logout_text" />
+            android:layout_height="56dp"
+            android:layout_marginTop="44dp">
+        </android.support.v7.widget.AppCompatButton>
 
 
     </LinearLayout>

@@ -15,11 +15,10 @@
     <string name="main_drawer_close">Close navigation drawer</string>
     <string name="select_channel_type">Select channel type</string>
 
-    <!-- login/logout -->
+    <!-- login -->
     <string name="login_user_id">User ID</string>
     <string name="login_user_nickname">Nickname</string>
     <string name="login_connect">Connect</string>
-    <string name="logout_text">Log Out</string>
 
     <!-- Open Channel List -->
     <string name="open_channel_list_participant_count">%1$d participants</string>
