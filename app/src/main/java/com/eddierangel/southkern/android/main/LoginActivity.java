@@ -112,6 +112,10 @@ public class LoginActivity extends AppCompatActivity {
         mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Show the loading indicator
+                showProgressBar(true);
+                mConnectButton.setEnabled(false);
+
                 String userId = mUserIdConnectEditText.getText().toString();
                 // Remove all spaces from userID
                 final String userIdFormatted = userId.replaceAll("\\s", "");
@@ -199,10 +203,6 @@ public class LoginActivity extends AppCompatActivity {
      * @param sendbirdToken The user's token that we will use to connect to sendbird securely.
      */
     private void connectToSendBird(final String userId, final String userNickname, final String sendbirdToken ) {
-        // Show the loading indicator
-        showProgressBar(true);
-        mConnectButton.setEnabled(false);
-
         SendBird.connect(userId, sendbirdToken, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
