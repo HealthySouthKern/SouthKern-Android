@@ -1,4 +1,4 @@
-package com.eddierangel.southkern.android.main;
+package com.eddierangel.southkern.android.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,6 +9,7 @@ public class PreferenceUtils {
     public static final String PREFERENCE_KEY_USER_ID = "userId";
     public static final String PREFERENCE_KEY_NICKNAME = "nickname";
     public static final String PREFERENCE_KEY_FIREBASE_TOKEN = "firebaseToken";
+    public static final String PREFERENCE_KEY_SENDBIRD_TOKEN = "sendbirdToken";
     public static final String PREFERENCE_KEY_CONNECTED = "connected";
 
     // Prevent instantiation
@@ -45,6 +46,15 @@ public class PreferenceUtils {
 
     public static String getFirebaseToken(Context context) {
         return getSharedPreferences(context).getString(PREFERENCE_KEY_FIREBASE_TOKEN, "");
+    }
+
+    public static void setSendbirdToken(Context context, String sendbirdToken) {
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putString(PREFERENCE_KEY_SENDBIRD_TOKEN, sendbirdToken).apply();
+    }
+
+    public static String getSendbirdToken(Context context) {
+        return getSharedPreferences(context).getString(PREFERENCE_KEY_SENDBIRD_TOKEN, "");
     }
 
     public static void setConnected(Context context, boolean tf) {

@@ -14,12 +14,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -27,7 +33,13 @@ import com.sendbird.android.User;
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -39,8 +51,40 @@ public class LoginActivity extends AppCompatActivity {
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseFunctions mFunctions;
     private static final int RC_SIGN_IN = 9;
 
+
+    /* function makes a call to the firebase function api to handle users with tokens. before we
+     * were using just the UID to connect with sendbird which was not secure. using firebase functions, we create
+     * a secure endpoint that communicates with the sendbird platform API to provide a secure way to authorize users.
+     * @param userID        user ID to register or log into sendbird service
+     * @param nickname      user nickname to register with. this is automatically upated on the client when connecting
+     * @param firebaseToken firebase token is required to use endpoint, so only firebase authenticated users can authenticate with sendbird
+     * this function returns the sendbird API token that is accessed by using task.getResult();
+     * */
+    private Task<String> getSendbirdUserWithToken(String userID, String nickname, String firebaseToken) {
+        Log.i("FIREBASE TOKEN", "" + firebaseToken);
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("userID", userID);
+        data.put("nickname", nickname);
+        data.put("token", firebaseToken);
+
+        return mFunctions
+                .getHttpsCallable("getSendbirdUserWithToken")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        // This continuation runs on either success or failure, but if the task
+                        // has failed then getResult() will throw an Exception which will be
+                        // propagated down.
+                        String result = (String) task.getResult().getData();
+                        return result;
+                    }
+                });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Initialize Firebase components
         mFirebaseAuth = FirebaseAuth.getInstance();
-
+        mFunctions = FirebaseFunctions.getInstance();
 
         setContentView(R.layout.activity_login);
 
@@ -66,15 +110,35 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String userId = mUserIdConnectEditText.getText().toString();
                 // Remove all spaces from userID
-                userId = userId.replaceAll("\\s", "");
+                final String userIdFormatted = userId.replaceAll("\\s", "");
 
-                String userNickname = mUserNicknameEditText.getText().toString();
+                final String userNickname = mUserNicknameEditText.getText().toString();
 
                 PreferenceUtils.setUserId(LoginActivity.this, userId);
                 PreferenceUtils.setNickname(LoginActivity.this, userNickname);
                 String firebaseToken = PreferenceUtils.getFirebaseToken(LoginActivity.this);
 
-                connectToSendBird(userId, userNickname, firebaseToken);
+                /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
+                getSendbirdUserWithToken(userIdFormatted, userNickname, firebaseToken)
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (!task.isSuccessful()) {
+                                Exception e = task.getException();
+                                if (e instanceof FirebaseFunctionsException) {
+                                    FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                                    FirebaseFunctionsException.Code code = ffe.getCode();
+                                    Object details = ffe.getDetails();
+                                }
+
+                                // ...
+                            }
+                            // success
+                            // save sendbird token to shared store
+                            PreferenceUtils.setSendbirdToken(LoginActivity.this, task.getResult());
+                            connectToSendBird(userIdFormatted, userNickname, task.getResult());
+                        }
+                    });;
 
             }
         });
@@ -99,7 +163,6 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(GetTokenResult result) {
                             String idToken = result.getToken();
-                            Log.d("token", idToken);
                             // save token to shared store.
                             PreferenceUtils.setFirebaseToken(LoginActivity.this, idToken);
                         }
@@ -132,14 +195,14 @@ public class LoginActivity extends AppCompatActivity {
      * Attempts to connect a user to SendBird.
      * @param userId    The unique ID of the user.
      * @param userNickname  The user's nickname, which will be displayed in chats.
-     * @param firebaseToken The user's firebase token that we will use to connect to sendbird.
+     * @param sendbirdToken The user's token that we will use to connect to sendbird securely.
      */
-    private void connectToSendBird(final String userId, final String userNickname, final String firebaseToken ) {
+    private void connectToSendBird(final String userId, final String userNickname, final String sendbirdToken ) {
         // Show the loading indicator
         showProgressBar(true);
         mConnectButton.setEnabled(false);
 
-        SendBird.connect(userId, firebaseToken, new SendBird.ConnectHandler() {
+        SendBird.connect(userId, sendbirdToken, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
                 // Callback received; hide the progress bar.
