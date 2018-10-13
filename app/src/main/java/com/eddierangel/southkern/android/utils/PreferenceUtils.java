@@ -1,4 +1,4 @@
-package com.eddierangel.southkern.android.main;
+package com.eddierangel.southkern.android.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
