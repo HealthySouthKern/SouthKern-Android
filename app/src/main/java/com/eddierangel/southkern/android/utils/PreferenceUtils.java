@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.HashMap;
+
 public class PreferenceUtils {
 
     public static final String PREFERENCE_KEY_USER_ID = "userId";

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">SouthKern</string>
 
+    <!-- Facebook -->
+    <string name="facebook_app_id">296130564334095</string>
+    <string name="fb_login_protocol_scheme">fb296130564334095</string>
+
     <!-- all -->
     <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>
 
