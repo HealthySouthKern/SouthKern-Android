@@ -143,11 +143,13 @@ public class UserCreation extends AppCompatActivity {
                 @Override
                 public void onCancel() {
                     // App code
+                    mFinishUserButton.setEnabled(true);
                 }
 
                 @Override
                 public void onError(FacebookException exception) {
                     Log.d("Facebook auth error: ", "" + exception);
+                    mFinishUserButton.setEnabled(true);
                 }
             });
 
@@ -162,8 +164,6 @@ public class UserCreation extends AppCompatActivity {
                 data.put("user_organization", userOrganization);
                 data.put("user_position", userPosition);
 
-
-                Log.i("data_before", "" + data);
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("userData", data);
                 setResult(Activity.RESULT_OK, returnIntent);
