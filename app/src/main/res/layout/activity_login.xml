@@ -25,56 +25,6 @@
             android:layout_gravity="center_horizontal"
             android:src="@drawable/login_logo" />
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="56dp">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/edittext_login_user_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/login_user_id"
-                android:imeOptions="actionNext"
-                android:inputType="textVisiblePassword" />
-
-
-        </android.support.design.widget.TextInputLayout>
-
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/edittext_login_user_nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/login_user_nickname"
-                android:imeOptions="actionDone"
-                android:inputType="textVisiblePassword" />
-
-
-        </android.support.design.widget.TextInputLayout>
-
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/button_login_connect"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
-            android:text="@string/login_connect"
-            app:theme="@style/AppTheme.ButtonStyle"></android.support.v7.widget.AppCompatButton>
-
-        <Button
-            android:id="@+id/button_logout_firebase"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Log Out" />
-
-
     </LinearLayout>
 
     <android.support.v4.widget.ContentLoadingProgressBar
@@ -82,8 +32,21 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_marginBottom="60dp"
+        android:layout_gravity="bottom|center"
         android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/loading_text"
+        android:textSize="16sp"
+        android:layout_gravity="bottom|center"
+        android:textColor="#000000"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Connecting to messaging service..." />
 
 
 </android.support.design.widget.CoordinatorLayout>
