@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <!-- Facebook end -->
-        <activity android:name=".main.MainActivity"
+        <activity android:launchMode='singleTask' android:name=".main.MainActivity"
             android:label="@string/select_channel_type"/>
         <activity android:name=".utils.PhotoViewerActivity" />
         <activity

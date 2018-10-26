@@ -2,21 +2,15 @@ package com.eddierangel.southkern.android.main;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.Toast;
 
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -30,25 +24,28 @@ import com.eddierangel.southkern.android.R;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.FirebaseFunctionsException;
-import com.google.firebase.functions.HttpsCallableResult;
-import com.sendbird.android.SendBird;
-import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.core.models.User;
 
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
+import retrofit2.Call;
 
 
 public class UserCreation extends AppCompatActivity {
@@ -57,9 +54,11 @@ public class UserCreation extends AppCompatActivity {
     private CoordinatorLayout mLoginLayout;
     private Button mFinishUserButton;
     private LoginButton facebookButton;
+    private TwitterLoginButton twitterButton;
     private String EMAIL;
     private HashMap<String, String> data = new HashMap<String, String>();
     private CallbackManager callbackManager;
+    private TwitterAuthClient authClient = new TwitterAuthClient();
 
     /* Helper function that converts a JSON string to a HashMap.
      * @param: String str is the JSON string to convert */
@@ -83,13 +82,24 @@ public class UserCreation extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_create_user);
-
         // Facebook initialization
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         callbackManager = CallbackManager.Factory.create();
         EMAIL = PreferenceUtils.getUserId(UserCreation.this.getApplicationContext()); // Users log in with email
+
+        // Twitter initialization
+        TwitterAuthConfig authConfig =  new TwitterAuthConfig(
+                getString(R.string.twitter_consumer_key),
+                getString(R.string.twitter_consumer_secret));
+
+        TwitterConfig twitterConfig = new TwitterConfig.Builder(this)
+                .twitterAuthConfig(authConfig)
+                .build();
+
+        Twitter.initialize(twitterConfig);
+
+        setContentView(R.layout.activity_create_user);
 
         mLoginLayout = (CoordinatorLayout) findViewById(R.id.layout_create_user);
 
@@ -98,13 +108,70 @@ public class UserCreation extends AppCompatActivity {
         mUserOrganization = (TextInputEditText) findViewById(R.id.create_user_organization);
 
         mFinishUserButton = (Button) findViewById(R.id.button_user_create);
+        facebookButton = (LoginButton) findViewById(R.id.login_button_facebook);
+        facebookButton.setTextSize(14);
 
+        twitterButton = (TwitterLoginButton) findViewById(R.id.login_button_twitter);
+        twitterButton.setText("Continue with Twitter");
+        twitterButton.setTextSize(14);
 
-        facebookButton = (LoginButton) findViewById(R.id.login_button);
+        twitterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFinishUserButton.setEnabled(false);
+                facebookButton.setEnabled(false);
+            }
+        });
+
+        twitterButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                TwitterSession session = result.data;
+                // Do something with result, which provides a TwitterSession for making API calls
+                Call<User> user = TwitterCore.getInstance().getApiClient(session).getAccountService().verifyCredentials(false, false, true);
+                        user.enqueue(new Callback<User>() {
+                    @Override
+                    public void success(Result<User> userResult) {
+                        HashMap<String, String> userData = new HashMap<String, String>();
+
+                        userData.put("user_picture", userResult.data.profileImageUrl);
+                        userData.put("user_name", userResult.data.name);
+                        userData.put("user_background_image", userResult.data.profileBackgroundImageUrl);
+                        userData.put("user_screen_name", userResult.data.screenName);
+                        userData.put("user_description", userResult.data.description);
+                        userData.put("user_twitter", "true");
+
+                        data = userData;
+
+                        mFinishUserButton.setEnabled(true);
+                        facebookButton.setEnabled(false);
+
+                    }
+
+                    @Override
+                    public void failure(TwitterException e) {
+                        mFinishUserButton.setEnabled(true);
+                        twitterButton.setEnabled(true);
+                        facebookButton.setEnabled(true);
+                        Log.d("TwitterKit", "Verify Credentials Failure", e);
+                    }
+                });
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                mFinishUserButton.setEnabled(true);
+                twitterButton.setEnabled(true);
+                facebookButton.setEnabled(true);
+
+            }
+        });
+
         facebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mFinishUserButton.setEnabled(false);
+                twitterButton.setEnabled(false);
             }
         });
         facebookButton.setReadPermissions("public_profile");
@@ -123,12 +190,13 @@ public class UserCreation extends AppCompatActivity {
                         HttpMethod.GET,
                         new GraphRequest.Callback() {
                             public void onCompleted(GraphResponse response) {
-                                if (response != null) {
+                                if (response.getError() == null) {
                                     try {
                                         String resData = response.getRawResponse();
                                         // Convert JSON String to HashMap using jsonToMap so we can create user meta data
                                         data = jsonToMap(resData);
                                         mFinishUserButton.setEnabled(true);
+                                        twitterButton.setEnabled(false);
                                     } catch (Exception e) {
                                         Log.i("graph err", "" + e);
                                         e.printStackTrace();
@@ -144,12 +212,17 @@ public class UserCreation extends AppCompatActivity {
                 public void onCancel() {
                     // App code
                     mFinishUserButton.setEnabled(true);
+                    twitterButton.setEnabled(true);
+                    facebookButton.setEnabled(true);
+
                 }
 
                 @Override
                 public void onError(FacebookException exception) {
                     Log.d("Facebook auth error: ", "" + exception);
                     mFinishUserButton.setEnabled(true);
+                    twitterButton.setEnabled(true);
+                    facebookButton.setEnabled(true);
                 }
             });
 
@@ -164,6 +237,8 @@ public class UserCreation extends AppCompatActivity {
                 data.put("user_organization", userOrganization);
                 data.put("user_position", userPosition);
 
+                Log.i("data_before", "" + data);
+
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("userData", data);
                 setResult(Activity.RESULT_OK, returnIntent);
@@ -176,7 +251,11 @@ public class UserCreation extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Facebook
         callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        // Twitter
+        twitterButton.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 

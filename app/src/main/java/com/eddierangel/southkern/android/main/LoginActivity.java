@@ -139,11 +139,13 @@ public class LoginActivity extends AppCompatActivity {
                                                 Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
                                                 PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
                                                 if (firstLogin) {
+                                                    Log.i("I logged in", "123");
                                                     // It is the user's first time logging in -> show them UserCreation form
                                                     Intent intent = new Intent(LoginActivity.this, UserCreation.class);
                                                     startActivityForResult(intent, 1);
                                                 }
                                                 if (!firstLogin && task.getResult().get("nickname") != null) {
+                                                    Log.i("I dont need info", "123");
                                                     // This isn't the user's first rodeo -> connect and show them main feed
                                                     String userNickname = (String) task.getResult().get("nickname");
                                                     connectToSendBird(userId, userNickname, sendbirdToken);
@@ -191,7 +193,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(PreferenceUtils.getConnected(this)) {
+        if (PreferenceUtils.getConnected(this)) {
+            Log.i("I am auto connecting", "123");
             connectToSendBird(PreferenceUtils.getUserId(this), PreferenceUtils.getNickname(this), PreferenceUtils.getFirebaseToken(LoginActivity.this));
         }
     }
@@ -255,9 +258,20 @@ public class LoginActivity extends AppCompatActivity {
         User user = SendBird.getCurrentUser();
         try {
             if (data.containsKey("user_picture")) {
-                String JSONPicUrl = data.get("user_picture");
-                JSONObject profilePic = new JSONObject(JSONPicUrl);
-                String picURL = (String) profilePic.getJSONObject("data").get("url");
+                String picURL;
+
+                // We have to parse twitter and facebook profile pictures differently since they are given to us
+                // in different types. Facebook: JSONObject, Twitter: String
+                if (!data.containsKey("user_twitter")) {
+                    // Parse Facebook user profile picture
+                    String JSONPicUrl = data.get("user_picture");
+                    JSONObject profilePic = new JSONObject(JSONPicUrl);
+                    picURL = (String) profilePic.getJSONObject("data").get("url");
+                } else {
+                    // Just use Twitter profile picture
+                    picURL = data.get("user_picture");
+                }
+
                 SendBird.updateCurrentUserInfo(data.get("user_name"), picURL, new SendBird.UserInfoUpdateHandler() {
                     @Override
                     public void onUpdated(SendBirdException e) {
@@ -272,6 +286,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
             }
+
             user.updateMetaData(data, new User.MetaDataHandler() {
                 @Override
                 public void onResult(Map<String, String> map, SendBirdException e) {
@@ -291,18 +306,18 @@ public class LoginActivity extends AppCompatActivity {
     private void updateCurrentUserPushToken() {
         // Register Firebase Token
         SendBird.registerPushTokenForCurrentUser(FirebaseInstanceId.getInstance().getToken(),
-                new SendBird.RegisterPushTokenWithStatusHandler() {
-                    @Override
-                    public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
-                        if (e != null) {
-                            // Error!
-                            Toast.makeText(LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        Toast.makeText(LoginActivity.this, "Push token registered.", Toast.LENGTH_SHORT).show();
+            new SendBird.RegisterPushTokenWithStatusHandler() {
+                @Override
+                public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        Toast.makeText(LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
+
+                    Toast.makeText(LoginActivity.this, "Push token registered.", Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     /**
