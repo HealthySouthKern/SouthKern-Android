@@ -2,8 +2,9 @@
 
 buildscript {
     repositories {
-        jcenter()
+        // Keep google() as first repository, recent (11/14/18) updates causes syncs to fail if not.
         google()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
@@ -16,7 +17,8 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
+        // Keep google() as first repository, recent (11/14/18) updates causes syncs to fail if not.
         google()
+        jcenter()
     }
 }

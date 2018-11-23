@@ -10,6 +10,10 @@
             android:id="@+id/nav_item_open_channels"
             android:icon="@drawable/ic_open_channels"
             android:title="Open Channels" />
+        <item
+            android:id="@+id/nav_item_calendar"
+            android:icon="@drawable/ic_play"
+            android:title="Calendar" />
 
     </group>
 

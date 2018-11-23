@@ -22,6 +22,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".main.UserCreation"/>
+        <activity android:name=".main.CalendarActivity"/>
+        <activity android:name=".main.SubmissionManager"/>
         <!-- Facebook start -->
         <meta-data
             tools:replace="android:value"

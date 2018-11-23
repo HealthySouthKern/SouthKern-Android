@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">SouthKern</string>
 
+    <!-- Google Calendar -->
+    <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
+    <string name="google_calendar_id">jfschmiechen@gmail.com</string>
+
     <!-- Twitter -->
     <string name="twitter_consumer_key">KBTW1JU8TXR2c8bDKNsplOYoN</string>
     <string name="twitter_consumer_secret">f5Gg2xddiSz1NNzJZT8bJVNHBVDHA3SS9ky20UWJjIyIxrXtj9</string>

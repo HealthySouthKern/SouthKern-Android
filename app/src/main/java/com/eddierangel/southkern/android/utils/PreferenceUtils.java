@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.api.services.calendar.model.Event;
+
+import java.util.List;
+
 public class PreferenceUtils {
 
     public static final String PREFERENCE_KEY_USER_ID = "userId";

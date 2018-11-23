@@ -49,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
 
+                } else if (id == R.id.nav_item_calendar) {
+                    Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
+                    startActivity(intent);
+                    return true;
+
                 } else if (id == R.id.nav_item_disconnect) {
                     // Unregister push tokens and disconnect
                     disconnect();
