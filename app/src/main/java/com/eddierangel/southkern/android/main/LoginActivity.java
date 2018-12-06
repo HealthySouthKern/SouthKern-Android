@@ -10,6 +10,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -95,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         // A loading indicator
         mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.progress_bar_login);
 
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -112,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onSuccess(GetTokenResult result) {
                             String idToken = result.getToken();
                             // save token to shared store.
-                            PreferenceUtils.setFirebaseToken(LoginActivity.this, idToken);
+                            PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), idToken);
 
                             final String userId = user.getEmail();
 
@@ -139,13 +141,11 @@ public class LoginActivity extends AppCompatActivity {
                                                 Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
                                                 PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
                                                 if (firstLogin) {
-                                                    Log.i("I logged in", "123");
                                                     // It is the user's first time logging in -> show them UserCreation form
                                                     Intent intent = new Intent(LoginActivity.this, UserCreation.class);
                                                     startActivityForResult(intent, 1);
                                                 }
                                                 if (!firstLogin && task.getResult().get("nickname") != null) {
-                                                    Log.i("I dont need info", "123");
                                                     // This isn't the user's first rodeo -> connect and show them main feed
                                                     String userNickname = (String) task.getResult().get("nickname");
                                                     connectToSendBird(userId, userNickname, sendbirdToken);
@@ -296,6 +296,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         } catch(Exception e) {
+            Log.e("meta data error", "" + e);
             e.printStackTrace();
         }
     }

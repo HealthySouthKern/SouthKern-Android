@@ -51,14 +51,11 @@ import retrofit2.Call;
 public class UserCreation extends AppCompatActivity {
 
     private TextInputEditText mUserName, mUserPosition, mUserOrganization;
-    private CoordinatorLayout mLoginLayout;
     private Button mFinishUserButton;
     private LoginButton facebookButton;
     private TwitterLoginButton twitterButton;
-    private String EMAIL;
     private HashMap<String, String> data = new HashMap<String, String>();
     private CallbackManager callbackManager;
-    private TwitterAuthClient authClient = new TwitterAuthClient();
 
     /* Helper function that converts a JSON string to a HashMap.
      * @param: String str is the JSON string to convert */
@@ -86,7 +83,6 @@ public class UserCreation extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         callbackManager = CallbackManager.Factory.create();
-        EMAIL = PreferenceUtils.getUserId(UserCreation.this.getApplicationContext()); // Users log in with email
 
         // Twitter initialization
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(
@@ -101,7 +97,6 @@ public class UserCreation extends AppCompatActivity {
 
         setContentView(R.layout.activity_create_user);
 
-        mLoginLayout = (CoordinatorLayout) findViewById(R.id.layout_create_user);
 
         mUserName = (TextInputEditText) findViewById(R.id.create_user_name);
         mUserPosition = (TextInputEditText) findViewById(R.id.create_user_position);
@@ -237,7 +232,16 @@ public class UserCreation extends AppCompatActivity {
                 data.put("user_organization", userOrganization);
                 data.put("user_position", userPosition);
 
-                Log.i("data_before", "" + data);
+                if (!userOrganization.isEmpty()) {
+                    data.put("user_type", "organization");
+                } else {
+                    data.put("user_type", "resident");
+                }
+
+                /* Uncomment line below in order to make new admins. Right now we have no clear way to make a user
+                 * an admin. However, in the future we should have a javascript function to create admins. For now,
+                 * use this temporary solution. */
+                // data.put("user_type", "admin");
 
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("userData", data);

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:padding="25dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/approve_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="10dp"
+                android:text="APPROVE"
+                android:textColor="#A4C639"
+                android:textSize="16sp"
+                android:onClick="onApproveClick"
+                android:clickable="true"
+                android:layout_weight="20"
+                android:visibility="gone"
+                android:focusable="true"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/delete_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginLeft="5dp"
+                android:text="DELETE"
+                android:textColor="#f00"
+                android:textSize="16sp"
+                android:onClick="onDeleteClick"
+                android:clickable="true"
+                android:focusable="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                    android:id="@+id/image_calendar_logo"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical|center_horizontal|left"
+                    android:src="@drawable/bhc_logo_color_splash" />
+
+            <TextView
+                android:id="@+id/event_title_edit"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-5dp"
+                android:layout_marginLeft="10dp"
+                android:textSize="25sp"
+                android:text="Edit event" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/event_name_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:ems="10"
+            android:hint="Edit the name of the event"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/event_location_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:ems="10"
+            android:hint="Edit event location"
+            android:inputType="textPostalAddress" />
+
+        <EditText
+            android:id="@+id/event_description_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:ems="10"
+            android:hint="Edit event description"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/button_select_start_time_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Edit event start time"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/button_select_time_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Edit event end time" />
+
+        <Button
+            android:id="@+id/button_edit_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Save changes" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
