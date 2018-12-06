@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f2f3f4"
     tools:context="com.eddierangel.southkern.android.main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -13,11 +14,36 @@
         android:fitsSystemWindows="true">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_main"
+            android:id="@+id/main_activity_toolbar"
             android:layout_width="match_parent"
-            android:theme="@style/Toolbar"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/Theme.AppCompat.Light">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/Toolbar">
+
+            <ImageButton
+                android:id="@+id/menu_button_main"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/fui_transparent"
+                app:srcCompat="@drawable/baseline_menu_white_18dp" />
+
+            <ImageView
+                android:id="@+id/image_main_logo"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="65dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/bhc_logo_color_splash" />
+
+            <ImageButton
+                android:id="@+id/alert_view_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:translationX="-65dp"
+                android:background="@color/fui_transparent"
+                app:srcCompat="@drawable/baseline_announcement_24" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -25,22 +51,86 @@
 
     <!-- The navigation drawer -->
     <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:menu="@menu/nav_view">
+    android:id="@+id/nav_view_main"
+    android:layout_width="250dp"
+    android:layout_height="350dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:visibility="gone"
+    app:menu="@menu/nav_view">
 
-        <TextView
-            android:id="@+id/text_main_versions"
-            android:text="@string/all_app_version"
-            android:textSize="12sp"
-            android:textColor="#8e8e8e"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/text_main_versions"
+        android:text="@string/all_app_version"
+        android:textSize="12sp"
+        android:textColor="#8e8e8e"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</android.support.design.widget.NavigationView>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view_alerts"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:visibility="gone">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/alert_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" />
 
     </android.support.design.widget.NavigationView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="70dp">
+
+        <RelativeLayout
+            android:id="@+id/alert_creator"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/rectangle"
+            android:layout_margin="10dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/alert_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textMultiLine"
+                android:layout_margin="10dp"
+                android:layout_marginBottom="0dp"
+                android:hint="What is going on in the community?" />
+
+            <Button
+                android:id="@+id/alert_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="left"
+                android:layout_below="@id/alert_description"
+                android:text="Post status update" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/feed_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin" />
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
