@@ -12,7 +12,7 @@
             android:title="Open Channels" />
         <item
             android:id="@+id/nav_item_calendar"
-            android:icon="@drawable/ic_play"
+            android:icon="@drawable/baseline_event_black_18dp"
             android:title="Calendar" />
 
     </group>

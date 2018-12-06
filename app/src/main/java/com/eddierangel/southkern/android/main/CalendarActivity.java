@@ -701,4 +701,5 @@ public class CalendarActivity extends AppCompatActivity {
         events = refetchedEvents;
         mWeekView.notifyDatasetChanged();
     }
+
 }

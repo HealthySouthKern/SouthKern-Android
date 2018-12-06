@@ -97,8 +97,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
                 int year = Integer.parseInt(formattedDate.substring(0, 4));
                 int month = Integer.parseInt(formattedDate.substring(5, 7));
-                int day = Integer.parseInt(formattedDate.substring(7, 9));
-                tempCalendar.set(year, month, day);
+                int day = Integer.parseInt(formattedDate.substring(8, 10));
+                tempCalendar.set(year, month - 1, day);
                 String dateDay = tempCalendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
 
                 holder.date.setText(dateDay + " | " + formattedDate);
