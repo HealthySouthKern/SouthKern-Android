@@ -14,6 +14,8 @@ public class PreferenceUtils {
     public static final String PREFERENCE_KEY_NICKNAME = "nickname";
     public static final String PREFERENCE_KEY_FIREBASE_TOKEN = "firebaseToken";
     public static final String PREFERENCE_KEY_SENDBIRD_TOKEN = "sendbirdToken";
+    public static final String PREFERENCE_KEY_SOCIAL_ID = "socialId";
+    public static final String PREFERENCE_KEY_SOCIAL_TYPE = "socialType";
     public static final String PREFERENCE_KEY_CONNECTED = "connected";
 
     // Prevent instantiation
@@ -23,6 +25,24 @@ public class PreferenceUtils {
 
     public static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences("sendbird", Context.MODE_PRIVATE);
+    }
+
+    public static void setSocialType(Context context, String type) {
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putString(PREFERENCE_KEY_SOCIAL_TYPE, type).apply();
+    }
+
+    public static String getSocialType(Context context) {
+        return getSharedPreferences(context).getString(PREFERENCE_KEY_SOCIAL_TYPE, "");
+    }
+
+    public static void setSocialId(Context context, String socialId) {
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putString(PREFERENCE_KEY_SOCIAL_ID, socialId).apply();
+    }
+
+    public static String getSocialId(Context context) {
+        return getSharedPreferences(context).getString(PREFERENCE_KEY_SOCIAL_ID, "");
     }
 
     public static void setUserId(Context context, String userId) {

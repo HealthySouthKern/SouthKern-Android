@@ -108,8 +108,10 @@ public class MainActivity extends AppCompatActivity {
         userMetaData = sendbirdUser.getMetaData();
 
         alertCreationLayout = (RelativeLayout) findViewById(R.id.alert_creator);
-        if (userMetaData.get("user_type").equals("admin")) {
-            alertCreationLayout.setVisibility(View.VISIBLE);
+        if (userMetaData.get("user_type") != null) {
+            if (userMetaData.get("user_type").equals("admin")) {
+                alertCreationLayout.setVisibility(View.VISIBLE);
+            }
         }
 
         mFunctions = FirebaseFunctions.getInstance();
@@ -248,6 +250,11 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (id == R.id.nav_item_calendar) {
                     Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
+                    startActivity(intent);
+                    return true;
+
+                } else if (id == R.id.nav_item_user_list) {
+                    Intent intent = new Intent(MainActivity.this, UserList.class);
                     startActivity(intent);
                     return true;
 

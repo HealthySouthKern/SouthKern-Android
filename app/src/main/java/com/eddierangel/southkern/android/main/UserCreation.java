@@ -174,7 +174,7 @@ public class UserCreation extends AppCompatActivity {
 
             new FacebookCallback<LoginResult>() {
                 @Override
-                public void onSuccess(LoginResult loginResult) {
+                public void onSuccess(final LoginResult loginResult) {
                     // Now that we have a token for facebook, we can use that to fetch profile data
                     Bundle params = new Bundle();
                     params.putString("fields", "first_name, last_name, picture.type(large), locale, gender, cover");
@@ -190,6 +190,8 @@ public class UserCreation extends AppCompatActivity {
                                         String resData = response.getRawResponse();
                                         // Convert JSON String to HashMap using jsonToMap so we can create user meta data
                                         data = jsonToMap(resData);
+                                        PreferenceUtils.setSocialType(UserCreation.this.getApplicationContext(), "facebook");
+                                        PreferenceUtils.setSocialId(UserCreation.this.getApplicationContext(), "" + loginResult.getAccessToken().getUserId());
                                         mFinishUserButton.setEnabled(true);
                                         twitterButton.setEnabled(false);
                                     } catch (Exception e) {
@@ -232,7 +234,7 @@ public class UserCreation extends AppCompatActivity {
                 data.put("user_organization", userOrganization);
                 data.put("user_position", userPosition);
 
-                if (!userOrganization.isEmpty()) {
+                if (!userOrganization.equals("")) {
                     data.put("user_type", "organization");
                 } else {
                     data.put("user_type", "resident");
