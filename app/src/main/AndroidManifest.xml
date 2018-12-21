@@ -25,6 +25,7 @@
         <activity android:name=".main.CalendarActivity"/>
         <activity android:name=".main.SubmissionManager"/>
         <activity android:name=".openchannel.OpenChatFeed"/>
+        <activity android:name=".main.UserList"/>
         <!-- Facebook start -->
         <meta-data
             tools:replace="android:value"
