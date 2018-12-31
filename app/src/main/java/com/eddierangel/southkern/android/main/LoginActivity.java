@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ui.idp.AuthMethodPickerActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -164,6 +165,8 @@ public class LoginActivity extends AppCompatActivity {
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false)
+                                    .setTheme(R.style.LoginTheme)
+                                    .setLogo(R.drawable.bhc_logo_color_centered)
                                     .setAvailableProviders(Arrays.asList(
                                             new AuthUI.IdpConfig.EmailBuilder().build(),
                                             new AuthUI.IdpConfig.GoogleBuilder().build()))
@@ -184,6 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                     String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
                     result = (HashMap<String, String>) data.getSerializableExtra("userData");
                     userData = result;
+                    Log.i("userdata2", "" + result);
                     connectToSendBird(userId, result.get("user_name"), sendbirdToken);
                 }
             }
@@ -226,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
                     PreferenceUtils.setConnected(LoginActivity.this, false);
                     return;
                 }
-
+                Log.i("user_userdata", "" + userData);
                 if (userData != null) {
                     Log.i("createmeta", "" + userData);
                     createUserMetaData(userData);
@@ -258,19 +262,8 @@ public class LoginActivity extends AppCompatActivity {
         User user = SendBird.getCurrentUser();
         try {
             if (data.containsKey("user_picture")) {
-                String picURL;
 
-                // We have to parse twitter and facebook profile pictures differently since they are given to us
-                // in different types. Facebook: JSONObject, Twitter: String
-                if (!data.containsKey("user_twitter")) {
-                    // Parse Facebook user profile picture
-                    String JSONPicUrl = data.get("user_picture");
-                    JSONObject profilePic = new JSONObject(JSONPicUrl);
-                    picURL = (String) profilePic.getJSONObject("data").get("url");
-                } else {
-                    // Just use Twitter profile picture
-                    picURL = data.get("user_picture");
-                }
+                String picURL = data.get("user_picture");
 
                 SendBird.updateCurrentUserInfo(data.get("user_name"), picURL, new SendBird.UserInfoUpdateHandler() {
                     @Override
@@ -282,7 +275,6 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT)
                                     .show();
                         }
-
                     }
                 });
             }

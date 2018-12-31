@@ -22,14 +22,14 @@
             android:layout_alignParentTop="true"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            android:theme="@style/Toolbar" >
+            android:theme="@style/Toolbar">
 
             <ImageButton
                 android:id="@+id/menu_button_calendar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@color/fui_transparent"
-                app:srcCompat="@drawable/baseline_menu_white_18dp" />
+                app:srcCompat="@drawable/baseline_arrow_back_white_18dp" />
 
             <ImageView
                 android:id="@+id/image_calendar_logo"
@@ -39,7 +39,7 @@
                 android:layout_marginTop="-10dp"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/bhc_logo_color_splash"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -50,17 +50,23 @@
             android:text="Manage Event Submissions"
             android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/progressBarCalendar"
-            style="?android:attr/progressBarStyle"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_gravity="center"
-            android:layout_height="160dp" />
+            android:layout_height="match_parent">
+
+            <android.support.v4.widget.ContentLoadingProgressBar
+                android:id="@+id/progressBarCalendar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center" />
 
         <com.alamkanak.weekview.WeekView
             android:id="@+id/weekView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:columnGap="8dp"
             app:dayBackgroundColor="#05000000"
             app:eventTextColor="@android:color/white"
@@ -73,6 +79,9 @@
             app:noOfVisibleDays="3"
             app:textSize="12sp"
             app:todayBackgroundColor="#1848adff" />
+
+        </RelativeLayout>
+
 
         <!--<android.support.v7.widget.RecyclerView-->
         <!--android:id="@+id/recycler_calendar"-->

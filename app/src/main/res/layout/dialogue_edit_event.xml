@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|left"
                 android:layout_marginLeft="10dp"
-                android:text="APPROVE"
+                android:text="@string/approve_capital"
                 android:textColor="#A4C639"
                 android:textSize="16sp"
                 android:onClick="onApproveClick"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginLeft="5dp"
-                android:text="DELETE"
+                android:text="@string/delete_capital"
                 android:textColor="#f00"
                 android:textSize="16sp"
                 android:onClick="onDeleteClick"
@@ -71,7 +71,7 @@
                 android:layout_marginBottom="-5dp"
                 android:layout_marginLeft="10dp"
                 android:textSize="25sp"
-                android:text="Edit event" />
+                android:text="@string/edit_event" />
         </LinearLayout>
 
         <EditText
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:ems="10"
-            android:hint="Edit the name of the event"
+            android:hint="@string/edit_name_event"
             android:inputType="textPersonName" />
 
         <EditText
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:ems="10"
-            android:hint="Edit event location"
+            android:hint="@string/edit_location_event"
             android:inputType="textPostalAddress" />
 
         <EditText
@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:ems="10"
-            android:hint="Edit event description"
+            android:hint="@string/edit_description_event"
             android:inputType="textMultiLine" />
 
         <Button
@@ -106,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="Edit event start time"
+            android:text="@string/edit_start_event"
             android:visibility="gone"/>
 
         <Button
@@ -114,14 +114,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="Edit event end time" />
+            android:text="@string/edit_end_event" />
 
         <Button
             android:id="@+id/button_edit_event"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="Save changes" />
+            android:text="@string/save_changes" />
 
     </LinearLayout>
 
