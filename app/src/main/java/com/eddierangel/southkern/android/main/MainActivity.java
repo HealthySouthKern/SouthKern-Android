@@ -251,6 +251,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
 
+                } else if (id == R.id.nav_item_view_own_profile) {
+                    Intent intent = new Intent(MainActivity.this, ViewOwnProfile.class);
+                    startActivity(intent);
+                    return true;
+
                 } else if (id == R.id.nav_item_disconnect) {
                     // Unregister push tokens and disconnect
                     disconnect();
