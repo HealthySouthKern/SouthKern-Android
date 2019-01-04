@@ -13,6 +13,11 @@
         <item
             android:id="@+id/nav_item_calendar"
             android:icon="@drawable/baseline_event_black_18dp"
+            android:title="Calendar" />
+        <item
+            android:id="@+id/nav_item_view_own_profile"
+            android:icon="@drawable/ic_open_channels"
+            android:title="My Profile" />
             android:title="@string/calendar" />
         <item
             android:id="@+id/nav_item_user_list"

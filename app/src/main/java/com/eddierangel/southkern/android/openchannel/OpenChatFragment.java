@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
+import com.eddierangel.southkern.android.main.MainActivity;
+import com.eddierangel.southkern.android.main.ViewOwnProfile;
+import com.eddierangel.southkern.android.main.ViewProfile;
+import com.google.gson.Gson;
 import com.sendbird.android.*;
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.FileUtils;
@@ -285,6 +291,21 @@ public class OpenChatFragment extends Fragment {
                         .create()
                         .show();
             }
+        });
+
+        mChatAdapter.setOnItemClickListener(new OpenChatAdapter.OnItemClickListener()  {
+            @Override
+            public void onUserMessageItemClick(UserMessage message) {
+                User sender = message.getSender();
+                String userId = sender.getUserId();
+                Intent intent = new Intent(getContext(), ViewProfile.class);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+            }
+            @Override
+            public void onFileMessageItemClick(FileMessage message) {}
+            @Override
+            public void onAdminMessageItemClick(AdminMessage message) {}
         });
     }
 

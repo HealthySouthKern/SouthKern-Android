@@ -38,6 +38,12 @@
     <string name="login_connect">Connect</string>
     <string name="logout_text">Log Out</string>
 
+    <!-- profile texts -->
+    <string name="profile_user_real_name">Name:</string>
+    <string name="profile_user_organization">Organization:</string>
+    <string name="profile_user_position">Position in Organization:</string>
+    <string name="profile_user_role">Role:</string>
+
     <!-- Open Channel List -->
     <string name="open_channel_list_participant_count">%1$d participants</string>
 
