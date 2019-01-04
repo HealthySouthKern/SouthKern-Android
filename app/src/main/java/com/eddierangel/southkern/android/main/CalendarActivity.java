@@ -178,25 +178,27 @@ public class CalendarActivity extends AppCompatActivity {
         editEventDialogue = new Dialog(CalendarActivity.this);
         viewEventDialogue = new Dialog(CalendarActivity.this);
         Log.i("userdata", "" + sendbirdUserData);
-        if (sendbirdUserData.get("user_type").equals("admin")) {
-            Credential credential;
-            CalendarAuthorization calAuth = new CalendarAuthorization();
-            final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport(); // GoogleNetHttpTransport.newTrustedTransport();
-            Context mContext = CalendarActivity.this.getApplicationContext();
+        if (sendbirdUserData.get("user_type") != null) {
+            if (sendbirdUserData.get("user_type").equals("admin")) {
+                Credential credential;
+                CalendarAuthorization calAuth = new CalendarAuthorization();
+                final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport(); // GoogleNetHttpTransport.newTrustedTransport();
+                Context mContext = CalendarActivity.this.getApplicationContext();
 
-            HashMap params = new HashMap();
-            params.put("transport", HTTP_TRANSPORT);
-            params.put("context", mContext);
-            calAuth.execute(params);
+                HashMap params = new HashMap();
+                params.put("transport", HTTP_TRANSPORT);
+                params.put("context", mContext);
+                calAuth.execute(params);
 
-            try {
-                credential = calAuth.get();
-                service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                        .setApplicationName(APPLICATION_NAME)
-                        .build();
-            } catch(Exception e) {
-                Log.e("Failed create credential", "" + e);
-                e.printStackTrace();
+                try {
+                    credential = calAuth.get();
+                    service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                            .setApplicationName(APPLICATION_NAME)
+                            .build();
+                } catch (Exception e) {
+                    Log.e("Failed create credential", "" + e);
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -475,7 +477,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
-        mWeekView.setVisibility(View.INVISIBLE);
+        mWeekView.setVisibility(View.GONE);
 
         createEventTitle = (TextView) createEventDialogue.findViewById(R.id.create_event_title);
          if(!sendbirdUserData.get("user_type").equals("admin")) { createEventTitle.setText("Create submission"); createEventTitle.setTextSize(20); }

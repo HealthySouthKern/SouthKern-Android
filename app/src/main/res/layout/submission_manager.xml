@@ -37,7 +37,7 @@
             android:id="@+id/empty_submission_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No submissions have been made."
+            android:text="@string/no_submissions"
             android:gravity="center"
             android:textSize="22sp"
             android:padding="10dp"
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="Finished" />
+                android:text="@string/submissions_finished" />
 
         </RelativeLayout>
 
