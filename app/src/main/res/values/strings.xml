@@ -1,8 +1,20 @@
 <resources>
-    <string name="app_name">SendBird Sample</string>
+    <string name="app_name">SouthKern</string>
+
+    <!-- Google Calendar -->
+    <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
+    <string name="google_calendar_id">jfschmiechen@gmail.com</string>
+
+    <!-- Twitter -->
+    <string name="twitter_consumer_key">KBTW1JU8TXR2c8bDKNsplOYoN</string>
+    <string name="twitter_consumer_secret">f5Gg2xddiSz1NNzJZT8bJVNHBVDHA3SS9ky20UWJjIyIxrXtj9</string>
+
+    <!-- Facebook -->
+    <string name="facebook_app_id">296130564334095</string>
+    <string name="fb_login_protocol_scheme">fb296130564334095</string>
 
     <!-- all -->
-    <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>
+    <string name="all_app_version">SouthKern v%1$s / SDK v%2$s</string>
 
     <string name="all_create">Create</string>
     <string name="all_invite">Invite</string>
@@ -10,19 +22,27 @@
     <string name="all_group_channels">Group Channels</string>
     <string name="all_open_channels">Open Channels</string>
 
-    <!-- Branding -->
-    <string name="company_name">Building Healthy Communities</string>
-    <string name="south_kern">South Kern</string>
-
     <!-- main -->
     <string name="main_drawer_open">Open navigation drawer</string>
     <string name="main_drawer_close">Close navigation drawer</string>
     <string name="select_channel_type">Select channel type</string>
+    <string name="address_book">Address Book</string>
+    <string name="calendar">Calendar</string>
+    <string name="open_channels">Open Channels</string>
+    <string name="group_channels">Group Channels</string>
+    <string name="disconnect">Disconnect</string>
 
-    <!-- login -->
+    <!-- login/logout -->
     <string name="login_user_id">User ID</string>
     <string name="login_user_nickname">Nickname</string>
     <string name="login_connect">Connect</string>
+    <string name="logout_text">Log Out</string>
+
+    <!-- profile texts -->
+    <string name="profile_user_real_name">Name:</string>
+    <string name="profile_user_organization">Organization:</string>
+    <string name="profile_user_position">Position in Organization:</string>
+    <string name="profile_user_role">Role:</string>
 
     <!-- Open Channel List -->
     <string name="open_channel_list_participant_count">%1$d participants</string>
@@ -52,6 +72,36 @@
     <!-- Message Status -->
     <string name="message_sending">Sending</string>
     <string name="message_failed">Failed</string>
+
+    <!-- Calendar Dialogues -->
+    <string name="delete_capital">DELETE</string>
+    <string name="approve_capital">APPROVE</string>
+    <string name="edit_event">Edit event</string>
+    <string name="edit_name_event">Edit the name of the event</string>
+    <string name="edit_location_event">Edit event location</string>
+    <string name="edit_description_event">Edit event description</string>
+    <string name="edit_start_event">Edit event start time</string>
+    <string name="edit_end_event">Edit event end time</string>
+    <string name="save_changes">Save changes</string>
+    <string name="view_event">View event</string>
+    <string name="view_event_name">Name of the event</string>
+    <string name="view_event_location">Event location</string>
+    <string name="view_event_description">Event description</string>
+    <string name="close_event_dialogue">Close</string>
+    <string name="create_event">Create event</string>
+    <string name="create_event_end">Select event end time</string>
+    <string name="create_event_finish">Create</string>
+
+    <!-- submissions -->
+    <string name="no_submissions">No submissions have been made.</string>
+    <string name="submissions_finished">Finished</string>
+
+    <!-- main feed -->
+    <string name="current_week">This</string>
+    <string name="next_week">Next</string>
+    <string name="today">Today</string>
+    <string name="community">What is going on in the community?</string>
+    <string name="community_post">Post status update</string>
 
 
 </resources>
