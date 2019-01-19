@@ -70,6 +70,10 @@
             android:label="@string/participant_list" />
         <activity android:name=".openchannel.OpenChannelActivity" />
         <activity android:name=".groupchannel.GroupChannelActivity" />
+        <activity
+            android:name=".main.ViewOwnProfile"
+            android:parentActivityName=".main.MainActivity"/>
+        <activity android:name=".main.ViewProfile" />
 
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>

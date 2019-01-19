@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
                         for (Event event : events) {
                             if (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime &&
-                                    event.getStart().getDate().getValue() > new Date().getTime() &&
                                     event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime) &&
                                     !dummyEvents.contains(event)) {
                                 dummyEvents.add(event);
@@ -173,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                                    dummyTime.setDate(createdAtTime);
                                    tempEvent.setStart(dummyTime);
 
-                                   if (!dummyEvents.contains(tempEvent)) {
+                                   if (!dummyEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
                                        dummyEvents.add(tempEvent);
                                    }
 
@@ -215,6 +214,8 @@ public class MainActivity extends AppCompatActivity {
                                    }
                                });
 
+                               Collections.reverse(alertEvents);
+
                                mAdapter.notifyDataSetChanged();
                            }
 
@@ -251,10 +252,16 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_item_calendar) {
                     Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
                     startActivity(intent);
+                    finish();
                     return true;
 
                 } else if (id == R.id.nav_item_user_list) {
                     Intent intent = new Intent(MainActivity.this, UserList.class);
+                    startActivity(intent);
+                    return true;
+
+                } else if (id == R.id.nav_item_view_own_profile) {
+                    Intent intent = new Intent(MainActivity.this, ViewOwnProfile.class);
                     startActivity(intent);
                     return true;
 

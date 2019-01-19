@@ -14,7 +14,7 @@
     <string name="fb_login_protocol_scheme">fb296130564334095</string>
 
     <!-- all -->
-    <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>
+    <string name="all_app_version">SouthKern v%1$s / SDK v%2$s</string>
 
     <string name="all_create">Create</string>
     <string name="all_invite">Invite</string>
@@ -37,6 +37,12 @@
     <string name="login_user_nickname">Nickname</string>
     <string name="login_connect">Connect</string>
     <string name="logout_text">Log Out</string>
+
+    <!-- profile texts -->
+    <string name="profile_user_real_name">Name:</string>
+    <string name="profile_user_organization">Organization:</string>
+    <string name="profile_user_position">Position in Organization:</string>
+    <string name="profile_user_role">Role:</string>
 
     <!-- Open Channel List -->
     <string name="open_channel_list_participant_count">%1$d participants</string>
@@ -89,6 +95,13 @@
     <!-- submissions -->
     <string name="no_submissions">No submissions have been made.</string>
     <string name="submissions_finished">Finished</string>
+
+    <!-- main feed -->
+    <string name="current_week">This</string>
+    <string name="next_week">Next</string>
+    <string name="today">Today</string>
+    <string name="community">What is going on in the community?</string>
+    <string name="community_post">Post status update</string>
 
 
 </resources>

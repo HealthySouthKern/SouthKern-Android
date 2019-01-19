@@ -253,6 +253,8 @@ public class UserList extends AppCompatActivity {
 
                                 }
 
+                                Collections.reverse(alertEvents);
+
                                 mAdapter.notifyDataSetChanged();
                             }
 
