@@ -1,9 +1,12 @@
 package com.eddierangel.southkern.android.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ public class ViewProfile extends AppCompatActivity {
     private FirebaseFunctions mFunctions;
     private Object userData;
     private Map<String, String> userMetaData;
+    private ImageButton backButton;
 
     private Task<Object> fetchUserwithUserID(String firebaseToken, String userID) {
         // Create the arguments to the callable function.
@@ -57,12 +61,21 @@ public class ViewProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
 
-        String userId = getIntent().getStringExtra("userId");
+        String userID = getIntent().getStringExtra("userId");
         User user = SendBird.getCurrentUser();
-        String userID = user.getUserId();
 
         // Initialize mFunctions
         mFunctions = FirebaseFunctions.getInstance();
+        backButton = (ImageButton) findViewById(R.id.menu_button_back);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewProfile.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         fetchUserwithUserID(PreferenceUtils.getFirebaseToken(this.getApplicationContext()), userID).addOnCompleteListener(new OnCompleteListener<Object>() {
             @Override
@@ -86,15 +99,17 @@ public class ViewProfile extends AppCompatActivity {
                     // metadata is a nested object inside the user object which contains the useful profile data.
 
                     String userPicture = userMetaData.get("user_picture");
-                    String nickname = userMetaData.get("nickname");
+                    String nickname = userMetaData.get("user_nickname");
                     String name = userMetaData.get("user_name");
                     String organization = userMetaData.get("user_organization");
                     String position = userMetaData.get("user_position");
                     String role = userMetaData.get("user_type");
 
                     ImageView profileImage = (ImageView)findViewById(R.id.profile_image);
-                    if (!userPicture.isEmpty()){
-                        Picasso.get().load(userPicture).into(profileImage);
+                    if (userPicture != null) {
+                        if (!userPicture.isEmpty()) {
+                            Picasso.get().load(userPicture).into(profileImage);
+                        }
                     }
 
                     TextView userNickname = (TextView)findViewById(R.id.text_user_nickname);
