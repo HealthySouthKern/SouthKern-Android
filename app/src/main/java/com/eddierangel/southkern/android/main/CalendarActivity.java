@@ -11,7 +11,11 @@ import android.graphics.RectF;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +33,7 @@ import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 
 import com.eddierangel.southkern.android.R;
+import com.eddierangel.southkern.android.utils.AlertAdapter;
 import com.eddierangel.southkern.android.utils.CalendarAuthorization;
 import com.eddierangel.southkern.android.utils.EventManager;
 import com.eddierangel.southkern.android.utils.EventParser;
@@ -65,6 +70,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -95,6 +101,12 @@ public class CalendarActivity extends AppCompatActivity {
     private String CALENDAR_ID;
     private DatabaseReference mDatabase;
     private String APPLICATION_NAME;
+    private long twoWeekTime = 1209600000;
+    private NavigationView alertNavView;
+    private AlertAdapter alertAdapter;
+    private RecyclerView alertRecyclerView;
+    private ImageButton viewAlertButton;
+    private List<Event> alertEvents = new ArrayList<>();
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private Task<Events> getCalendarEvents(String firebaseToken) {
@@ -196,7 +208,7 @@ public class CalendarActivity extends AppCompatActivity {
                             .setApplicationName(APPLICATION_NAME)
                             .build();
                 } catch (Exception e) {
-                    Log.e("Failed create credential", "" + e);
+                    Log.e("credential failed", "" + e);
                     e.printStackTrace();
                 }
             }
@@ -485,7 +497,7 @@ public class CalendarActivity extends AppCompatActivity {
         progressBarCalendar = (ProgressBar) findViewById(R.id.progressBarCalendar);
         progressBarCalendar.setEnabled(true);
 
-
+        alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
 
         getCalendarEvents(PreferenceUtils.getFirebaseToken(this.getApplicationContext()))
                 .addOnCompleteListener(new OnCompleteListener<Events>() {
@@ -513,6 +525,57 @@ public class CalendarActivity extends AppCompatActivity {
                         mLogo.setVisibility(View.VISIBLE);
                         mWeekView.setVisibility(View.VISIBLE);
                         createEventButton.setVisibility(View.VISIBLE);
+
+                        alertRecyclerView = (RecyclerView) findViewById(R.id.alert_recycler_view);
+                        RecyclerView.LayoutManager mLayoutAlertManager = new LinearLayoutManager(getApplicationContext());
+                        alertRecyclerView.setLayoutManager(mLayoutAlertManager);
+                        alertRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                        alertAdapter = new AlertAdapter(alertEvents);
+                        alertRecyclerView.setAdapter(alertAdapter);
+
+                        viewAlertButton = (ImageButton) findViewById(R.id.alert_view_button);
+                        viewAlertButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                alertNavView.setVisibility(alertNavView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                                viewAlertButton.setBackgroundColor(alertNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
+
+                            }
+                        });
+
+                        mDatabase.child("statusUpdates").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
+                                    HashMap statusObj = (HashMap) mSnapshot.getValue();
+                                    Event tempEvent = new Event();
+                                    tempEvent.setDescription((String) statusObj.get("text"));
+                                    tempEvent.setSummary("Status update");
+
+                                    EventDateTime dummyTime = new EventDateTime();
+                                    Long dateTime = Long.parseLong(statusObj.get("createdAt").toString());
+                                    DateTime createdAtTime = new DateTime(dateTime);
+                                    dummyTime.setDate(createdAtTime);
+                                    tempEvent.setStart(dummyTime);
+
+                                    if (!alertEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
+                                        alertEvents.add(tempEvent);
+                                    }
+
+                                }
+
+                                Collections.reverse(alertEvents);
+
+                                alertAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
                         if (sendbirdUserData.get("user_type").equals("admin")) {
                             submissionButton.setVisibility(View.VISIBLE);
                         } else {

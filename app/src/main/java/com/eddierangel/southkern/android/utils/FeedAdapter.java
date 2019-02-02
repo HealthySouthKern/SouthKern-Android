@@ -40,6 +40,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
     private Calendar tempCalendar = Calendar.getInstance();
     private static ClickListener clickListener;
     private Boolean approved = false;
+    private long twoWeekTime = 1209600000;
+
 
     public interface ClickListener {
         void onItemClick(int position, View v);
@@ -122,10 +124,23 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
                     tempCalendar.set(year, month - 1, day);
                     String dateDay = tempCalendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
 
-                    if ((tempCalendar.getTimeInMillis() - new Date().getTime()) / 86400000 < 6) {
-                        holder.date.setText("This " + dateDay + " | " + formattedDate);
+                    if (((Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis())) < (twoWeekTime / 2))  &&
+                            (new Date().getTime() < tempCalendar.getTimeInMillis()) &&
+                            (tempCalendar.getTimeInMillis() < new Date().getTime() + (twoWeekTime / 2))
+                            ) {
+                        holder.date.setText(context.getResources().getText(R.string.current_week) + " " + dateDay + " | " + formattedDate);
+
+                    } else if (((Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis())) > (twoWeekTime / 2) &&
+                            (new Date().getTime() < tempCalendar.getTimeInMillis()) &&
+                            (tempCalendar.getTimeInMillis() > new Date().getTime() + (twoWeekTime / 2))
+                    )) {
+                        holder.date.setText(context.getResources().getText(R.string.next_week) + " " + dateDay + " | " + formattedDate);
+
+                    } else if (new Date().getTime() - tempCalendar.getTimeInMillis() < 86400000) { // Less than one day
+                        holder.date.setText(context.getResources().getText(R.string.today) + " | " + formattedDate);
+
                     } else {
-                        holder.date.setText("Next " + dateDay + " | " + formattedDate);
+                        holder.date.setText(dateDay + " | " + formattedDate);
                     }
 
                     String formattedEndTime = timeFormat.format(parsedEndDate);
@@ -141,13 +156,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
                     holder.date.setTextColor(Color.BLACK);
                     holder.time.setTextColor(Color.BLACK);
                 } catch (Exception e) {
-                    Log.i("date parse err", "" + e);
                     e.printStackTrace();
                 }
             }
         } else {
-
-            Log.i("compareELSE", "" + event);
             String createdAt = event.getStart().getDate().toString();
             Date parsedStartDate;
 
@@ -161,10 +173,23 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
                 tempCalendar.set(year, month - 1, day);
                 String dateDay = tempCalendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
 
-                if ((tempCalendar.getTimeInMillis() - new Date().getTime()) / 86400000 < 6) {
-                    holder.date.setText("This " + dateDay + " | " + formattedDate);
+                if (((Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis())) < (twoWeekTime / 2))  &&
+                        (new Date().getTime() < tempCalendar.getTimeInMillis()) &&
+                        (tempCalendar.getTimeInMillis() < new Date().getTime() + (twoWeekTime / 2))
+                        ) {
+                    holder.date.setText(context.getResources().getText(R.string.current_week) + " " + dateDay + " | " + formattedDate);
+
+                } else if (((Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis())) > (twoWeekTime / 2) &&
+                        (new Date().getTime() < tempCalendar.getTimeInMillis()) &&
+                        (tempCalendar.getTimeInMillis() > new Date().getTime() + (twoWeekTime / 2))
+                )) {
+                    holder.date.setText(context.getResources().getText(R.string.next_week) + " " + dateDay + " | " + formattedDate);
+
+                } else if (new Date().getTime() - tempCalendar.getTimeInMillis() < 86400000) { // Less than one day
+                    holder.date.setText(context.getResources().getText(R.string.today) + " | " + formattedDate);
+
                 } else {
-                    holder.date.setText("Next " + dateDay + " | " + formattedDate);
+                    holder.date.setText(dateDay + " | " + formattedDate);
                 }
 
                 String formattedStartTime = timeFormat.format(parsedStartDate);

@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -62,7 +63,8 @@ public class SubmissionManager extends AppCompatActivity {
     private EventAdapter mAdapter;
     private EventDateTime eventStart = new EventDateTime();
     private EditText editEventName, editEventLocation, editEventDescription;
-    private TextView editEventTitle, approveText, deleteText, emptyListText;
+    private TextView editEventTitle, approveText, deleteText;
+    private LinearLayout emptyListText, submissionListView;
     private TimePickerDialog mTimePicker;
     private int year, month, day, endHour, endMinute, startHour, startMinute = 0;
     private Boolean endTimeSelected;
@@ -183,11 +185,8 @@ public class SubmissionManager extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        emptyListText = (TextView) findViewById(R.id.empty_submission_text);
-
-        if (eventList.isEmpty()) {
-            emptyListText.setVisibility(View.VISIBLE);
-        }
+        submissionListView = (LinearLayout) findViewById(R.id.submission_list_view);
+        emptyListText = (LinearLayout) findViewById(R.id.empty_submissions);
 
         editEventDialogue = new Dialog(SubmissionManager.this);
         editEventDialogue.setContentView(R.layout.dialogue_edit_event);
@@ -205,7 +204,11 @@ public class SubmissionManager extends AppCompatActivity {
                     Event event = EventParser.parseSingleEvent(mSnapshot.getValue());
                     eventList.add(event);
                 }
-                emptyListText.setVisibility(View.GONE);
+                if (!eventList.isEmpty()) {
+                    Log.i("entered if not empt", "123");
+                    emptyListText.setVisibility(View.GONE);
+                    submissionListView.setVisibility(View.VISIBLE);
+                }
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -214,6 +217,12 @@ public class SubmissionManager extends AppCompatActivity {
 
             }
         });
+
+        if (eventList.isEmpty()) {
+            Log.i("entered if sub", "123");
+            emptyListText.setVisibility(View.VISIBLE);
+            submissionListView.setVisibility(View.GONE);
+        }
 
         mTimePicker = new TimePickerDialog(SubmissionManager.this, new TimePickerDialog.OnTimeSetListener() {
             @Override

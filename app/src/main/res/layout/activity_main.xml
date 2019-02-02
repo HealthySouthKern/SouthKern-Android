@@ -97,6 +97,7 @@
             android:id="@+id/alert_creator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
             android:background="@drawable/rectangle"
             android:layout_margin="10dp"
             android:visibility="gone">
@@ -109,17 +110,19 @@
                 android:inputType="textMultiLine"
                 android:layout_margin="10dp"
                 android:layout_marginBottom="0dp"
-                android:hint="What is going on in the community?" />
+                android:hint="@string/community" />
 
             <Button
                 android:id="@+id/alert_submit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-10dp"
+                android:layout_marginTop="-15dp"
                 android:layout_marginLeft="10dp"
-                android:gravity="left"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:gravity="left|center_vertical"
                 android:layout_below="@id/alert_description"
-                android:text="Post status update" />
+                android:text="@string/community_post" />
 
         </RelativeLayout>
 
