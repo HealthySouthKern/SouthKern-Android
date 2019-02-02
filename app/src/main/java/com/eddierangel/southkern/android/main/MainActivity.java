@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_item_user_list) {
                     Intent intent = new Intent(MainActivity.this, UserList.class);
                     startActivity(intent);
+                    finish();
                     return true;
 
                 } else if (id == R.id.nav_item_view_own_profile) {
