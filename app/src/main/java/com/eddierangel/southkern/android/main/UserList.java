@@ -90,7 +90,8 @@ public class UserList extends AppCompatActivity {
                         // This continuation runs on either success or failure, but if the task
                         // has failed then getResult() will throw an Exception which will be
                         // propagated down.
-                        return (HashMap) task.getResult().getData();
+                        Log.i("usertest2", "" + ((List<Object>) task.getResult().getData()).get(0));
+                        return (HashMap) ((List<Object>) task.getResult().getData()).get(0);
                     }
                 });
     }
@@ -203,8 +204,10 @@ public class UserList extends AppCompatActivity {
                                 Object details = ffe.getDetails();
                             }
                         }
+
+                        Log.i("usertest", "" + task.getResult().get("users"));
                         // Success
-                        userList = (List<Object>) task.getResult().get("users");
+                        userList = (List<Object>) task.getResult().get("users"); // new ArrayList<Object>(((HashMap<Object, Object>) task.getResult().get("users")).values());
                         originalUserList = userList;
 
                         userListControls.setVisibility(View.VISIBLE);
