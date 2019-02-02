@@ -71,8 +71,7 @@ public class ViewProfile extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ViewProfile.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 
