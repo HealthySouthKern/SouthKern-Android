@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.AddressAdapter;
@@ -224,7 +225,9 @@ public class UserList extends AppCompatActivity {
                             @Override
                             public void onItemClick(int position, View v) {
                                 HashMap user = (HashMap) userList.get(position);
-                                // Link to Noah's user profile view once he completes it.
+                                Intent intent = new Intent(UserList.this, ViewProfile.class);
+                                intent.putExtra("userId", (String)user.get("user_id"));
+                                startActivity(intent);
                             }
 
                             @Override
