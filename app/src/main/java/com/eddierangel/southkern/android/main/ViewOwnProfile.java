@@ -68,13 +68,13 @@ public class ViewOwnProfile extends AppCompatActivity {
         final HashMap<String, String> data = new HashMap<String, String>();
 
         ImageView userProfileImage = (ImageView)findViewById(R.id.image_user_profile);
-        try {
-            if (!profileImageUrl.isEmpty()) {
-                Picasso.get().load(profileImageUrl).into(userProfileImage);
-            }
+
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            Picasso.get().load(profileImageUrl).into(userProfileImage);
         }
-        catch (Exception e) {
-            Log.e("ViewOwnProfile", "null profileImageUrl");
+        else if (user.getProfileUrl() != null){
+            profileImageUrl = user.getProfileUrl();
+            Picasso.get().load(profileImageUrl).into(userProfileImage);
         }
 
         EditText nicknameEditText = (EditText)findViewById(R.id.text_user_nickname);

@@ -102,29 +102,48 @@ public class ViewProfile extends AppCompatActivity {
                     String name = userMetaData.get("user_name");
                     String organization = userMetaData.get("user_organization");
                     String position = userMetaData.get("user_position");
-                    String role = userMetaData.get("user_type");
+                    String role = userMetaData.get("user_role");
+
 
                     ImageView profileImage = (ImageView)findViewById(R.id.profile_image);
-                    if (userPicture != null) {
-                        if (!userPicture.isEmpty()) {
+                    if (userPicture != null && !userPicture.isEmpty()) {
+                            Picasso.get().load(userPicture).into(profileImage);
+                    }
+                    else {
+                        userPicture = (String) ((Map) userData).get("profile_url");
+                        if (userPicture != null && !userPicture.isEmpty()) {
                             Picasso.get().load(userPicture).into(profileImage);
                         }
                     }
 
+
                     TextView userNickname = (TextView)findViewById(R.id.text_user_nickname);
-                    userNickname.setText(nickname);
+                    if (nickname != null && !nickname.isEmpty()) {
+                        userNickname.setText(nickname);
+                    }
+                    else if (((Map) userData).get("nickname")!= null){
+                        userNickname.setText((String) ((Map) userData).get("nickname"));
+                    }
 
                     TextView userName = (TextView)findViewById(R.id.text_user_real_name);
-                    userName.setText(name);
+                    if (name != null && !name.isEmpty()) {
+                        userName.setText(name);
+                    }
 
                     TextView userOrganization = (TextView)findViewById(R.id.text_user_organization);
-                    userOrganization.setText(organization);
+                    if (organization != null && !organization.isEmpty()) {
+                        userOrganization.setText(organization);
+                    }
 
                     TextView userPosition = (TextView)findViewById(R.id.text_user_position);
-                    userPosition.setText(position);
+                    if (position != null && !position.isEmpty()) {
+                        userPosition.setText(position);
+                    }
 
                     TextView userRole = (TextView)findViewById(R.id.text_user_role);
-                    userRole.setText(role);
+                    if (role != null && !role.isEmpty()) {
+                        userRole.setText(role);
+                    }
                 }
                 catch (Exception e) {
                     Log.e("InsideTaskComplete", "Error getting user or creating map");
