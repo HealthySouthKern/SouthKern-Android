@@ -121,13 +121,16 @@ public class ViewProfile extends AppCompatActivity {
                     if (nickname != null && !nickname.isEmpty()) {
                         userNickname.setText(nickname);
                     }
-                    else if (((Map) userData).get("nickname")!= null){
-                        userNickname.setText((String) ((Map) userData).get("nickname"));
+                    else {
+                        userNickname.setText((String) ((Map) userData).get("user_id"));
                     }
 
                     TextView userName = (TextView)findViewById(R.id.text_user_real_name);
                     if (name != null && !name.isEmpty()) {
                         userName.setText(name);
+                    }
+                    else if (((Map) userData).get("nickname")!= null){
+                        userName.setText((String) ((Map) userData).get("nickname"));
                     }
 
                     TextView userOrganization = (TextView)findViewById(R.id.text_user_organization);
