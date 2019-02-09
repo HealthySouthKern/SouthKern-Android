@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import com.eddierangel.southkern.android.R;
 
+// TODO: Add Documentation to Public Interface
 public class SplashScreen extends Activity {
 
     /** Duration of wait*/

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+// TODO: Add Documentation to Public Interface
 public class MemberListActivity extends AppCompatActivity{
 
     private UserListAdapter mListAdapter;

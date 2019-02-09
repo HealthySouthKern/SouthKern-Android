@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+// TODO: Add Documentation to Public Interface
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> {
     private List<Event> eventList;
     private Context context;
