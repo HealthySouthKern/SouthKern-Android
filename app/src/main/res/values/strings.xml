@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">SouthKern</string>
 
+    <!-- Twitter -->
+    <string name="twitter_consumer_key">KBTW1JU8TXR2c8bDKNsplOYoN</string>
+    <string name="twitter_consumer_secret">f5Gg2xddiSz1NNzJZT8bJVNHBVDHA3SS9ky20UWJjIyIxrXtj9</string>
+
+    <!-- Facebook -->
+    <string name="facebook_app_id">296130564334095</string>
+    <string name="fb_login_protocol_scheme">fb296130564334095</string>
+
     <!-- all -->
     <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>
 
@@ -15,10 +23,11 @@
     <string name="main_drawer_close">Close navigation drawer</string>
     <string name="select_channel_type">Select channel type</string>
 
-    <!-- login -->
+    <!-- login/logout -->
     <string name="login_user_id">User ID</string>
     <string name="login_user_nickname">Nickname</string>
     <string name="login_connect">Connect</string>
+    <string name="logout_text">Log Out</string>
 
     <!-- Open Channel List -->
     <string name="open_channel_list_participant_count">%1$d participants</string>

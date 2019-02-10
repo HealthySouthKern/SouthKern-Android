@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.eddierangel.southkern.android.R;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
      * then disconnects from SendBird.
      */
     private void disconnect() {
+        AuthUI.getInstance().signOut(this);
+
         SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
             @Override
             public void onUnregistered(SendBirdException e) {
