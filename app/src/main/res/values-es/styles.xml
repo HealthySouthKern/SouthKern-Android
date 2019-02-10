@@ -9,7 +9,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="Toolbar">
+    <style name="Toolbar" >
         <item name="android:textColorPrimary">#ffffff</item>
     </style>
 

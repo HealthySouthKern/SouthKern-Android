@@ -10,9 +10,11 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ui.idp.AuthMethodPickerActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -95,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         // A loading indicator
         mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.progress_bar_login);
 
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -112,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onSuccess(GetTokenResult result) {
                             String idToken = result.getToken();
                             // save token to shared store.
-                            PreferenceUtils.setFirebaseToken(LoginActivity.this, idToken);
+                            PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), idToken);
 
                             final String userId = user.getEmail();
 
@@ -139,13 +142,11 @@ public class LoginActivity extends AppCompatActivity {
                                                 Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
                                                 PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
                                                 if (firstLogin) {
-                                                    Log.i("I logged in", "123");
                                                     // It is the user's first time logging in -> show them UserCreation form
                                                     Intent intent = new Intent(LoginActivity.this, UserCreation.class);
                                                     startActivityForResult(intent, 1);
                                                 }
                                                 if (!firstLogin && task.getResult().get("nickname") != null) {
-                                                    Log.i("I dont need info", "123");
                                                     // This isn't the user's first rodeo -> connect and show them main feed
                                                     String userNickname = (String) task.getResult().get("nickname");
                                                     connectToSendBird(userId, userNickname, sendbirdToken);
@@ -164,6 +165,8 @@ public class LoginActivity extends AppCompatActivity {
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false)
+                                    .setTheme(R.style.LoginTheme)
+                                    .setLogo(R.drawable.bhc_logo_color_centered)
                                     .setAvailableProviders(Arrays.asList(
                                             new AuthUI.IdpConfig.EmailBuilder().build(),
                                             new AuthUI.IdpConfig.GoogleBuilder().build()))
@@ -184,6 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                     String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
                     result = (HashMap<String, String>) data.getSerializableExtra("userData");
                     userData = result;
+                    Log.i("userdata2", "" + result);
                     connectToSendBird(userId, result.get("user_name"), sendbirdToken);
                 }
             }
@@ -226,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
                     PreferenceUtils.setConnected(LoginActivity.this, false);
                     return;
                 }
-
+                Log.i("user_userdata", "" + userData);
                 if (userData != null) {
                     Log.i("createmeta", "" + userData);
                     createUserMetaData(userData);
@@ -258,19 +262,8 @@ public class LoginActivity extends AppCompatActivity {
         User user = SendBird.getCurrentUser();
         try {
             if (data.containsKey("user_picture")) {
-                String picURL;
 
-                // We have to parse twitter and facebook profile pictures differently since they are given to us
-                // in different types. Facebook: JSONObject, Twitter: String
-                if (!data.containsKey("user_twitter")) {
-                    // Parse Facebook user profile picture
-                    String JSONPicUrl = data.get("user_picture");
-                    JSONObject profilePic = new JSONObject(JSONPicUrl);
-                    picURL = (String) profilePic.getJSONObject("data").get("url");
-                } else {
-                    // Just use Twitter profile picture
-                    picURL = data.get("user_picture");
-                }
+                String picURL = data.get("user_picture");
 
                 SendBird.updateCurrentUserInfo(data.get("user_name"), picURL, new SendBird.UserInfoUpdateHandler() {
                     @Override
@@ -282,7 +275,6 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT)
                                     .show();
                         }
-
                     }
                 });
             }
@@ -296,6 +288,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         } catch(Exception e) {
+            Log.e("meta data error", "" + e);
             e.printStackTrace();
         }
     }

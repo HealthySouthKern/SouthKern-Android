@@ -26,6 +26,11 @@
         <activity android:name=".main.MainActivity"
 =======
         <activity android:name=".main.UserCreation"/>
+        <activity android:name=".main.CalendarActivity"/>
+        <activity android:name=".main.SubmissionManager"/>
+        <activity android:name=".openchannel.OpenChatFeed"/>
+        <activity android:name=".main.UserList"/>
+        <activity android:name=".utils.FirebaseLoginUI"/>
         <!-- Facebook start -->
         <meta-data
             tools:replace="android:value"
@@ -70,6 +75,10 @@
             android:label="@string/participant_list" />
         <activity android:name=".openchannel.OpenChannelActivity" />
         <activity android:name=".groupchannel.GroupChannelActivity" />
+        <activity
+            android:name=".main.ViewOwnProfile"
+            android:parentActivityName=".main.MainActivity"/>
+        <activity android:name=".main.ViewProfile" />
 
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>

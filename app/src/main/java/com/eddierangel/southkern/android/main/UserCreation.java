@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -51,14 +52,17 @@ import retrofit2.Call;
 public class UserCreation extends AppCompatActivity {
 
     private TextInputEditText mUserName, mUserPosition, mUserOrganization;
-    private CoordinatorLayout mLoginLayout;
     private Button mFinishUserButton;
     private LoginButton facebookButton;
     private TwitterLoginButton twitterButton;
-    private String EMAIL;
     private HashMap<String, String> data = new HashMap<String, String>();
     private CallbackManager callbackManager;
-    private TwitterAuthClient authClient = new TwitterAuthClient();
+    private String profileURL;
+    private static String FACEBOOK_FIELD_PICTURE = "picture";
+    private static String FACEBOOK_FIELD_DATA = "data";
+    private static String FACEBOOK_FIELD_URL = "url";
+    private static String FACEBOOK_FIELD_PROFILE_IMAGE = "picture.type(large)";
+    private static String FACEBOOK_FIELDS = "fields";
 
     /* Helper function that converts a JSON string to a HashMap.
      * @param: String str is the JSON string to convert */
@@ -78,6 +82,19 @@ public class UserCreation extends AppCompatActivity {
         return map;
     }
 
+    private String getImageUrl(GraphResponse response) {
+        String url = null;
+        try {
+            url = response.getJSONObject()
+                    .getJSONObject(FACEBOOK_FIELD_PICTURE)
+                    .getJSONObject(FACEBOOK_FIELD_DATA)
+                    .getString(FACEBOOK_FIELD_URL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +103,6 @@ public class UserCreation extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         callbackManager = CallbackManager.Factory.create();
-        EMAIL = PreferenceUtils.getUserId(UserCreation.this.getApplicationContext()); // Users log in with email
 
         // Twitter initialization
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(
@@ -101,7 +117,6 @@ public class UserCreation extends AppCompatActivity {
 
         setContentView(R.layout.activity_create_user);
 
-        mLoginLayout = (CoordinatorLayout) findViewById(R.id.layout_create_user);
 
         mUserName = (TextInputEditText) findViewById(R.id.create_user_name);
         mUserPosition = (TextInputEditText) findViewById(R.id.create_user_position);
@@ -134,14 +149,15 @@ public class UserCreation extends AppCompatActivity {
                     public void success(Result<User> userResult) {
                         HashMap<String, String> userData = new HashMap<String, String>();
 
-                        userData.put("user_picture", userResult.data.profileImageUrl);
-                        userData.put("user_name", userResult.data.name);
-                        userData.put("user_background_image", userResult.data.profileBackgroundImageUrl);
-                        userData.put("user_screen_name", userResult.data.screenName);
-                        userData.put("user_description", userResult.data.description);
-                        userData.put("user_twitter", "true");
+                        data.put("user_picture", userResult.data.profileImageUrl);
 
-                        data = userData;
+                        /* Due to sendbird meta data limits, we can not store this information. Once the sendbird plan has been
+                         * upgraded, uncomment these lines and use them to customize user profiles. */
+//                        userData.put("user_name", userResult.data.name);
+//                        userData.put("user_background_image", userResult.data.profileBackgroundImageUrl);
+//                        userData.put("user_screen_name", userResult.data.screenName);
+//                        userData.put("user_description", userResult.data.description);
+//                        userData.put("user_twitter", "true");
 
                         mFinishUserButton.setEnabled(true);
                         facebookButton.setEnabled(false);
@@ -179,38 +195,58 @@ public class UserCreation extends AppCompatActivity {
 
             new FacebookCallback<LoginResult>() {
                 @Override
-                public void onSuccess(LoginResult loginResult) {
-                    // Now that we have a token for facebook, we can use that to fetch profile data
-                    Bundle params = new Bundle();
-                    params.putString("fields", "first_name, last_name, picture.type(large), locale, gender, cover");
-                    new GraphRequest(
-                        loginResult.getAccessToken(),
-                        "/" + loginResult.getAccessToken().getUserId() + "/",
-                        params,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-                                if (response.getError() == null) {
-                                    try {
-                                        String resData = response.getRawResponse();
-                                        // Convert JSON String to HashMap using jsonToMap so we can create user meta data
-                                        data = jsonToMap(resData);
-                                        mFinishUserButton.setEnabled(true);
-                                        twitterButton.setEnabled(false);
-                                    } catch (Exception e) {
-                                        Log.i("graph err", "" + e);
-                                        e.printStackTrace();
-                                    }
+                public void onSuccess(final LoginResult loginResult) {
+
+                    // fetch permanent facebook profile URL.
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(),
+                            new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(JSONObject object, GraphResponse response) {
+                                    profileURL = getImageUrl(response);
+                                    mFinishUserButton.setEnabled(true);
+                                    twitterButton.setEnabled(false);
                                 }
-                            }
-                        }
-                    ).executeAsync();
+                            });
+
+                    Bundle parameters = new Bundle();
+                    parameters.putString(FACEBOOK_FIELDS, FACEBOOK_FIELD_PROFILE_IMAGE);
+                    request.setParameters(parameters);
+                    request.executeAsync();
+
+                    // Now that we have a token for facebook, we can use that to fetch profile data
+
+                    /* Due to sendbird meta data limits, we can not store this information. Once the sendbird plan has been
+                     * upgraded, uncomment these lines and use them to customize user profiles. */
+//                    Bundle params = new Bundle();
+//                    params.putString("fields", "first_name, last_name, locale, gender, cover");
+//                    new GraphRequest(
+//                        loginResult.getAccessToken(),
+//                        "/" + loginResult.getAccessToken().getUserId() + "/",
+//                        params,
+//                        HttpMethod.GET,
+//                        new GraphRequest.Callback() {
+//                            public void onCompleted(GraphResponse response) {
+//                                if (response.getError() == null) {
+//                                    try {
+//                                        String resData = response.getRawResponse();
+//                                        // Convert JSON String to HashMap using jsonToMap so we can create user meta data
+//                                        data = jsonToMap(resData);
+//                                        mFinishUserButton.setEnabled(true);
+//                                        twitterButton.setEnabled(false);
+//                                    } catch (Exception e) {
+//                                        Log.i("graph err", "" + e);
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    ).executeAsync();
 
                 }
 
                 @Override
                 public void onCancel() {
-                    // App code
                     mFinishUserButton.setEnabled(true);
                     twitterButton.setEnabled(true);
                     facebookButton.setEnabled(true);
@@ -219,7 +255,7 @@ public class UserCreation extends AppCompatActivity {
 
                 @Override
                 public void onError(FacebookException exception) {
-                    Log.d("Facebook auth error: ", "" + exception);
+                    Log.e("Facebook auth error: ", "" + exception);
                     mFinishUserButton.setEnabled(true);
                     twitterButton.setEnabled(true);
                     facebookButton.setEnabled(true);
@@ -236,8 +272,21 @@ public class UserCreation extends AppCompatActivity {
                 data.put("user_name", userName);
                 data.put("user_organization", userOrganization);
                 data.put("user_position", userPosition);
+                if (profileURL != null) {
+                    Log.i("user_picture", profileURL);
+                    data.put("user_picture", profileURL);
+                }
 
-                Log.i("data_before", "" + data);
+                if (!userOrganization.equals("")) {
+                    data.put("user_type", "organization");
+                } else {
+                    data.put("user_type", "resident");
+                }
+
+                /* Uncomment line below in order to make new admins. Right now we have no clear way to make a user
+                 * an admin. However, in the future we should have a javascript function to create admins. For now,
+                 * use this temporary solution. */
+                // data.put("user_type", "admin");
 
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("userData", data);

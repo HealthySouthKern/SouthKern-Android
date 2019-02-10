@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
+import com.eddierangel.southkern.android.main.MainActivity;
+import com.eddierangel.southkern.android.main.ViewOwnProfile;
+import com.eddierangel.southkern.android.main.ViewProfile;
+import com.google.gson.Gson;
 import com.sendbird.android.*;
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.FileUtils;
@@ -52,9 +58,10 @@ public class OpenChatFragment extends Fragment {
     private ImageButton mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
+    private Boolean isCustomChat = false;
 
     private OpenChannel mChannel;
-    private String mChannelUrl;
+    private String mChannelUrl, channelName;
     private PreviousMessageListQuery mPrevMessageListQuery;
 
     /**
@@ -68,6 +75,12 @@ public class OpenChatFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    public void setCustomView(Boolean bool, String channelUrl, String name) {
+        isCustomChat = bool;
+        mChannelUrl = channelUrl;
+        channelName = name;
     }
 
     @Nullable
@@ -111,8 +124,12 @@ public class OpenChatFragment extends Fragment {
 
 
         // Gets channel from URL user requested
-        mChannelUrl = getArguments().getString(OpenChannelListFragment.EXTRA_OPEN_CHANNEL_URL);
-        enterChannel(mChannelUrl);
+        if (isCustomChat) {
+            enterChannel(mChannelUrl);
+        } else {
+            mChannelUrl = getArguments().getString(OpenChannelListFragment.EXTRA_OPEN_CHANNEL_URL);
+            enterChannel(mChannelUrl);
+        }
 
         return rootView;
     }
@@ -275,6 +292,21 @@ public class OpenChatFragment extends Fragment {
                         .show();
             }
         });
+
+        mChatAdapter.setOnItemClickListener(new OpenChatAdapter.OnItemClickListener()  {
+            @Override
+            public void onUserMessageItemClick(UserMessage message) {
+                User sender = message.getSender();
+                String userId = sender.getUserId();
+                Intent intent = new Intent(getContext(), ViewProfile.class);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+            }
+            @Override
+            public void onFileMessageItemClick(FileMessage message) {}
+            @Override
+            public void onAdminMessageItemClick(AdminMessage message) {}
+        });
     }
 
     private void setUpRecyclerView() {
@@ -406,33 +438,68 @@ public class OpenChatFragment extends Fragment {
      *
      * @param channelUrl The URL of the channel to enter.
      */
-    private void enterChannel(String channelUrl) {
+    private void enterChannel(final String channelUrl) {
+        Log.i("channelurl2", "" + channelUrl);
         OpenChannel.getChannel(channelUrl, new OpenChannel.OpenChannelGetHandler() {
             @Override
             public void onResult(final OpenChannel openChannel, SendBirdException e) {
                 if (e != null) {
+                    Log.i("channelcreateerr", "" + e);
                     // Error!
-                    e.printStackTrace();
-                    return;
-                }
+                    if (openChannel == null) {
+                        OpenChannel.createChannel(channelName, null, null, null, new OpenChannel.OpenChannelCreateHandler() {
+                            @Override
+                            public void onResult(final OpenChannel openChannel, SendBirdException e) {
+                                if (e != null) {
+                                    e.printStackTrace();
+                                }
+                                // Enter the channel
+                                openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
+                                    @Override
+                                    public void onResult(SendBirdException e) {
+                                        if (e != null) {
+                                            // Error!
+                                            e.printStackTrace();
+                                        }
 
-                // Enter the channel
-                openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
-                    @Override
-                    public void onResult(SendBirdException e) {
-                        if (e != null) {
-                            // Error!
-                            e.printStackTrace();
-                            return;
-                        }
+                                        mChannel = openChannel;
+                                        loadInitialMessageList(30);
 
-                        mChannel = openChannel;
-                        loadInitialMessageList(30);
-
-                        // Set action bar title to name of channel
-                        ((OpenChannelActivity) getActivity()).setActionBarTitle(mChannel.getName());
+                                        // Set action bar title to name of channel
+                                        if (isCustomChat) {
+                                            ((OpenChatFeed) getActivity()).setActionBarTitle(mChannel.getName());
+                                        } else {
+                                            ((OpenChannelActivity) getActivity()).setActionBarTitle(mChannel.getName());
+                                        }
+                                    }
+                                });
+                            }
+                        });
                     }
-                });
+                } else {
+
+                    // Enter the channel
+                    openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
+                        @Override
+                        public void onResult(SendBirdException e) {
+                            if (e != null) {
+                                // Error!
+                                e.printStackTrace();
+                                return;
+                            }
+
+                            mChannel = openChannel;
+                            loadInitialMessageList(30);
+
+                            // Set action bar title to name of channel
+                            if (isCustomChat) {
+                                ((OpenChatFeed) getActivity()).setActionBarTitle(mChannel.getName());
+                            } else {
+                                ((OpenChannelActivity) getActivity()).setActionBarTitle(mChannel.getName());
+                            }
+                        }
+                    });
+                }
             }
         });
     }
