@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import java.util.List;
 
 
+// TODO: Add Documentation to Public Interface
 public class TypingIndicator {
 
     List<ImageView> mImageViewList;

@@ -3,6 +3,7 @@ package com.eddierangel.southkern.android.utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+// TODO: Add Documentation to Public Interface
 public class UrlPreviewInfo {
     private final String mUrl;
     private final String mSiteName;

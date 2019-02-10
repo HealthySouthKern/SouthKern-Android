@@ -9,6 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+// TODO: Add Documentation to Public Interface
 public class TextUtils {
     public static String getGroupChannelTitle(GroupChannel channel) {
         List<Member> members = channel.getMembers();

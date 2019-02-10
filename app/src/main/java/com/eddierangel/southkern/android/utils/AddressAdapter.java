@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
+// TODO: Add Documentation to Public Interface
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHolder> {
     private List<Object> userList;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");

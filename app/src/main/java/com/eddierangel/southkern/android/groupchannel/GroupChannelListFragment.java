@@ -24,6 +24,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
+// TODO: Add Documentation to Public Interface
 public class GroupChannelListFragment extends Fragment {
 
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";

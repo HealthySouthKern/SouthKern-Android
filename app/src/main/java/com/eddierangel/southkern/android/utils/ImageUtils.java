@@ -12,7 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-
+// TODO: Add Documentation to Public Interface
 public class ImageUtils {
 
     // Prevent instantiation
