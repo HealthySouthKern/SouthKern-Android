@@ -60,6 +60,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 
+// TODO: Add Documentation to Public Interface
 public class GroupChatFragment extends Fragment {
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
 

@@ -57,6 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Add Documentation to Public Interface
 public class UserList extends AppCompatActivity {
 
     private FirebaseFunctions mFunctions;

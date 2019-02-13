@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.eddierangel.southkern.android.R;
 
+// TODO: Add Documentation to Public Interface
 public class OpenChannelActivity extends AppCompatActivity{
 
     @Override

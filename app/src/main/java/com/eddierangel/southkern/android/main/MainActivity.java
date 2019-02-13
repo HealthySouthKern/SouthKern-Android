@@ -60,11 +60,11 @@ import java.util.Map;
 
 import com.eddierangel.southkern.android.utils.InternetCheck;
 
+// TODO: Add Documentation to Public Interface
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private NavigationView mNavView, alertNavView;
-    private LinearLayout mSplashLayout;
     private ImageButton navButton, viewAlertButton;
     private Button submitStatusUpdate;
     private FirebaseFunctions mFunctions;

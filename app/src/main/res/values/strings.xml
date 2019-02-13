@@ -1,6 +1,18 @@
 <resources>
     <string name="app_name">SouthKern</string>
 
+    <!-- Google Calendar -->
+    <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
+    <string name="google_calendar_id">jfschmiechen@gmail.com</string>
+
+    <!-- Twitter -->
+    <string name="twitter_consumer_key">FY00000000000000000000000</string>
+    <string name="twitter_consumer_secret">R0000000000000000000000000000000000000000000000000</string>
+
+    <!-- Facebook -->
+    <string name="facebook_app_id">200000000000000</string>
+    <string name="fb_login_protocol_scheme">fb200000000000000</string>
+
     <!-- all -->
     <string name="all_app_version">SouthKern v%1$s / SDK v%2$s</string>
 

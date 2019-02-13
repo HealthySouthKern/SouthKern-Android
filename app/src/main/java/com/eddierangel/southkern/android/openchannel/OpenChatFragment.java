@@ -37,6 +37,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 
+// TODO: Add Documentation to Public Interface
 public class OpenChatFragment extends Fragment {
 
     private static final String LOG_TAG = OpenChatFragment.class.getSimpleName();

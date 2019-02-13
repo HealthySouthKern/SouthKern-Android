@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 
+// TODO: Add Documentation to Public Interface
 class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final String URL_PREVIEW_CUSTOM_TYPE = "url_preview";
 

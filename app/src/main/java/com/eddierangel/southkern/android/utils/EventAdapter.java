@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+// TODO: Add Documentation to Public Interface
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
     private List<Event> eventList;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
