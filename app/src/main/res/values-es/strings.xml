@@ -14,7 +14,7 @@
     <string name="fb_login_protocol_scheme">fb200000000000000</string>
 
     <!-- all -->
-    <!-- En Español -->
+    <!--En Español -->
     <string name="all_app_version">SouthKern v%1$s / SDK v%2$s</string>
 
     <string name="all_create">Crear</string>
@@ -94,7 +94,7 @@
     <string name="create_event_finish">Crear</string>
 
     <!-- submissions -->
-    <string name="no_submissions">No se han realizado presentaciones.</string>
+    <string name="no_submissions">No se han realizado presentaciones</string>
     <string name="submissions_finished">Presentaciones terminadas</string>
 
     <!-- main feed -->
