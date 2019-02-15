@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+// TODO: Add Documentation to Public Interface
 public class SubmissionManager extends AppCompatActivity {
     private Event eventToView;
     private Calendar service;

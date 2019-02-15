@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+// TODO: Add Documentation to Public Interface
 public class ViewProfile extends AppCompatActivity {
 
     private FirebaseFunctions mFunctions;

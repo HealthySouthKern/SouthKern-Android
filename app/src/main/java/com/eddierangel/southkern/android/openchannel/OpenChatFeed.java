@@ -17,6 +17,7 @@ import com.sendbird.android.SendBirdException;
 
 import java.util.List;
 
+// TODO: Add Documentation to Public Interface
 public class OpenChatFeed extends AppCompatActivity {
 
     private String channelURL;

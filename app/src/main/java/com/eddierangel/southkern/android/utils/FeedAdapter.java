@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+// TODO: Add Documentation to Public Interface
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> {
     private List<Event> eventList;
     private Context context;
@@ -69,12 +70,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
 
         @Override
         public void onClick(View v) {
-            clickListener.onItemClick(getAdapterPosition(), v);
+            if (clickListener != null) {
+                clickListener.onItemClick(getAdapterPosition(), v);
+            }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            clickListener.onItemLongClick(getAdapterPosition(), v);
+            if (clickListener != null) {
+                clickListener.onItemLongClick(getAdapterPosition(), v);
+            }
             return false;
         }
     }

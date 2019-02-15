@@ -1,20 +1,22 @@
 package com.eddierangel.southkern.android.main;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ui.idp.AuthMethodPickerActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,19 +34,18 @@ import com.sendbird.android.User;
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 
-import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
+// TODO: Add Documentation to Public Interface
 public class LoginActivity extends AppCompatActivity {
 
     private CoordinatorLayout mLoginLayout;
     private HashMap<String, String> userData;
     private ContentLoadingProgressBar mProgressBar;
+    private BroadcastReceiver mConnReceiver;
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
@@ -52,8 +53,32 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFunctions mFunctions;
     private static final int RC_SIGN_IN = 9;
 
+    private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("app","Network connectivity change");
 
-    /* function makes a call to the firebase function api to handle users with tokens. before we
+            Bundle bundle = intent.getExtras();
+
+            NetworkInfo networkInfo = (NetworkInfo) bundle.get("networkInfo");
+
+            if (networkInfo.isConnected() && mFirebaseAuth.getCurrentUser() != null) {
+                String userId = PreferenceUtils.getUserId(LoginActivity.this);
+                String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
+                String nickname;
+                if (userData != null) {
+                    nickname = userData.get("user_name");
+                } else {
+                    nickname = "resident";
+                }
+                connectToSendBird(userId, nickname, sendbirdToken);
+            }
+        }
+    };
+
+
+    /***
+     *  function makes a call to the firebase function api to handle users with tokens. before we
      * were using just the UID to connect with sendbird which was not secure. using firebase functions, we create
      * a secure endpoint that communicates with the sendbird platform API to provide a secure way to authorize users.
      * @param userID        user ID to register or log into sendbird service
@@ -105,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     // user is signed in
                     PreferenceUtils.setUserId(LoginActivity.this, user.getEmail());
-                    PreferenceUtils.setNickname(LoginActivity.this, "Guest");
+                    PreferenceUtils.setNickname(LoginActivity.this, "Resident");
 
                     // Show the loading indicator
                     showProgressBar(true);
@@ -142,12 +167,12 @@ public class LoginActivity extends AppCompatActivity {
                                                 Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
                                                 PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
                                                 if (firstLogin) {
-                                                    // It is the user's first time logging in -> show them UserCreation form
+                                                    // It is the users first time logging in -> show them UserCreation form
                                                     Intent intent = new Intent(LoginActivity.this, UserCreation.class);
                                                     startActivityForResult(intent, 1);
                                                 }
                                                 if (!firstLogin && task.getResult().get("nickname") != null) {
-                                                    // This isn't the user's first rodeo -> connect and show them main feed
+                                                    // This isn't the users first rodeo -> connect and show them main feed
                                                     String userNickname = (String) task.getResult().get("nickname");
                                                     connectToSendBird(userId, userNickname, sendbirdToken);
                                                 }
@@ -210,6 +235,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param sendbirdToken The user's token that we will use to connect to sendbird securely.
      */
     private void connectToSendBird(final String userId, final String userNickname, final String sendbirdToken) {
+                showProgressBar(true);
 
         SendBird.connect(userId, sendbirdToken, new SendBird.ConnectHandler() {
             @Override
@@ -219,20 +245,19 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (e != null) {
                     // Error!
-                    Log.i("connect", "" + e);
-                    Toast.makeText(
-                            LoginActivity.this, "" + e.getCode() + ": " + e.getMessage(),
-                            Toast.LENGTH_SHORT)
-                            .show();
+                    Log.e("login_error",  e.getCode() + " " + e);
 
                     // Show login failure snackbar
-                    showSnackbar("Login to SendBird failed");
+                    if (e.getCode() == 400302) {
+                        return; // Error message already propagated (access token is not valid)
+                    } else {
+                        showSnackbar("Login to SendBird failed. Reconnecting...");
+                    }
+
                     PreferenceUtils.setConnected(LoginActivity.this, false);
                     return;
                 }
-                Log.i("user_userdata", "" + userData);
                 if (userData != null) {
-                    Log.i("createmeta", "" + userData);
                     createUserMetaData(userData);
                 }
 
@@ -354,19 +379,20 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void logOut() {
-        AuthUI.getInstance().signOut(this);
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(networkChangeReceiver);
+
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-       mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeReceiver, intentFilter);
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 }
