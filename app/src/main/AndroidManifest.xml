@@ -26,6 +26,7 @@
         <activity android:name=".main.SubmissionManager"/>
         <activity android:name=".openchannel.OpenChatFeed"/>
         <activity android:name=".main.UserList"/>
+        <activity android:name=".utils.ReconnectionManager"/>
         <!-- Facebook start -->
         <meta-data
             tools:replace="android:value"
