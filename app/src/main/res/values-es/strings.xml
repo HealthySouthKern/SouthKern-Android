@@ -1,79 +1,108 @@
 <resources>
     <string name="app_name">SouthKern</string>
 
-    <string name="all_create">Create</string>
-    <string name="all_invite">Invite</string>
+    <!-- Google Calendar -->
+    <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
+    <string name="google_calendar_id">jfschmiechen@gmail.com</string>
 
-    <string name="all_group_channels">Group Channels</string>
-    <string name="all_open_channels">Open Channels</string>
+    <!-- Twitter -->
+    <string name="twitter_consumer_key">FY00000000000000000000000</string>
+    <string name="twitter_consumer_secret">R0000000000000000000000000000000000000000000000000</string>
+
+    <!-- Facebook -->
+    <string name="facebook_app_id">200000000000000</string>
+    <string name="fb_login_protocol_scheme">fb200000000000000</string>
+
+    <!-- all -->
+    <!--En Español -->
+    <string name="all_app_version">SouthKern v%1$s / SDK v%2$s</string>
+
+    <string name="all_create">Crear</string>
+    <string name="all_invite">Invitar</string>
+
+    <string name="all_group_channels">Canales de group</string>
+    <string name="all_open_channels">Canales abiertos</string>
 
     <!-- main -->
-    <string name="main_drawer_open">Open navigation drawer</string>
-    <string name="main_drawer_close">Close navigation drawer</string>
-    <string name="select_channel_type">Select channel type</string>
-    <string name="address_book">Address Book</string>
-    <string name="calendar">Calendar</string>
-    <string name="open_channels">Open Channels</string>
-    <string name="group_channels">Group Channels</string>
-    <string name="disconnect">Disconnect</string>
+    <string name="main_drawer_open">Cajón de navegación abierto</string>
+    <string name="main_drawer_close">Cerrar el cajon de navegación</string>
+    <string name="select_channel_type">Seleccione el tipo de canal</string>
+    <string name="address_book">Directorio</string>
+    <string name="calendar">Calendario</string>
+    <string name="open_channels">Canales abiertos</string>
+    <string name="group_channels">Canales de grupo</string>
+    <string name="disconnect">Desonectar</string>
 
     <!-- login/logout -->
-    <string name="login_user_id">User ID</string>
-    <string name="login_user_nickname">Nickname</string>
-    <string name="login_connect">Connect</string>
-    <string name="logout_text">Log Out</string>
+    <string name="login_user_id">ID de usuario</string>
+    <string name="login_user_nickname">Apodo</string>
+    <string name="login_connect">Conectar</string>
+    <string name="logout_text">Cerrar sesión</string>
+
+    <!-- profile texts -->
+    <string name="profile_user_real_name">Nombre:</string>
+    <string name="profile_user_organization">Organización:</string>
+    <string name="profile_user_position">Posición en la organización:</string>
+    <string name="profile_user_role">El oficio:</string>
 
     <!-- Open Channel List -->
-    <string name="open_channel_list_participant_count">%1$d participants</string>
+    <string name="open_channel_list_participant_count">%1$d participantes</string>
 
-    <string name="create_open_channel">Create Open Channel</string>
-    <string name="participant_list">Participants</string>
+    <string name="create_open_channel">Crear canal abierto</string>
+    <string name="participant_list">Participantes</string>
 
     <!-- Group Channel List -->
-    <string name="group_channel_list_file_message_text">%1$s has uploaded a file.</string>
+    <string name="group_channel_list_file_message_text">%1$s ha subido un archivo</string>
 
-    <string name="create_group_channel">Create Group Channel</string>
-    <string name="member_list">Members</string>
-    <string name="invite_member">Invite members</string>
+    <string name="create_group_channel">Crear canal de grupo</string>
+    <string name="member_list">Miembros</string>
+    <string name="invite_member">Invitar a los miembros</string>
 
     <!-- Content descriptions -->
-    <string name="open_channel_chat_content_desc_profile">Profile image</string>
+    <string name="open_channel_chat_content_desc_profile">Imagen de perfil</string>
 
     <!-- Menu actions -->
-    <string name="action_create_channel">Create channel</string>
+    <string name="action_create_channel">Crear canal</string>
 
-    <string name="download">Download</string>
-    <string name="cancel">Cancel</string>
-    <string name="upload">Upload</string>
-    <string name="resend_message">Resend</string>
-    <string name="delete_message">Delete</string>
+    <string name="download">Descargar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="upload">Subir</string>
+    <string name="resend_message">Reenviar</string>
+    <string name="delete_message">Borrar</string>
 
     <!-- Message Status -->
-    <string name="message_sending">Sending</string>
-    <string name="message_failed">Failed</string>
+    <string name="message_sending">Enviando mensaje</string>
+    <string name="message_failed">Mensaje fallido</string>
 
     <!-- Calendar Dialogues -->
-    <string name="delete_capital">DELETE</string>
-    <string name="approve_capital">APPROVE</string>
-    <string name="edit_event">Edit event</string>
-    <string name="edit_name_event">Edit the name of the event</string>
-    <string name="edit_location_event">Edit event location</string>
-    <string name="edit_description_event">Edit event description</string>
-    <string name="edit_start_event">Edit event start time</string>
-    <string name="edit_end_event">Edit event end time</string>
-    <string name="save_changes">Save changes</string>
-    <string name="view_event">View event</string>
-    <string name="view_event_name">Name of the event</string>
-    <string name="view_event_location">Event location</string>
-    <string name="view_event_description">Event description</string>
-    <string name="close_event_dialogue">Close</string>
-    <string name="create_event">Create event</string>
-    <string name="create_event_end">Select event end time</string>
-    <string name="create_event_finish">Create</string>
+    <string name="delete_capital">Borrar</string>
+    <string name="approve_capital">Aprobar</string>
+    <string name="edit_event">Editar evento</string>
+    <string name="edit_name_event">Editar el nombre del evento</string>
+    <string name="edit_location_event">Editar ubicación del evento</string>
+    <string name="edit_description_event">Editar la descripción del evento</string>
+    <string name="edit_start_event">Editar hora de inicio del evento</string>
+    <string name="edit_end_event">Editar evento y hora</string>
+    <string name="save_changes">Guardar cambios</string>
+    <string name="view_event">Ver evento</string>
+    <string name="view_event_name">Ver el nombre del evento</string>
+    <string name="view_event_location">Ver la ubicación del evento</string>
+    <string name="view_event_description">Ver la descripción del evento</string>
+    <string name="close_event_dialogue">Cerrar el diálogo del evento</string>
+    <string name="create_event">Crear Evento</string>
+    <string name="create_event_end">Selecciona evento y hora</string>
+    <string name="create_event_finish">Crear</string>
 
     <!-- submissions -->
-    <string name="no_submissions">No submissions have been made.</string>
-    <string name="submissions_finished">Finished</string>
+    <string name="no_submissions">No se han realizado presentaciones</string>
+    <string name="submissions_finished">Presentaciones terminadas</string>
+
+    <!-- main feed -->
+    <string name="current_week">Semana Actual</string>
+    <string name="next_week">Próxima Semana</string>
+    <string name="today">Hoy</string>
+    <string name="community">¿Qué está pasando en la comunidad?</string>
+    <string name="community_post">Actualización de estado de publicación</string>
 
 
 </resources>
