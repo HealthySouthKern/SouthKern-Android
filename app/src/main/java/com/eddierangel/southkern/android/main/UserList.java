@@ -27,7 +27,9 @@ import com.eddierangel.southkern.android.utils.AddressAdapter;
 import com.eddierangel.southkern.android.utils.AlertAdapter;
 import com.eddierangel.southkern.android.utils.EventAdapter;
 import com.eddierangel.southkern.android.utils.FeedAdapter;
+import com.eddierangel.southkern.android.utils.InternetCheck;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
+import com.eddierangel.southkern.android.utils.ReconnectionManager;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -178,197 +180,209 @@ public class UserList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_address_book);
-        mToolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        new InternetCheck(new InternetCheck.Consumer() {
+            @Override
+            public void accept(Boolean internet) {
+                if (!internet) {
+                    Intent intent = new Intent(UserList.this, ReconnectionManager.class);
+                    startActivity(intent);
+                    finish();
+                } else {
 
-        sortName = (ImageView) findViewById(R.id.sort_name);
-        sortOrganization = (ImageView) findViewById(R.id.sort_group);
-        backButton = (ImageButton) findViewById(R.id.menu_button_back);
-        organizationSearch = (EditText) findViewById(R.id.organization_search);
-        userListControls = (LinearLayout) findViewById(R.id.user_list_controls);
-        alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
+                    setContentView(R.layout.activity_address_book);
+                    mToolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
+                    setSupportActionBar(mToolbar);
+                    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        mFunctions = FirebaseFunctions.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
+                    sortName = (ImageView) findViewById(R.id.sort_name);
+                    sortOrganization = (ImageView) findViewById(R.id.sort_group);
+                    backButton = (ImageButton) findViewById(R.id.menu_button_back);
+                    organizationSearch = (EditText) findViewById(R.id.organization_search);
+                    userListControls = (LinearLayout) findViewById(R.id.user_list_controls);
+                    alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
+
+                    mFunctions = FirebaseFunctions.getInstance();
+                    mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
 
 
-        fetchUserList(PreferenceUtils.getFirebaseToken(this.getApplicationContext()))
-                .addOnCompleteListener(new OnCompleteListener<HashMap>() {
-                    @Override
-                    public void onComplete(@NonNull Task<HashMap> task) {
-                        if (!task.isSuccessful()) {
-                            Exception e = task.getException();
-                            if (e instanceof FirebaseFunctionsException) {
-                                FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
-                                FirebaseFunctionsException.Code code = ffe.getCode();
-                                Object details = ffe.getDetails();
-                            }
-                        }
-
-                        Log.i("usertest", "" + task.getResult().get("users"));
-                        // Success
-                        userList = (List<Object>) task.getResult().get("users"); // new ArrayList<Object>(((HashMap<Object, Object>) task.getResult().get("users")).values());
-                        originalUserList = userList;
-
-                        userListControls.setVisibility(View.VISIBLE);
-
-                        addressRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
-                        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                        addressRecyclerView.setLayoutManager(mLayoutManager);
-                        addressRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                        mAdapter = new AddressAdapter(userList, UserList.this.getApplicationContext());
-                        addressRecyclerView.setAdapter(mAdapter);
-
-                        ((AddressAdapter) mAdapter).setOnItemClickListener(new AddressAdapter.ClickListener() {
-                            @Override
-                            public void onItemClick(int position, View v) {
-                                HashMap user = (HashMap) userList.get(position);
-                                Intent intent = new Intent(UserList.this, ViewProfile.class);
-                                intent.putExtra("userId", (String)user.get("user_id"));
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onItemLongClick(int position, View v) {
-                                Log.d("onItemLongClick pos = ", "" + position);
-                            }
-
-                        });
-
-                        mDatabase.child("statusUpdates").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
-                                    HashMap statusObj = (HashMap) mSnapshot.getValue();
-                                    Event tempEvent = new Event();
-                                    tempEvent.setDescription((String) statusObj.get("text"));
-                                    tempEvent.setSummary("Status update");
-
-                                    EventDateTime dummyTime = new EventDateTime();
-                                    Long dateTime = Long.parseLong(statusObj.get("createdAt").toString());
-                                    DateTime createdAtTime = new DateTime(dateTime);
-                                    dummyTime.setDate(createdAtTime);
-                                    tempEvent.setStart(dummyTime);
-
-                                    if (!alertEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
-                                        alertEvents.add(tempEvent);
+                    fetchUserList(PreferenceUtils.getFirebaseToken(UserList.this.getApplicationContext()))
+                            .addOnCompleteListener(new OnCompleteListener<HashMap>() {
+                                @Override
+                                public void onComplete(@NonNull Task<HashMap> task) {
+                                    if (!task.isSuccessful()) {
+                                        Exception e = task.getException();
+                                        if (e instanceof FirebaseFunctionsException) {
+                                            FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                                            FirebaseFunctionsException.Code code = ffe.getCode();
+                                            Object details = ffe.getDetails();
+                                        }
                                     }
 
+                                    Log.i("usertest", "" + task.getResult().get("users"));
+                                    // Success
+                                    userList = (List<Object>) task.getResult().get("users"); // new ArrayList<Object>(((HashMap<Object, Object>) task.getResult().get("users")).values());
+                                    originalUserList = userList;
+
+                                    userListControls.setVisibility(View.VISIBLE);
+
+                                    addressRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
+                                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                                    addressRecyclerView.setLayoutManager(mLayoutManager);
+                                    addressRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                                    mAdapter = new AddressAdapter(userList, UserList.this.getApplicationContext());
+                                    addressRecyclerView.setAdapter(mAdapter);
+
+                                    ((AddressAdapter) mAdapter).setOnItemClickListener(new AddressAdapter.ClickListener() {
+                                        @Override
+                                        public void onItemClick(int position, View v) {
+                                            HashMap user = (HashMap) userList.get(position);
+                                            Intent intent = new Intent(UserList.this, ViewProfile.class);
+                                            intent.putExtra("userId", (String) user.get("user_id"));
+                                            startActivity(intent);
+                                        }
+
+                                        @Override
+                                        public void onItemLongClick(int position, View v) {
+                                            Log.d("onItemLongClick pos = ", "" + position);
+                                        }
+
+                                    });
+
+                                    mDatabase.child("statusUpdates").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                            for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
+                                                HashMap statusObj = (HashMap) mSnapshot.getValue();
+                                                Event tempEvent = new Event();
+                                                tempEvent.setDescription((String) statusObj.get("text"));
+                                                tempEvent.setSummary("Status update");
+
+                                                EventDateTime dummyTime = new EventDateTime();
+                                                Long dateTime = Long.parseLong(statusObj.get("createdAt").toString());
+                                                DateTime createdAtTime = new DateTime(dateTime);
+                                                dummyTime.setDate(createdAtTime);
+                                                tempEvent.setStart(dummyTime);
+
+                                                if (!alertEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
+                                                    alertEvents.add(tempEvent);
+                                                }
+
+                                            }
+
+                                            Collections.reverse(alertEvents);
+
+                                            mAdapter.notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
                                 }
+                            });
 
-                                Collections.reverse(alertEvents);
+                    sortName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sortOrganization.setBackgroundColor(Color.TRANSPARENT);
+                            sortName.setBackgroundColor(Color.GRAY);
 
-                                mAdapter.notifyDataSetChanged();
+                            sortOrg = false;
+                            userList = originalUserList;
+                            if (sortAZ) {
+                                sortAZ = false;
+                                sortUserListNickname(userList);
+                            } else {
+                                sortAZ = true;
+                                sortName.setBackgroundColor(Color.TRANSPARENT);
+                                sortUserListNickname(userList);
+                                Collections.reverse(userList);
                             }
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    sortOrganization.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sortName.setBackgroundColor(Color.TRANSPARENT);
+                            sortOrganization.setBackgroundColor(Color.GRAY);
 
+                            sortAZ = true;
+                            userList = originalUserList;
+                            if (sortOrg) {
+                                sortOrg = false;
+                                sortOrganization.setBackgroundColor(Color.TRANSPARENT);
+
+                                Collections.reverse(userList);
+                                sortUserListOrganization(userList);
+                            } else {
+                                sortOrg = true;
+                                sortOrganization.setBackgroundColor(Color.GRAY);
+                                sortUserListOrganization(userList);
+                                Collections.reverse(userList);
                             }
-                        });
-                    }
-                });
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
 
-        sortName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sortOrganization.setBackgroundColor(Color.TRANSPARENT);
-                sortName.setBackgroundColor(Color.GRAY);
+                    organizationSearch.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                sortOrg = false;
-                userList = originalUserList;
-                if (sortAZ) {
-                    sortAZ = false;
-                    sortUserListNickname(userList);
-                } else {
-                    sortAZ = true;
-                    sortName.setBackgroundColor(Color.TRANSPARENT);
-                    sortUserListNickname(userList);
-                    Collections.reverse(userList);
+                        }
+                    });
+
+                    organizationSearch.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                            final String searchTerm = editable.toString().toLowerCase();
+                            userList = originalUserList;
+
+                            Collections.sort(userList, getMoveToFrontComparator(searchTerm));
+
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    backButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(UserList.this, MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    alertRecyclerView = (RecyclerView) findViewById(R.id.alert_recycler_view);
+                    RecyclerView.LayoutManager mLayoutAlertManager = new LinearLayoutManager(getApplicationContext());
+                    alertRecyclerView.setLayoutManager(mLayoutAlertManager);
+                    alertRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    alertAdapter = new AlertAdapter(alertEvents);
+                    alertRecyclerView.setAdapter(alertAdapter);
+
+                    viewAlertButton = (ImageButton) findViewById(R.id.alert_view_button);
+                    viewAlertButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            alertNavView.setVisibility(alertNavView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                            viewAlertButton.setBackgroundColor(alertNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
+
+                        }
+                    });
                 }
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-
-        sortOrganization.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sortName.setBackgroundColor(Color.TRANSPARENT);
-                sortOrganization.setBackgroundColor(Color.GRAY);
-
-                sortAZ = true;
-                userList = originalUserList;
-                if (sortOrg) {
-                    sortOrg = false;
-                    sortOrganization.setBackgroundColor(Color.TRANSPARENT);
-
-                    Collections.reverse(userList);
-                    sortUserListOrganization(userList);
-                } else {
-                    sortOrg = true;
-                    sortOrganization.setBackgroundColor(Color.GRAY);
-                    sortUserListOrganization(userList);
-                    Collections.reverse(userList);
-                }
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-
-        organizationSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        organizationSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                final String searchTerm = editable.toString().toLowerCase();
-                userList = originalUserList;
-
-                Collections.sort(userList, getMoveToFrontComparator(searchTerm));
-
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(UserList.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        alertRecyclerView = (RecyclerView) findViewById(R.id.alert_recycler_view);
-        RecyclerView.LayoutManager mLayoutAlertManager = new LinearLayoutManager(getApplicationContext());
-        alertRecyclerView.setLayoutManager(mLayoutAlertManager);
-        alertRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        alertAdapter = new AlertAdapter(alertEvents);
-        alertRecyclerView.setAdapter(alertAdapter);
-
-        viewAlertButton = (ImageButton) findViewById(R.id.alert_view_button);
-        viewAlertButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertNavView.setVisibility(alertNavView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                viewAlertButton.setBackgroundColor(alertNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
-
             }
         });
     }

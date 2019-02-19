@@ -103,5 +103,8 @@
     <string name="community">What is going on in the community?</string>
     <string name="community_post">Post status update</string>
 
+    <!-- general -->
+    <string name="reconnecting">Internet connection lost. Reconnecting.</string>
+
 
 </resources>
