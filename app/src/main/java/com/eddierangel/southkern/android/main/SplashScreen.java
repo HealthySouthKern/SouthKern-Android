@@ -9,6 +9,7 @@ import com.eddierangel.southkern.android.R;
 // TODO: Add Documentation to Public Interface
 public class SplashScreen extends Activity {
 
+    private static final String TAG = "SplashScreen";
     /** Duration of wait*/
     private final int SPLASH_DISPLAY_LENGTH = 1000;
 

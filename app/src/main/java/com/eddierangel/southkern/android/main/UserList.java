@@ -60,6 +60,7 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class UserList extends AppCompatActivity {
 
+    private static final String TAG = "UserList";
     private FirebaseFunctions mFunctions;
     private List<Object> userList = new ArrayList<>();
     private List<Object> originalUserList = new ArrayList<>();
@@ -94,7 +95,7 @@ public class UserList extends AppCompatActivity {
                         // This continuation runs on either success or failure, but if the task
                         // has failed then getResult() will throw an Exception which will be
                         // propagated down.
-                        Log.i("usertest2", "" + ((List<Object>) task.getResult().getData()).get(0));
+                        Log.i(TAG, "fetchUserList: usertest2: " + ((List<Object>) task.getResult().getData()).get(0));
                         return (HashMap) ((List<Object>) task.getResult().getData()).get(0);
                     }
                 });
@@ -136,7 +137,7 @@ public class UserList extends AppCompatActivity {
                 firstTempHolder = (String) firstUser.get("nickname");
                 secondTempHolder = (String) secondUser.get("nickname");
                 if (firstTempHolder != null && secondTempHolder != null) {
-                    Log.i("tempholders", firstTempHolder.length() + " | " + secondTempHolder.length());
+                    Log.i(TAG, "getMoveToFrontComparator: tempholders: " + firstTempHolder.length() + " | " + secondTempHolder.length());
 
                     boolean containsFirst = firstTempHolder.toLowerCase().contains(part.toLowerCase());
                     boolean containsSecond = secondTempHolder.toLowerCase().contains(part.toLowerCase());
@@ -218,7 +219,7 @@ public class UserList extends AppCompatActivity {
                                         }
                                     }
 
-                                    Log.i("usertest", "" + task.getResult().get("users"));
+                                    Log.i(TAG, "onCreate: getFirebaseToken: usertest: " + task.getResult().get("users"));
                                     // Success
                                     userList = (List<Object>) task.getResult().get("users"); // new ArrayList<Object>(((HashMap<Object, Object>) task.getResult().get("users")).values());
                                     originalUserList = userList;
@@ -244,7 +245,7 @@ public class UserList extends AppCompatActivity {
 
                                         @Override
                                         public void onItemLongClick(int position, View v) {
-                                            Log.d("onItemLongClick pos = ", "" + position);
+                                            Log.d(TAG, "onCreate: onItemLongClick: pos = " + position);
                                         }
 
                                     });

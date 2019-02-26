@@ -28,6 +28,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         implements SelectUserFragment.UsersSelectedListener, SelectDistinctFragment.DistinctSelectedListener {
 
     public static final String EXTRA_NEW_CHANNEL_URL = "EXTRA_NEW_CHANNEL_URL";
+    private static final String TAG = "CreateGroupChannelActivity";
 
     static final int STATE_SELECT_USERS = 0;
     static final int STATE_SELECT_DISTINCT = 1;

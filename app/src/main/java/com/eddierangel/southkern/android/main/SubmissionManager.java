@@ -55,6 +55,7 @@ import java.util.List;
 
 // TODO: Add Documentation to Public Interface
 public class SubmissionManager extends AppCompatActivity {
+    private static final String TAG = "SubmissionManager";
     private Event eventToView;
     private Calendar service;
     private List<Event> eventList = new ArrayList<>();
@@ -81,13 +82,13 @@ public class SubmissionManager extends AppCompatActivity {
         if (startHour != 0) {
             try {
                 String date = eventToView.getStart().getDate().toString();
-                Log.i("datetime", "" + date);
+                Log.i(TAG, "getEventInfoFromDialogue: getStart: datetime: " + date);
                 year = Integer.parseInt(date.substring(0, 4));
                 month = Integer.parseInt(date.substring(5, 7));
                 day = Integer.parseInt(date.substring(7, 9));
                 startCalendar.set(year, month, day , startHour, startMinute);
             } catch(Exception e) {
-                Log.e("edit sub parse time err", "" + e);
+                Log.e(TAG, "getEventInfoFromDialogue: edit sub parse time err: " + e);
                 e.printStackTrace();
             }
         }
@@ -95,13 +96,13 @@ public class SubmissionManager extends AppCompatActivity {
         if (endHour != 0) {
             try {
                 String date = eventToView.getEnd().getDate().toString();
-                Log.i("datetime", "" + date);
+                Log.i(TAG, "getEventInfoFromDialogue: getEnd: datetime: " + date);
                 year = Integer.parseInt(date.substring(0, 4));
                 month = Integer.parseInt(date.substring(5, 7));
                 day = Integer.parseInt(date.substring(7, 9));
                 endCalendar.set(year, month, day , endHour, endMinute);
             } catch(Exception e) {
-                Log.e("edit sub parse time err", "" + e);
+                Log.e("getEventInfoFromDialogue: edit sub parse time err", "" + e);
                 e.printStackTrace();
             }
         }
@@ -128,7 +129,7 @@ public class SubmissionManager extends AppCompatActivity {
         dummyEvent.setSummary(newEventName);
         dummyEvent.setLocation(newEventLocation);
         dummyEvent.setDescription(newEventDescription);
-        Log.i("eventendhour", endHour + "");
+        Log.i(TAG, "getEventInfoFromDialogue: eventendhour: " + endHour + "");
         if (endHour != 0) {
             dummyEvent.setEnd(new EventDateTime().setDateTime(newEventEndTime));
         } else {
@@ -182,7 +183,7 @@ public class SubmissionManager extends AppCompatActivity {
                     .setApplicationName(APPLICATION_NAME)
                     .build();
         } catch(Exception e) {
-            Log.e("Failed to create credential", "" + e);
+            Log.e(TAG, "onCreate: get credential: Failed to create credential: " + e);
             e.printStackTrace();
         }
 
@@ -198,15 +199,15 @@ public class SubmissionManager extends AppCompatActivity {
         mDatabase.child("submissions").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.i("databaseval", "" + dataSnapshot.getValue());
+                Log.i(TAG, "onCreate: onDataChange: databaseval: " + dataSnapshot.getValue());
                 eventList.clear();
                 for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
-                    Log.i("databaseval2", "" + mSnapshot.getValue());
+                    Log.i(TAG, "onCreate: getChildren: databaseval2: " + mSnapshot.getValue());
                     Event event = EventParser.parseSingleEvent(mSnapshot.getValue());
                     eventList.add(event);
                 }
                 if (!eventList.isEmpty()) {
-                    Log.i("entered if not empt", "123");
+                    Log.i(TAG, "onCreate: isEmpty (210): entered if not empty: 123");
                     emptyListText.setVisibility(View.GONE);
                     submissionListView.setVisibility(View.VISIBLE);
                 }
@@ -220,7 +221,7 @@ public class SubmissionManager extends AppCompatActivity {
         });
 
         if (eventList.isEmpty()) {
-            Log.i("entered if sub", "123");
+            Log.i(TAG, "onCreate: isEmpty (224): entered if sub: 123");
             emptyListText.setVisibility(View.VISIBLE);
             submissionListView.setVisibility(View.GONE);
         }
@@ -287,9 +288,9 @@ public class SubmissionManager extends AppCompatActivity {
         mAdapter.setOnItemClickListener(new EventAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Log.d("onItemClick position: ", "" + position);
+                Log.d(TAG, "onCreate: onItemClick: onItemClick position: " + position);
                 Event event = eventList.get(position);
-                Log.i("eventclick", "" + event);
+                Log.i(TAG, "onCreate: get event: eventclick: " + event);
                 eventToView = event;
                 eventStart = event.getStart();
                 DateFormat df = new SimpleDateFormat("h:mm a");
@@ -328,7 +329,7 @@ public class SubmissionManager extends AppCompatActivity {
 
             @Override
             public void onItemLongClick(int position, View v) {
-                Log.d("onItemLongClick pos = ", "" + position);
+                Log.d(TAG, "onCreate: onItemLongClick: pos = " + position);
             }
         });
 
@@ -348,7 +349,7 @@ public class SubmissionManager extends AppCompatActivity {
                 try {
                     insertEvent.execute(params);
                 } catch(Exception e) {
-                    Log.e("error inserting event", "" + e);
+                    Log.e(TAG, "onCreate: insertEvent: error inserting event: " + e);
                     e.printStackTrace();
                 }
                 mDatabase.child("submissions").child(eventToView.getSummary()).removeValue();

@@ -25,6 +25,7 @@ import java.util.List;
 
 // TODO: Add Documentation to Public Interface
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHolder> {
+    private static final String TAG = "AddressAdapter";
     private List<Object> userList;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

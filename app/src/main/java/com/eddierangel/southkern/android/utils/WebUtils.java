@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 public class WebUtils {
 
+    private static final String TAG = "WebUtils";
     // This class should not be initialized
     private WebUtils() {
 

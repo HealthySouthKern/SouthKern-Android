@@ -29,6 +29,7 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class ViewOwnProfile extends AppCompatActivity {
 
+    private static final String TAG = "ViewOwnProfile";
     private ImageButton backButton;
 
     @Override
@@ -62,7 +63,7 @@ public class ViewOwnProfile extends AppCompatActivity {
             profileImageUrl = user.getMetaData("user_picture)");
         }
         catch (Exception e) {
-            Log.e("ViewOwnProfile", "User Missing Metadata");
+            Log.e(TAG, "onCreate: getMetaData: User Missing Metadata");
         }
 
 
@@ -75,7 +76,7 @@ public class ViewOwnProfile extends AppCompatActivity {
             }
         }
         catch (Exception e) {
-            Log.e("ViewOwnProfile", "null profileImageUrl");
+            Log.e(TAG, "onCreate: load profileImage: null profileImageUrl");
         }
 
         EditText nicknameEditText = (EditText)findViewById(R.id.text_user_nickname);

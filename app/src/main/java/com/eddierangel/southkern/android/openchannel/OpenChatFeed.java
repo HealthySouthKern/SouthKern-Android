@@ -20,6 +20,7 @@ import java.util.List;
 // TODO: Add Documentation to Public Interface
 public class OpenChatFeed extends AppCompatActivity {
 
+    private static final String TAG = "OpenChatFeed";
     private String channelURL;
     private String channelName;
 
@@ -42,14 +43,14 @@ public class OpenChatFeed extends AppCompatActivity {
             @Override
             public void onResult(List<OpenChannel> channels, SendBirdException e) {
                 if (e != null) {    // Error.
-                    Log.i("channelerr", "" + e);
+                    Log.i(TAG, "onCreate: createOpenChannelListQuery: channelerr: " + e);
                     return;
                 }
 
                 for (OpenChannel channel : channels) {
                     if (channel.getName().equals(channelName)) {
                         channelURL = channel.getUrl();
-                        Log.i("channelurl", "" + channelURL);
+                        Log.i(TAG, "onCreate: getUrl: channelurl: " + channelURL);
                     }
                 }
 

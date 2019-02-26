@@ -11,6 +11,7 @@ import java.util.List;
 // TODO: Add Documentation to Public Interface
 public class PreferenceUtils {
 
+    private static final String TAG = "PreferenceUtils";
     public static final String PREFERENCE_KEY_USER_ID = "userId";
     public static final String PREFERENCE_KEY_NICKNAME = "nickname";
     public static final String PREFERENCE_KEY_FIREBASE_TOKEN = "firebaseToken";

@@ -32,6 +32,7 @@ import java.util.Random;
 
 // TODO: Add Documentation to Public Interface
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> {
+    private static final String TAG = "FeedAdapter";
     private List<Event> eventList;
     private Context context;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -214,7 +215,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
                 holder.time.setTextColor(Color.WHITE);
 
             } catch(Exception e) {
-                Log.i("status parse err", "" + e);
+                Log.i(TAG, "onBindViewHolder: status parse err: " + e);
             }
         }
 

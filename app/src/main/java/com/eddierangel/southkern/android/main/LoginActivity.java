@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,6 +43,8 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
+
     private CoordinatorLayout mLoginLayout;
     private HashMap<String, String> userData;
     private ContentLoadingProgressBar mProgressBar;
@@ -56,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("app","Network connectivity change");
+            Log.d(TAG,"networkChangeReceiver: app: Network connectivity change");
 
             Bundle bundle = intent.getExtras();
 
@@ -178,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 }
                                             }
                                             catch(Exception e) {
-                                                Log.i("sendbirdtokenErr", "" + e);
+                                                Log.i(TAG, "onCreate: getSendbirdUserWithToken: sendbirdtokenErr" + e);
                                             }
                                         }
                                     });;
@@ -212,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                     String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
                     result = (HashMap<String, String>) data.getSerializableExtra("userData");
                     userData = result;
-                    Log.i("userdata2", "" + result);
+                    Log.i(TAG, "onActivityResult: getSerializableExtra: userdata2: " + result);
                     connectToSendBird(userId, result.get("user_name"), sendbirdToken);
                 }
             }
@@ -223,7 +226,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if (PreferenceUtils.getConnected(this)) {
-            Log.i("I am auto connecting", "123");
+            Log.i(TAG, "onStart: getConnected: I am auto connecting: 123");
             connectToSendBird(PreferenceUtils.getUserId(this), PreferenceUtils.getNickname(this), PreferenceUtils.getFirebaseToken(LoginActivity.this));
         }
     }
@@ -245,7 +248,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (e != null) {
                     // Error!
-                    Log.e("login_error",  e.getCode() + " " + e);
+                    Log.e(TAG,  "connectToSendbird: connect: login_error: " + e.getCode() + " " + e);
 
                     // Show login failure snackbar
                     if (e.getCode() == 400302) {
@@ -308,12 +311,12 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResult(Map<String, String> map, SendBirdException e) {
                     if (e != null) {    // Error.
-                        Log.i("meta data error", "" + e);
+                        Log.i(TAG, "createUserMetadata: updateMetaData: meta data error: " + e);
                     }
                 }
             });
         } catch(Exception e) {
-            Log.e("meta data error", "" + e);
+            Log.e(TAG, "createUserMetadata: updateMetaData: meta data error: " + e);
             e.printStackTrace();
         }
     }

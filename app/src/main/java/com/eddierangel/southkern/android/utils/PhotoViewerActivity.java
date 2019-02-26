@@ -14,6 +14,8 @@ import com.eddierangel.southkern.android.R;
 // TODO: Add Documentation to Public Interface
 public class PhotoViewerActivity extends AppCompatActivity {
 
+    private static final String TAG = "PhotoViewerActivity";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

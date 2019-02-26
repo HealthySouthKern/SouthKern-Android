@@ -36,6 +36,8 @@ import java.util.List;
  */
 class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
+    private static final String TAG = "GroupChannelListAdapter";
+
     private List<GroupChannel> mChannelList;
     private Context mContext;
 
@@ -162,7 +164,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 mChannelList.remove(mChannelList.get(i));
                 mChannelList.add(0, groupChannel);
                 notifyDataSetChanged();
-                Log.v(GroupChannelListAdapter.class.getSimpleName(), "Channel replaced.");
+                Log.v(TAG, "updateOrInsert: Channel replaced.");
                 return;
             }
         }

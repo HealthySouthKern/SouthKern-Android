@@ -19,6 +19,8 @@ import java.util.HashMap;
 // TODO: Add Documentation to Public Interface
 public class EventManager {
 
+    private static final String TAG = "EventManager";
+
     public static class updateEvent extends AsyncTask<Object, Void, Void> {
 
         private Object callingParams;
@@ -50,7 +52,7 @@ public class EventManager {
                 return null;
 
             } catch(Exception e) {
-                Log.e("insert error", "" + e);
+                Log.e(TAG, "doInBackground: patch: insert error: " + e);
                 e.printStackTrace();
                 return null;
             }
@@ -85,13 +87,13 @@ public class EventManager {
             Calendar service = (Calendar) mapParams.get("service");
             Event dummyEvent = (Event) mapParams.get("event");
 
-            Log.i("datetimedevent", "" + dummyEvent);
+            Log.i(TAG, "doInBackground: datetimedevent: " + dummyEvent);
             try {
                 service.events().insert(calendarID, dummyEvent).execute();
                 callingParams = params[0];
                 return null;
             } catch(Exception e) {
-                Log.e("insert error", "" + e);
+                Log.e(TAG, "doInBackground: insert: insert error:" + e);
                 e.printStackTrace();
                 return null;
             }
@@ -130,7 +132,7 @@ public class EventManager {
                 callingParams = params[0];
                 return null;
             } catch(Exception e) {
-                Log.e("delete error", "" + e);
+                Log.e(TAG, "doInBackground: delete: delete error: " + e);
                 e.printStackTrace();
                 return null;
             }
@@ -162,7 +164,7 @@ public class EventManager {
             try {
                 return service.events().list(calendarID).execute();
             } catch(Exception e) {
-                Log.e("refetch events error", "" + e);
+                Log.e(TAG, "doInBackground: list: refetch events error: " + e);
                 e.printStackTrace();
                 return null;
             }

@@ -51,6 +51,7 @@ import retrofit2.Call;
 
 public class UserCreation extends AppCompatActivity {
 
+    private static final String TAG = "UserCreation";
     private TextInputEditText mUserName, mUserPosition, mUserOrganization;
     private Button mFinishUserButton;
     private LoginButton facebookButton;
@@ -169,7 +170,7 @@ public class UserCreation extends AppCompatActivity {
                         mFinishUserButton.setEnabled(true);
                         twitterButton.setEnabled(true);
                         facebookButton.setEnabled(true);
-                        Log.d("TwitterKit", "Verify Credentials Failure", e);
+                        Log.d(TAG, "onCreate: failure: Verify Credentials Failure", e);
                     }
                 });
             }
@@ -235,7 +236,7 @@ public class UserCreation extends AppCompatActivity {
 //                                        mFinishUserButton.setEnabled(true);
 //                                        twitterButton.setEnabled(false);
 //                                    } catch (Exception e) {
-//                                        Log.i("graph err", "" + e);
+//                                        Log.i(TAG, "graph err" + e);
 //                                        e.printStackTrace();
 //                                    }
 //                                }
@@ -255,7 +256,7 @@ public class UserCreation extends AppCompatActivity {
 
                 @Override
                 public void onError(FacebookException exception) {
-                    Log.e("Facebook auth error: ", "" + exception);
+                    Log.e(TAG, "onCreate: onError: Facebook auth error: " + exception);
                     mFinishUserButton.setEnabled(true);
                     twitterButton.setEnabled(true);
                     facebookButton.setEnabled(true);
@@ -273,7 +274,7 @@ public class UserCreation extends AppCompatActivity {
                 data.put("user_organization", userOrganization);
                 data.put("user_position", userPosition);
                 if (profileURL != null) {
-                    Log.i("user_picture", profileURL);
+                    Log.i(TAG, "onCreate: user_picture: " + profileURL);
                     data.put("user_picture", profileURL);
                 }
 

@@ -26,13 +26,15 @@ public class EventParser {
      * @param obj - object returned from a google calendar API call. The contents of the object are events from the google calendar.
      * */
 
+    private static final String TAG = "EventParser";
+
     public static Events parse(Object obj) {
         HashMap eventsObject = (HashMap) obj;
         Events dummyEvents = new Events();
         Class aClass = dummyEvents.getClass();
         for (Field field : aClass.getDeclaredFields()) {
             field.setAccessible(true);
-            Log.i(field.getName(), "" + eventsObject.get(field.getName()) + " : " + field.getType());
+            Log.i(TAG, "parse: field setAccessible: " + field.getName() + " " + eventsObject.get(field.getName()) + " : " + field.getType());
             if (eventsObject.containsKey(field.getName())) {
                 if (field.getName().equals("items")) {
                     List<Event> listOfEvents = new ArrayList<Event>();
@@ -87,7 +89,7 @@ public class EventParser {
                                         DateTime date = new DateTime(datetime);
                                         dummyEvent.setUpdated(date);
                                     } catch (Exception e) {
-                                        Log.e("Error parsing event.updated", "" + e);
+                                        Log.e(TAG, "parse: Error parsing event.updated: " + e);
                                     }
                                 } else if (innerField.getType().toString().equals("class com.google.api.services.calendar.model.EventDateTime")) {
                                     try {
@@ -100,7 +102,7 @@ public class EventParser {
                                         eventDateTime.setDate(date);
                                         dummyEvent.set(innerField.getName(), eventDateTime);
                                     } catch (Exception e) {
-                                        Log.e("Error parsing start time", "" + e);
+                                        Log.e(TAG, "parse: Error parsing start time: " + e);
                                     }
                                 } else {
                                     dummyEvent.set(innerField.getName(), map.get(innerField.getName()));
@@ -117,7 +119,7 @@ public class EventParser {
                         DateTime date = new DateTime(datetime);
                         dummyEvents.setUpdated(date);
                     } catch (Exception e) {
-                        Log.e("Error parsing events.updated", "" + e);
+                        Log.e(TAG, "parse: Error parsing events.updated: " + e);
                     }
                 } else {
                     dummyEvents.set(field.getName(), eventsObject.get(field.getName()));
@@ -129,7 +131,7 @@ public class EventParser {
 
     public static Event parseSingleEvent(Object obj) {
         HashMap map = (HashMap) obj;
-        Log.i("databasemap", "" + map);
+        Log.i(TAG, "parseSingleEvent: databasemap: " + map);
         Event dummyEvent = new Event();
 
         HashMap dummyMap = new HashMap();
@@ -143,7 +145,7 @@ public class EventParser {
         Class secondClass = dummyEvent.getClass();
         for (Field innerField : secondClass.getDeclaredFields()) {
             innerField.setAccessible(true);
-            Log.i("databasevalfield", "" + innerField.getName() + " | " + innerField.getType());
+            Log.i(TAG, "parseSingleEvent: databasevalfield: " + innerField.getName() + " | " + innerField.getType());
             if (map.containsKey(innerField.getName())) {
                 if (innerField.getType().toString().equals("class com.google.api.services.calendar.model.Event$ExtendedProperties")) {
                     dummyMap = (HashMap) map.get(innerField.getName());
@@ -179,11 +181,11 @@ public class EventParser {
                         DateTime date = new DateTime(datetime);
                         dummyEvent.setUpdated(date);
                     } catch (Exception e) {
-                        Log.e("Error parsing event.updated", "" + e);
+                        Log.e(TAG, "parseSingleEvent: Error parsing event.updated: " + e);
                     }
                 } else if (innerField.getType().toString().equals("class com.google.api.services.calendar.model.EventDateTime")) {
                     try {
-                        Log.i("databaseparseTime", "" + innerField.getName());
+                        Log.i(TAG, "parseSingleEvent: databaseparseTime: " + innerField.getName());
                         HashMap dateObj = (HashMap) map.get(innerField.getName());
                         HashMap dateTimeObj;
                         if (dateObj.get("dateTime") != null) {
@@ -197,17 +199,17 @@ public class EventParser {
                        // Log.i("databasedate", "" + date);
                         EventDateTime eventDateTime = new EventDateTime();
                         eventDateTime.setDate(date);
-                        Log.i("databaseeventtime", "" + eventDateTime);
+                        Log.i(TAG, "parseSingleEvent: databaseeventtime: " + eventDateTime);
                         dummyEvent.set(innerField.getName(), eventDateTime);
                     } catch (Exception e) {
-                        Log.e("Error parsing start time", "" + e);
+                        Log.e(TAG, "parseSingleEvent: Error parsing start time: " + e);
                     }
                 } else {
                     dummyEvent.set(innerField.getName(), map.get(innerField.getName()));
                 }
             }
         }
-        Log.i("databasedummy", "" + dummyEvent);
+        Log.i(TAG, "parseSingleEvent: databasedummy: " + dummyEvent);
         return dummyEvent;
     }
 }

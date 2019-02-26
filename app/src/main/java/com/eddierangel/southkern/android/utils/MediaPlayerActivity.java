@@ -37,6 +37,7 @@ import com.eddierangel.southkern.android.R;
 public class MediaPlayerActivity extends Activity implements
         OnBufferingUpdateListener, OnCompletionListener,
         OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
+    private static final String TAG = "MediaPlayerActivity";
     private MediaPlayer mMediaPlayer;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;

@@ -8,6 +8,7 @@ import java.net.Socket;
 
 public class InternetCheck extends AsyncTask<Void,Void,Boolean> {
 
+    private static final String TAG = "InternetCheck";
     private Consumer mConsumer;
     public  interface Consumer { void accept(Boolean internet); }
 

@@ -31,6 +31,7 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class ViewProfile extends AppCompatActivity {
 
+    private static final String TAG = "ViewProfile";
     private FirebaseFunctions mFunctions;
     private Object userData;
     private Map<String, String> userMetaData;
@@ -128,7 +129,7 @@ public class ViewProfile extends AppCompatActivity {
                     userRole.setText(role);
                 }
                 catch (Exception e) {
-                    Log.e("InsideTaskComplete", "Error getting user or creating map");
+                    Log.e(TAG, "onCreate: InsideTaskComplete: Error getting user or creating map");
                 }
             }
         });

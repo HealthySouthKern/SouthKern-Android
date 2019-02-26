@@ -15,6 +15,8 @@ import com.eddierangel.southkern.android.openchannel.OpenChannelListFragment;
 // TODO: Add Documentation to Public Interface
 public class GroupChannelActivity extends AppCompatActivity{
 
+    private static final String TAG = "GroupChannelActivity";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

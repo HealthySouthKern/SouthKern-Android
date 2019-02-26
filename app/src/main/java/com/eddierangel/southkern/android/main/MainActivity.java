@@ -63,6 +63,7 @@ import com.eddierangel.southkern.android.utils.InternetCheck;
 // TODO: Add Documentation to Public Interface
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private Toolbar mToolbar;
     private NavigationView mNavView, alertNavView;
     private ImageButton navButton, viewAlertButton;
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    Log.i("connectionTest", "starting activity");
+                    Log.i(TAG, "onCreate: InternetCheck: connectionTest: starting activity");
 
                     sendbirdUser = SendBird.getCurrentUser();
                     userMetaData = sendbirdUser.getMetaData();
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             Iterator<Event> iter = dummyEvents.iterator();
-                                            Log.i("datachange", "1");
+                                            Log.i(TAG, "onCreate: onDataChange: datachange: 1");
                                             while (iter.hasNext()) {
                                                 Event event = iter.next();
                                                 if (event.getSummary().equals("Status update")) {
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                                             Collections.sort(dummyEvents, new Comparator<Event>() {
                                                 @Override
                                                 public int compare(Event firstEvent, Event secondEvent) {
-                                                    Log.i("compare", "" + firstEvent);
+                                                    Log.i(TAG, "onCreate: sort: compare: " + firstEvent);
                                                     if (!firstEvent.getSummary().equals("Status update") && !secondEvent.getSummary().equals("Status update")) {
                                                         if (firstEvent.getStart().getDate().getValue() - twoWeekTime < secondEvent.getStart().getDate().getValue() - twoWeekTime) {
                                                             return 1;
@@ -356,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
         new InternetCheck(new InternetCheck.Consumer() {
             @Override
             public void accept(Boolean internet) {
-                Log.i("connectionTest", "" + internet);
+                Log.i(TAG, "onResume: InternetCheck: connectionTest: " + internet);
                 if (!internet) {
                     Intent intent = new Intent(MainActivity.this, ReconnectionManager.class);
                     startActivityForResult(intent, 1);
