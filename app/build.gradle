@@ -48,7 +48,7 @@ dependencies {
     // External libraries
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'org.jsoup:jsoup:1.10.2'
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     // Firebase
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
@@ -75,4 +75,3 @@ dependencies {
 
 }
 apply plugin: 'com.google.gms.google-services'
-

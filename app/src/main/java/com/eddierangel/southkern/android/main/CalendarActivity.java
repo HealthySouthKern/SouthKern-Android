@@ -191,9 +191,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                     mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
 
-                    User user = SendBird.getCurrentUser();
-                    Log.i("userdata", "" + user);
-                    final Map<String, String> sendbirdUserData = user.getMetaData();
+                    final Map<String, String> userData = PreferenceUtils.getUser(CalendarActivity.this.getApplicationContext());
 
                     CALENDAR_ID = CalendarActivity.this.getApplicationContext().getString(R.string.google_calendar_id);
                     APPLICATION_NAME = CalendarActivity.this.getApplicationContext().getString(R.string.app_name);
@@ -201,9 +199,9 @@ public class CalendarActivity extends AppCompatActivity {
                     createEventDialogue = new Dialog(CalendarActivity.this);
                     editEventDialogue = new Dialog(CalendarActivity.this);
                     viewEventDialogue = new Dialog(CalendarActivity.this);
-                    Log.i("userdata", "" + sendbirdUserData);
-                    if (sendbirdUserData.get("user_type") != null) {
-                        if (sendbirdUserData.get("user_type").equals("admin")) {
+                    Log.i("userdata", "" + userData);
+                    if (userData.get("user_type") != null) {
+                        if (userData.get("user_type").equals("admin")) {
                             Credential credential;
                             CalendarAuthorization calAuth = new CalendarAuthorization();
                             final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport(); // GoogleNetHttpTransport.newTrustedTransport();
@@ -235,9 +233,9 @@ public class CalendarActivity extends AppCompatActivity {
                     getSupportActionBar().setDisplayShowTitleEnabled(false);
 
                     createEventDialogue.setContentView(R.layout.dialogue_create_event);
-                    createEventDialogue.setTitle(sendbirdUserData.get("user_type").equals("admin") ? "Create Event" : "Create Submission");
+                    createEventDialogue.setTitle(userData.get("user_type").equals("admin") ? "Create Event" : "Create Submission");
                     editEventDialogue.setContentView(R.layout.dialogue_edit_event);
-                    editEventDialogue.setTitle(sendbirdUserData.get("user_type").equals("admin") ? "Edit Event" : "Edit Submission");
+                    editEventDialogue.setTitle(userData.get("user_type").equals("admin") ? "Edit Event" : "Edit Submission");
                     viewEventDialogue.setContentView(R.layout.dialogue_view_event);
                     viewEventDialogue.setTitle("View Event");
 
@@ -262,7 +260,7 @@ public class CalendarActivity extends AppCompatActivity {
                     });
 
                     deleteTextView = (TextView) editEventDialogue.findViewById(R.id.delete_text_view);
-                    if (sendbirdUserData.get("user_type").equals("admin"))
+                    if (userData.get("user_type").equals("admin"))
                         deleteTextView.setVisibility(View.VISIBLE);
                     deleteTextView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -379,7 +377,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 dummyEvent.setEnd(eventEndTime);
 
                                 // Perform optimistic UI update
-                                if (sendbirdUserData.get("user_type").equals("admin")) {
+                                if (userData.get("user_type").equals("admin")) {
                                     events.getItems().add(dummyEvent);
                                     mWeekView.notifyDatasetChanged();
                                 }
@@ -389,7 +387,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 params.put("event", (Object) dummyEvent);
                                 params.put("calendarID", CALENDAR_ID);
 
-                                if (sendbirdUserData.get("user_type").equals("admin")) {
+                                if (userData.get("user_type").equals("admin")) {
                                     EventManager.insertEvent insertEvent = new EventManager.insertEvent(CalendarActivity.this);
 
                                     try {
@@ -400,7 +398,7 @@ public class CalendarActivity extends AppCompatActivity {
                                     }
                                 } else {
                                     Event.Creator dummyCreator = new Event.Creator();
-                                    dummyCreator.setDisplayName(sendbirdUserData.get("user_name"));
+                                    dummyCreator.setDisplayName(userData.get("user_name"));
                                     dummyEvent.setCreator(dummyCreator);
                                     Log.i("created sub", "" + dummyCreator);
                                     mDatabase.child("submissions").child(name).setValue(dummyEvent).addOnFailureListener(new OnFailureListener() {
@@ -505,7 +503,7 @@ public class CalendarActivity extends AppCompatActivity {
                     mWeekView.setVisibility(View.GONE);
 
                     createEventTitle = (TextView) createEventDialogue.findViewById(R.id.create_event_title);
-                    if (!sendbirdUserData.get("user_type").equals("admin")) {
+                    if (!userData.get("user_type").equals("admin")) {
                         createEventTitle.setText("Create submission");
                         createEventTitle.setTextSize(20);
                     }
@@ -592,10 +590,10 @@ public class CalendarActivity extends AppCompatActivity {
                                         }
                                     });
 
-                                    if (sendbirdUserData.get("user_type").equals("admin")) {
+                                    if (userData.get("user_type").equals("admin")) {
                                         submissionButton.setVisibility(View.VISIBLE);
                                     } else {
-                                        final String username = sendbirdUserData.get("user_name");
+                                        final String username = userData.get("user_name");
                                         mDatabase.child("submissions").addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -650,7 +648,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 sdt = df.format(new Date(eventToView.getEnd().getDateTime().getValue()));
                             }
 
-                            if (sendbirdUserData.get("user_type").equals("admin")) {
+                            if (userData.get("user_type").equals("admin")) {
                                 editEventName = (EditText) editEventDialogue.findViewById(R.id.event_name_edit);
                                 editEventLocation = (EditText) editEventDialogue.findViewById(R.id.event_location_edit);
                                 editEventDescription = (EditText) editEventDialogue.findViewById(R.id.event_description_edit);

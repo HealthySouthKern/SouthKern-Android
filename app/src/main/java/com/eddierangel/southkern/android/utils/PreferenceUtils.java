@@ -2,22 +2,23 @@ package com.eddierangel.southkern.android.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
-import com.google.api.services.calendar.model.Event;
+import com.google.gson.Gson;
 
-import java.util.List;
+import java.util.HashMap;
 
 // TODO: Add Documentation to Public Interface
 public class PreferenceUtils {
+
+    static Gson gson = new Gson();
 
     public static final String PREFERENCE_KEY_USER_ID = "userId";
     public static final String PREFERENCE_KEY_NICKNAME = "nickname";
     public static final String PREFERENCE_KEY_FIREBASE_TOKEN = "firebaseToken";
     public static final String PREFERENCE_KEY_SENDBIRD_TOKEN = "sendbirdToken";
-    public static final String PREFERENCE_KEY_SOCIAL_ID = "socialId";
-    public static final String PREFERENCE_KEY_SOCIAL_TYPE = "socialType";
     public static final String PREFERENCE_KEY_CONNECTED = "connected";
+    public static final String PREFERENCE_KEY_FIREBASE_USER = "firebaseUser";
+    public static final String PREFERENCE_KEY_FACEBOOK_TOKEN = "facebookToken";
 
     // Prevent instantiation
     private PreferenceUtils() {
@@ -28,22 +29,25 @@ public class PreferenceUtils {
         return context.getSharedPreferences("sendbird", Context.MODE_PRIVATE);
     }
 
-    public static void setSocialType(Context context, String type) {
+    public static void setFacebookToken(Context context, String token) {
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putString(PREFERENCE_KEY_SOCIAL_TYPE, type).apply();
+        editor.putString(PREFERENCE_KEY_FACEBOOK_TOKEN, token).apply();
     }
 
-    public static String getSocialType(Context context) {
-        return getSharedPreferences(context).getString(PREFERENCE_KEY_SOCIAL_TYPE, "");
+    public static String getFacebookToken(Context context) {
+        return getSharedPreferences(context).getString(PREFERENCE_KEY_FACEBOOK_TOKEN, "");
     }
 
-    public static void setSocialId(Context context, String socialId) {
+    public static void setUser(Context context, HashMap user) {
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putString(PREFERENCE_KEY_SOCIAL_ID, socialId).apply();
+
+        // Convert hashmap to string using gson and store in preferences.
+        editor.putString(PREFERENCE_KEY_FIREBASE_USER, gson.toJson(user)).apply();
     }
 
-    public static String getSocialId(Context context) {
-        return getSharedPreferences(context).getString(PREFERENCE_KEY_SOCIAL_ID, "");
+    public static HashMap<String, String> getUser(Context context) {
+        // Convert string to hashmap using gson and return to caller.
+        return gson.fromJson(getSharedPreferences(context).getString(PREFERENCE_KEY_FIREBASE_USER, ""), HashMap.class);
     }
 
     public static void setUserId(Context context, String userId) {
