@@ -3,15 +3,12 @@ package com.eddierangel.southkern.android.main;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.eddierangel.southkern.android.utils.PreferenceUtils;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -26,16 +23,13 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.core.models.User;
 
@@ -51,7 +45,7 @@ import retrofit2.Call;
 
 public class UserCreation extends AppCompatActivity {
 
-    private TextInputEditText mUserName, mUserPosition, mUserOrganization;
+    private TextInputEditText mUserPosition, mUserOrganization;
     private Button mFinishUserButton;
     private LoginButton facebookButton;
     private TwitterLoginButton twitterButton;
@@ -118,7 +112,6 @@ public class UserCreation extends AppCompatActivity {
         setContentView(R.layout.activity_create_user);
 
 
-        mUserName = (TextInputEditText) findViewById(R.id.create_user_name);
         mUserPosition = (TextInputEditText) findViewById(R.id.create_user_position);
         mUserOrganization = (TextInputEditText) findViewById(R.id.create_user_organization);
 
@@ -151,13 +144,11 @@ public class UserCreation extends AppCompatActivity {
 
                         data.put("user_picture", userResult.data.profileImageUrl);
 
-                        /* Due to sendbird meta data limits, we can not store this information. Once the sendbird plan has been
-                         * upgraded, uncomment these lines and use them to customize user profiles. */
-//                        userData.put("user_name", userResult.data.name);
-//                        userData.put("user_background_image", userResult.data.profileBackgroundImageUrl);
-//                        userData.put("user_screen_name", userResult.data.screenName);
-//                        userData.put("user_description", userResult.data.description);
-//                        userData.put("user_twitter", "true");
+                        userData.put("user_name", userResult.data.name);
+                        userData.put("user_background_image", userResult.data.profileBackgroundImageUrl);
+                        userData.put("user_screen_name", userResult.data.screenName);
+                        userData.put("user_description", userResult.data.description);
+                        userData.put("user_twitter", "true");
 
                         mFinishUserButton.setEnabled(true);
                         facebookButton.setEnabled(false);
@@ -216,32 +207,31 @@ public class UserCreation extends AppCompatActivity {
 
                     // Now that we have a token for facebook, we can use that to fetch profile data
 
-                    /* Due to sendbird meta data limits, we can not store this information. Once the sendbird plan has been
-                     * upgraded, uncomment these lines and use them to customize user profiles. */
-//                    Bundle params = new Bundle();
-//                    params.putString("fields", "first_name, last_name, locale, gender, cover");
-//                    new GraphRequest(
-//                        loginResult.getAccessToken(),
-//                        "/" + loginResult.getAccessToken().getUserId() + "/",
-//                        params,
-//                        HttpMethod.GET,
-//                        new GraphRequest.Callback() {
-//                            public void onCompleted(GraphResponse response) {
-//                                if (response.getError() == null) {
-//                                    try {
-//                                        String resData = response.getRawResponse();
-//                                        // Convert JSON String to HashMap using jsonToMap so we can create user meta data
-//                                        data = jsonToMap(resData);
-//                                        mFinishUserButton.setEnabled(true);
-//                                        twitterButton.setEnabled(false);
-//                                    } catch (Exception e) {
-//                                        Log.i("graph err", "" + e);
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    ).executeAsync();
+                    Bundle params = new Bundle();
+                    params.putString("fields", "first_name, last_name, locale, gender, cover");
+                    new GraphRequest(
+                        loginResult.getAccessToken(),
+                        "/" + loginResult.getAccessToken().getUserId() + "/",
+                        params,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                if (response.getError() == null) {
+                                    try {
+                                        String resData = response.getRawResponse();
+                                        // Convert JSON String to HashMap using jsonToMap so we can create user meta data
+                                        data = jsonToMap(resData);
+                                        data.put("user_twitter", "false");
+                                        mFinishUserButton.setEnabled(true);
+                                        twitterButton.setEnabled(false);
+                                    } catch (Exception e) {
+                                        Log.i("graph err", "" + e);
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    ).executeAsync();
 
                 }
 
@@ -265,15 +255,13 @@ public class UserCreation extends AppCompatActivity {
         mFinishUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userName = mUserName.getText().toString();
                 String userOrganization = mUserOrganization.getText().toString();
                 String userPosition = mUserPosition.getText().toString();
 
-                data.put("user_name", userName);
                 data.put("user_organization", userOrganization);
                 data.put("user_position", userPosition);
+
                 if (profileURL != null) {
-                    Log.i("user_picture", profileURL);
                     data.put("user_picture", profileURL);
                 }
 

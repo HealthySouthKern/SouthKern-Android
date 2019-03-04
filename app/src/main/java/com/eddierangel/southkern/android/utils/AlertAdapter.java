@@ -46,7 +46,9 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder
 
         @Override
         public void onClick(View v) {
-            clickListener.onItemClick(getAdapterPosition(), v);
+            if (clickListener != null) {
+                clickListener.onItemClick(getAdapterPosition(), v);
+            }
         }
 
         @Override
