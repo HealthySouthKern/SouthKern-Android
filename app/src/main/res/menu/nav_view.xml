@@ -13,7 +13,7 @@
         <item
             android:id="@+id/nav_item_calendar"
             android:icon="@drawable/baseline_event_black_18dp"
-            android:title="Calendar" />
+            android:title="@string/calendar" />
         <item
             android:id="@+id/nav_item_user_list"
             android:icon="@drawable/baseline_book_black_36dp"
@@ -21,7 +21,7 @@
         <item
             android:id="@+id/nav_item_view_own_profile"
             android:icon="@drawable/baseline_assignment_ind_black_48dp"
-            android:title="My Profile" />
+            android:title="@string/my_profile" />
 
     </group>
 
