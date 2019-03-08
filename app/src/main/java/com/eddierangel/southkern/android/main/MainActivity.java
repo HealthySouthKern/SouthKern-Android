@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eddierangel.southkern.android.BuildConfig;
 import com.eddierangel.southkern.android.utils.AlertAdapter;
 import com.eddierangel.southkern.android.utils.EventParser;
 import com.eddierangel.southkern.android.utils.FeedAdapter;
@@ -305,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Displays the App version in a TextView
                     String appVersion = String.format(getResources().getString(R.string.all_app_version),
-                            BaseApplication.VERSION);
+                            BuildConfig.VERSION_NAME);
                     ((TextView) findViewById(R.id.text_main_versions)).setText(appVersion);
 
                     alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
