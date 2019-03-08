@@ -16,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.eddierangel.southkern.android.R;
+import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,8 +35,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
-import com.eddierangel.southkern.android.R;
-import com.eddierangel.southkern.android.utils.PreferenceUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -123,7 +123,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // A loading indicator
         mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.progress_bar_login);
-
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -214,6 +213,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
     }
+
     // Obtain user and social profile data from UserCreation class and use it to connect to sendbird
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

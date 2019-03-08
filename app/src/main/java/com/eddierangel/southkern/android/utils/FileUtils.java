@@ -38,13 +38,11 @@ public class FileUtils {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static Hashtable<String, Object> getFileInfo(final Context context, final Uri uri) {
 
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -77,11 +75,11 @@ public class FileUtils {
 
                 Uri contentUri = null;
                 if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    contentUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
                 } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                    contentUri = MediaStore.Video.Media.INTERNAL_CONTENT_URI;
                 } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    contentUri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
                 }
 
                 final String selection = "_id=?";
