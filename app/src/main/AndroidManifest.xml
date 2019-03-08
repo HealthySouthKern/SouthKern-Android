@@ -7,10 +7,6 @@
         android:required="true"/>
     <uses-permission-sdk-23  android:name="android.permission.ACCESS_NETWORK_STATE"
         android:required="true"/>
-    <uses-permission-sdk-23  android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:required="true"/>
-    <uses-permission-sdk-23  android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:required="true"/>
 
     <application
         android:name=".main.BaseApplication"
