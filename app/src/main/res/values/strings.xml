@@ -57,6 +57,9 @@
     <string name="member_list">Members</string>
     <string name="invite_member">Invite members</string>
 
+    <!-- User List -->
+    <string name="search_hint">Search for people</string>
+
     <!-- Content descriptions -->
     <string name="open_channel_chat_content_desc_profile">Profile image</string>
 
