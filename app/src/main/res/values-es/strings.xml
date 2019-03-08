@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SouthKern</string>
+    <string name="app_name">Healthy South Kern</string>
 
     <!-- Google Calendar -->
     <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
@@ -15,7 +15,7 @@
 
     <!-- all -->
     <!--En Español -->
-    <string name="all_app_version">SouthKern v%1$s / SDK v%2$s</string>
+    <string name="all_app_version">Healthy South Kern v%1$s</string>
 
     <string name="all_create">Crear</string>
     <string name="all_invite">Invitar</string>
@@ -103,6 +103,9 @@
     <string name="today">Hoy</string>
     <string name="community">¿Qué está pasando en la comunidad?</string>
     <string name="community_post">Actualización de estado de publicación</string>
+
+    <!-- general -->
+    <string name="reconnecting">onexión a internet perdida. Reconectando.</string>
 
 
 </resources>

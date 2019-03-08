@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SouthKern</string>
+    <string name="app_name">Healthy South Kern</string>
 
     <!-- Google Calendar -->
     <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
@@ -14,7 +14,7 @@
     <string name="fb_login_protocol_scheme">fb200000000000000</string>
 
     <!-- all -->
-    <string name="all_app_version">SouthKern v%1$s / SDK v%2$s</string>
+    <string name="all_app_version">Healthy South Kern v%1$s</string>
 
     <string name="all_create">Create</string>
     <string name="all_invite">Invite</string>
