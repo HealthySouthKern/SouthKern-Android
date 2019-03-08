@@ -30,6 +30,7 @@
     <string name="calendar">Calendar</string>
     <string name="open_channels">Open Channels</string>
     <string name="group_channels">Group Channels</string>
+    <string name="my_profile">My Profile</string>
     <string name="disconnect">Disconnect</string>
 
     <!-- login/logout -->

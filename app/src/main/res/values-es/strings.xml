@@ -29,8 +29,9 @@
     <string name="select_channel_type">Seleccione el tipo de canal</string>
     <string name="address_book">Directorio</string>
     <string name="calendar">Calendario</string>
-    <string name="open_channels">Canales abiertos</string>
-    <string name="group_channels">Canales de grupo</string>
+    <string name="open_channels">Canales Abiertos</string>
+    <string name="group_channels">Canales de Grupo</string>
+    <string name="my_profile">Mi Perfil</string>
     <string name="disconnect">Desonectar</string>
 
     <!-- login/logout -->
