@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-
-
 android {
     compileSdkVersion 27
     buildToolsVersion '28.0.3'
@@ -22,10 +20,6 @@ android {
     }
     productFlavors {
     }
-}
-
-repositories {
-    maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
 }
 
 dependencies {
