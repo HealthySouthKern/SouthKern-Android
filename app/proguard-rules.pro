@@ -15,3 +15,17 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Deobfuscates crash logs so that they are human readable.
+-keepattributes *Annotation*
+
+
+-keepattributes SourceFile,LineNumberTable
+
+
+-keep public class * extends java.lang.Exception
+
+
+# Allows faster builds
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**

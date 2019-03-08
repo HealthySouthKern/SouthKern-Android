@@ -1,11 +1,6 @@
 package com.eddierangel.southkern.android.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +11,6 @@ import android.widget.TextView;
 
 import com.eddierangel.southkern.android.R;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -87,11 +79,11 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final HashMap user = (HashMap) userList.get(position);
-        final HashMap userMetaData = (HashMap) user.get("metadata");
-        userProfileUrl = (String) user.get("profile_url");
-        userName = (String) user.get("nickname");
+        Log.i("InsideT4", "" + user);
+        userProfileUrl = (String) user.get("user_picture");
+        userName = (String) user.get("user_name");
         userEmailText = (String) user.get("user_id");
-        userOrganizationText = (String) userMetaData.get("user_organization");
+        userOrganizationText = (String) user.get("user_organization");
 
         ImageUtils.displayRoundImageFromUrl(context, userProfileUrl, holder.userProfilePic);
         holder.userNickname.setText(userName);

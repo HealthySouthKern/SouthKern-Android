@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +32,7 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,14 +47,12 @@ import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.groupchannel.GroupChannelActivity;
 import com.eddierangel.southkern.android.openchannel.OpenChannelActivity;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
-import com.sendbird.android.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,9 +73,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView feedRecyclerView, alertRecyclerView;
     private FeedAdapter mAdapter;
     private AlertAdapter alertAdapter;
-    private Map userMetaData;
+    private HashMap userMetaData;
+    private String firebaseUID;
     private HashMap statusUpdate = new HashMap();
-    private User sendbirdUser;
+    private String profileURL;
     private long twoWeekTime = 1209600000;
 
 
@@ -100,12 +99,72 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+
+    private void sortCalendarEvents(List<Event> events) {
+        Collections.sort(dummyEvents, new Comparator<Event>() {
+            long firstTime;
+            long secondTime;
+            @Override
+            public int compare(Event firstEvent, Event secondEvent) {
+                firstTime = firstEvent.getStart().getDate().getValue();
+                secondTime = secondEvent.getStart().getDate().getValue();
+
+                if (firstTime < secondTime) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+
+        mAdapter.notifyDataSetChanged();
+
+    }
+
+    private void filterAlerts(DataSnapshot dataSnapshot) {
+        alertEvents.clear();
+        for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
+            HashMap statusObj = (HashMap) mSnapshot.getValue();
+            Event tempEvent = new Event();
+            tempEvent.setDescription((String) statusObj.get("text"));
+            tempEvent.setSummary("Status update");
+
+            EventDateTime dummyTime = new EventDateTime();
+            Long dateTime = Long.parseLong(statusObj.get("createdAt").toString());
+            DateTime createdAtTime = new DateTime(dateTime);
+            dummyTime.setDate(createdAtTime);
+            tempEvent.setStart(dummyTime);
+
+            if (!dummyEvents.contains(tempEvent) && new Date().getTime() - tempEvent.getStart().getDate().getValue() < (twoWeekTime / 2)) {
+                dummyEvents.add(tempEvent);
+            } else if (new Date().getTime() - tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
+                mSnapshot.getRef().removeValue();
+            }
+
+            if (!alertEvents.contains(tempEvent) && new Date().getTime() - tempEvent.getStart().getDate().getValue() < (twoWeekTime / 2)) {
+                alertEvents.add(tempEvent);
+            }
+
+        }
+
+    }
+
+    private void filterEvents(List<Event> events) {
+        for (Event event : events) {
+            if (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime &&
+                    event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime) &&
+                    !dummyEvents.contains(event)) {
+                dummyEvents.add(event);
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        // Check for internet connection before starting activity.
         new InternetCheck(new InternetCheck.Consumer() {
             @Override
             public void accept(Boolean internet) {
@@ -114,20 +173,33 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    Log.i("connectionTest", "starting activity");
-
-                    sendbirdUser = SendBird.getCurrentUser();
-                    userMetaData = sendbirdUser.getMetaData();
-
-                    alertCreationLayout = (RelativeLayout) findViewById(R.id.alert_creator);
-                    if (userMetaData.get("user_type") != null) {
-                        if (userMetaData.get("user_type").equals("admin")) {
-                            alertCreationLayout.setVisibility(View.VISIBLE);
-                        }
-                    }
 
                     mFunctions = FirebaseFunctions.getInstance();
                     mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
+                    firebaseUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    mDatabase.child("southkernUsers").child(firebaseUID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            userMetaData = (HashMap) dataSnapshot.getValue();
+
+                            // Save user to shared preferences
+                            PreferenceUtils.setUser(MainActivity.this.getApplicationContext(), userMetaData);
+
+                            alertCreationLayout = (RelativeLayout) findViewById(R.id.alert_creator);
+                            if (userMetaData.get("user_type") != null) {
+                                if (userMetaData.get("user_type").equals("admin")) {
+                                    alertCreationLayout.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                     mToolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
                     setSupportActionBar(mToolbar);
                     getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -155,83 +227,22 @@ public class MainActivity extends AppCompatActivity {
                                     // Success
                                     events = task.getResult().getItems();
 
-                                    for (Event event : events) {
-                                        if (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime &&
-                                                event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime) &&
-                                                !dummyEvents.contains(event)) {
-                                            dummyEvents.add(event);
-                                        }
-                                    }
+                                    // Filter events that are too old or too far in the future.
+                                    // Keep events that are within one month of now, or two weeks in the past.
+                                    filterEvents(events);
 
                                     mDatabase.child("statusUpdates").addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            Iterator<Event> iter = dummyEvents.iterator();
-                                            Log.i("datachange", "1");
-                                            while (iter.hasNext()) {
-                                                Event event = iter.next();
-                                                if (event.getSummary().equals("Status update")) {
-                                                    iter.remove();
-                                                }
-                                            }
+                                            filterAlerts(dataSnapshot);
 
-                                            for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
-                                                HashMap statusObj = (HashMap) mSnapshot.getValue();
-                                                Event tempEvent = new Event();
-                                                tempEvent.setDescription((String) statusObj.get("text"));
-                                                tempEvent.setSummary("Status update");
-
-                                                EventDateTime dummyTime = new EventDateTime();
-                                                Long dateTime = Long.parseLong(statusObj.get("createdAt").toString());
-                                                DateTime createdAtTime = new DateTime(dateTime);
-                                                dummyTime.setDate(createdAtTime);
-                                                tempEvent.setStart(dummyTime);
-
-                                                if (!dummyEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
-                                                    dummyEvents.add(tempEvent);
-                                                }
-
-                                                if (!alertEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
-                                                    alertEvents.add(tempEvent);
-                                                }
-
-                                            }
-
-                                            Collections.sort(dummyEvents, new Comparator<Event>() {
-                                                @Override
-                                                public int compare(Event firstEvent, Event secondEvent) {
-                                                    Log.i("compare", "" + firstEvent);
-                                                    if (!firstEvent.getSummary().equals("Status update") && !secondEvent.getSummary().equals("Status update")) {
-                                                        if (firstEvent.getStart().getDate().getValue() - twoWeekTime < secondEvent.getStart().getDate().getValue() - twoWeekTime) {
-                                                            return 1;
-                                                        } else {
-                                                            return -1;
-                                                        }
-                                                    } else if (firstEvent.getSummary().equals("Status update") && !secondEvent.getSummary().equals("Status update")) {
-                                                        if (firstEvent.getStart().getDate().getValue() < secondEvent.getStart().getDate().getValue() - twoWeekTime) {
-                                                            return 1;
-                                                        } else {
-                                                            return -1;
-                                                        }
-                                                    } else if (!firstEvent.getSummary().equals("Status update") && secondEvent.getSummary().equals("Status update")) {
-                                                        if (firstEvent.getStart().getDate().getValue() - twoWeekTime < secondEvent.getStart().getDate().getValue()) {
-                                                            return 1;
-                                                        } else {
-                                                            return -1;
-                                                        }
-                                                    } else {
-                                                        if (firstEvent.getStart().getDate().getValue() < secondEvent.getStart().getDate().getValue()) {
-                                                            return 1;
-                                                        } else {
-                                                            return -1;
-                                                        }
-                                                    }
-                                                }
-                                            });
-
+                                            // Reverse so that recently added alerts are
+                                            // on top of the list instead of the bottom.
                                             Collections.reverse(alertEvents);
 
-                                            //mAdapter.notifyDataSetChanged();
+                                            sortCalendarEvents(dummyEvents);
+
+                                            mAdapter.notifyDataSetChanged();
                                         }
 
                                         @Override
@@ -240,7 +251,10 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     });
 
+                                    sortCalendarEvents(dummyEvents);
+
                                     mAdapter.notifyDataSetChanged();
+
                                 }
                             });
 
