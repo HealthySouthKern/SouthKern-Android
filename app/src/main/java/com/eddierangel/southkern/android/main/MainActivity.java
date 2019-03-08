@@ -303,10 +303,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    // Displays the SDK version in a TextView
-                    String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
-                            BaseApplication.VERSION, SendBird.getSDKVersion());
-                    ((TextView) findViewById(R.id.text_main_versions)).setText(sdkVersion);
+                    // Displays the App version in a TextView
+                    String appVersion = String.format(getResources().getString(R.string.all_app_version),
+                            BaseApplication.VERSION);
+                    ((TextView) findViewById(R.id.text_main_versions)).setText(appVersion);
 
                     alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
 
