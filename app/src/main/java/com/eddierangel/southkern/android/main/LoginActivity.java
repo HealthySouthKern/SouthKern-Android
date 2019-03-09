@@ -1,17 +1,22 @@
 package com.eddierangel.southkern.android.main;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -44,6 +49,8 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
+
     private CoordinatorLayout mLoginLayout;
     private HashMap<String, String> userData;
     private ContentLoadingProgressBar mProgressBar;
@@ -57,21 +64,34 @@ public class LoginActivity extends AppCompatActivity {
     private String firebaseUserId, generatedProfileUrl;
     private static final int RC_SIGN_IN = 9;
 
+    private static final int REQUEST_PERMISSION_ALL = 1;
+    private String[] PERMISSIONS = {
+            android.Manifest.permission.INTERNET,
+            android.Manifest.permission.ACCESS_NETWORK_STATE
+    };
+
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             Bundle bundle = intent.getExtras();
 
-            NetworkInfo networkInfo = (NetworkInfo) bundle.get("networkInfo");
+            if(bundle != null)
+            {
+                NetworkInfo networkInfo = (NetworkInfo) bundle.get("networkInfo");
 
-            if (networkInfo.isConnected() && mFirebaseAuth.getCurrentUser() != null) {
-                if (firstTimeLogin != null) {
-                    if (!firstTimeLogin) {
-                        String userId = PreferenceUtils.getUserId(LoginActivity.this);
-                        String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
-                        connectToSendBird(userId, mFirebaseAuth.getCurrentUser().getDisplayName(), sendbirdToken);
+                if (networkInfo != null)
+                {
+                    if (networkInfo.isConnected() && mFirebaseAuth.getCurrentUser() != null) {
+                        if (firstTimeLogin != null) {
+                            if (!firstTimeLogin) {
+                                String userId = PreferenceUtils.getUserId(LoginActivity.this);
+                                String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
+                                connectToSendBird(userId, mFirebaseAuth.getCurrentUser().getDisplayName(), sendbirdToken);
+                            }
+                        }
                     }
+
                 }
             }
         }
@@ -99,11 +119,15 @@ public class LoginActivity extends AppCompatActivity {
                 .call(data)
                 .continueWith(new Continuation<HttpsCallableResult, HashMap>() {
                     @Override
-                    public HashMap then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                    public HashMap then(@NonNull Task<HttpsCallableResult> task) {
                         // This continuation runs on either success or failure, but if the task
                         // has failed then getResult() will throw an Exception which will be
                         // propagated down.
-                        return (HashMap) task.getResult().getData();
+                        if( task.getResult().getData() != null)
+                        {
+                            return (HashMap) task.getResult().getData();
+                        }
+                        return new HashMap<>();
                     }
                 });
     }
@@ -112,17 +136,21 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize Firebase components
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFunctions = FirebaseFunctions.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        if(checkPermissions())
+        {
+            Log.i(TAG,"@string/internet_permission_granted");
+        } else {
+            requestPermissions();
+        }
+
+        initializeFirebaseComponents();
 
         setContentView(R.layout.activity_login);
 
-        mLoginLayout = (CoordinatorLayout) findViewById(R.id.layout_login);
+        mLoginLayout = findViewById(R.id.layout_login);
 
         // A loading indicator
-        mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.progress_bar_login);
+        mProgressBar = findViewById(R.id.progress_bar_login);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -214,6 +242,96 @@ public class LoginActivity extends AppCompatActivity {
         };
     }
 
+    private void initializeFirebaseComponents() {
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFunctions = FirebaseFunctions.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
+
+    private boolean checkPermissions() {
+        return hasPermissions(this, PERMISSIONS);
+    }
+
+    private void requestPermissions()
+    {
+        ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSION_ALL);
+    }
+
+    public boolean hasPermissions(Context context, String... permissions) {
+        boolean status = false;
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    // Permission is not granted
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.INTERNET)
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                    Manifest.permission.ACCESS_NETWORK_STATE)) {
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+                        showMessageOKCancel("You need to allow access to the Internet",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                       requestPermissions();
+                                    }
+                                });
+                    }
+                    else {
+                        // No explanation needed; request the permission
+                        requestPermissions();
+                    }
+                } else {
+                    // Permission has already been granted
+                    status = true;
+                }
+            }
+        }
+        return status;
+    }
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSION_ALL:
+            {
+                Map<String, Integer> perms = new HashMap<>();
+                // Initial
+                perms.put(android.Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_FINE_LOCATION
+                if (perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+                    Log.i(TAG, "@string/internet_permission_granted");
+
+                } else {
+                    // Permission Denied
+                    Log.i(TAG, "@string/internet_permission_denied");
+                    Toast.makeText(this, "@string/internet_permission_denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
     // Obtain user and social profile data from UserCreation class and use it to connect to sendbird
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -256,7 +374,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param sendbirdToken The user's token that we will use to connect to sendbird securely.
      */
     private void connectToSendBird(final String userId, final String userName, final String sendbirdToken) {
-        Log.i("apptest123", "attempting connection to sendbird");
+        Log.i(TAG, "@string/attempt_sendbird_connection");
         showProgressBar(true);
         if (mFirebaseAuth.getCurrentUser() != null) {
 
@@ -268,11 +386,11 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (e != null) {
                         // Error!
-                        Log.e("login_error", e.getCode() + " " + e);
+                        Log.e(TAG, "@string/sendbird_login_error" + e.getCode() + " " + e);
 
                         // Show login failure snackbar
                         if (e.getCode() != 400302) {
-                            showSnackbar("Login to SendBird failed. Reconnecting...");
+                            showSnackbar("@string/sendbird_login_failed");
                         }
 
                         PreferenceUtils.setConnected(LoginActivity.this, false);
@@ -300,7 +418,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onResult(SendBirdException e) {
                                     if (e != null) {
-                                        Log.e("delete meta err", "" + e);
+                                        Log.e(TAG, "@string/sendbird_delete_metadata_error"+ " " + e);
                                     }
                                 }
                             });
@@ -372,11 +490,8 @@ public class LoginActivity extends AppCompatActivity {
                             .show();
 
                     // Show update failed snackbar
-                    showSnackbar("Update user nickname failed");
-
-                    return;
+                    showSnackbar("@string/sendbird_udpate_nickname_failed");
                 }
-
             }
         });
     }
@@ -408,6 +523,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(checkPermissions())
+        {
+            Log.i(TAG,"@string/internet_permission_granted");
+        } else {
+            requestPermissions();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkChangeReceiver, intentFilter);

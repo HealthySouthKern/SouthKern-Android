@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">Healthy South Kern</string>
 
+    <!-- Permission Statuses -->
+    <string name="internet_permission_granted">Internet Permission Granted</string>
+    <string name="internet_permission_denied">Internet Permission Denied</string>
+
+    <!-- SendBird-->
+    <string name="attempt_sendbird_connection">Attempting connection to SendBird</string>
+    <string name="sendbird_login_error">SendBird Login Error</string>
+    <string name="sendbird_login_failed">Login to SendBird failed. Reconnecting…</string>
+    <string name="sendbird_delete_metadata_error">Delete Metadata Error</string>
+    <string name="sendbird_udpate_nickname_failed">Update user nickname failed</string>
+
+    <!-- FireBase -->
+    <string name="push_token_registered">Push token registered.</string>
+
     <!-- Google Calendar -->
     <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
     <string name="google_calendar_id">jfschmiechen@gmail.com</string>
