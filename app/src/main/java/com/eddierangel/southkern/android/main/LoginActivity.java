@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -159,7 +160,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     // user is signed in
                     PreferenceUtils.setUserId(LoginActivity.this, user.getEmail());
-                    PreferenceUtils.setNickname(LoginActivity.this, "Resident");
+                    PreferenceUtils.setNickname(LoginActivity.this, user.getDisplayName());
+                    PreferenceUtils.setProfileImage(LoginActivity.this, user.getPhotoUrl().toString());
 
                     // Show the loading indicator
                     showProgressBar(true);
@@ -202,6 +204,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
                                                     PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
                                                     firstTimeLogin = firstLogin;
+
 
                                                     if (firstLogin) {
                                                         // Get generated profile url from sendbird and set as temporary profile picture
@@ -352,6 +355,7 @@ public class LoginActivity extends AppCompatActivity {
                     userData.put("user_name", mFirebaseAuth.getCurrentUser().getDisplayName());
                     userData.put("sendbirdToken", sendbirdToken);
                     userData.put("firebaseToken", PreferenceUtils.getFirebaseToken(LoginActivity.this));
+                    userData.put("user_picture", PreferenceUtils.getProfileImage(LoginActivity.this));
 
                     // If the user did not opt to integrate social media then give them a generated profile url.
                     if (userData.get("user_picture") == null) {
@@ -406,10 +410,7 @@ public class LoginActivity extends AppCompatActivity {
                             tempUser.put("uid", firebaseUserId);
                             tempUser.put("user_id", userId);
                             tempUser.put("user_name", userName);
-
-                            if (SendBird.getCurrentUser().getProfileUrl() != null) {
-                                tempUser.put("user_picture", SendBird.getCurrentUser().getProfileUrl());
-                            }
+                            tempUser.put("user_picture", mFirebaseAuth.getCurrentUser().getPhotoUrl().toString());
 
                             mDatabase.child("southkernUsers").child(firebaseUserId).setValue(tempUser);
 
