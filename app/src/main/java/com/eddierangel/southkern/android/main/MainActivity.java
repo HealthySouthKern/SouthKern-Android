@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -68,6 +69,15 @@ public class MainActivity extends AppCompatActivity {
     private Button submitStatusUpdate;
     private FirebaseFunctions mFunctions;
     private DatabaseReference mDatabase;
+    private DatabaseReference mSouthKernUserRef;
+    private DatabaseReference mStatusUpdatesRef;
+    private ValueEventListener mSouthKernUserListener;
+    private ValueEventListener mStatusUpdatesListener;
+    private OnCompleteListener mEventsListener;
+    private OnClickListener mNavButtonListener;
+    private OnClickListener mViewAlertButtonListener;
+    private OnClickListener msubmitStatusUpdateButtonListener;
+    private Task<Events> mEventItems;
     private RelativeLayout alertCreationLayout;
     private List<Event> events, dummyEvents = new ArrayList<>(), alertEvents = new ArrayList<>();
     private EditText statusText;
@@ -99,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     private void sortCalendarEvents(List<Event> events) {
         Collections.sort(dummyEvents, new Comparator<Event>() {
@@ -165,6 +174,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        alertNavView = findViewById(R.id.nav_view_alerts);
+        navButton = findViewById(R.id.menu_button_main);
+        alertRecyclerView = findViewById(R.id.alert_recycler_view);
+        viewAlertButton = findViewById(R.id.alert_view_button);
+        statusText = findViewById(R.id.alert_description);
+        submitStatusUpdate = findViewById(R.id.alert_submit);
+
         // Check for internet connection before starting activity.
         new InternetCheck(new InternetCheck.Consumer() {
             @Override
@@ -173,196 +189,12 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, ReconnectionManager.class);
                     startActivity(intent);
                     finish();
-                } else {
-
-                    mFunctions = FirebaseFunctions.getInstance();
-                    mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
-                    firebaseUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                    mDatabase.child("southkernUsers").child(firebaseUID).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            userMetaData = (HashMap) dataSnapshot.getValue();
-
-                            // Save user to shared preferences
-                            PreferenceUtils.setUser(MainActivity.this.getApplicationContext(), userMetaData);
-
-                            alertCreationLayout = (RelativeLayout) findViewById(R.id.alert_creator);
-                            if (userMetaData.get("user_type") != null) {
-                                if (userMetaData.get("user_type").equals("admin")) {
-                                    alertCreationLayout.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-                    mToolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
-                    setSupportActionBar(mToolbar);
-                    getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-                    feedRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
-                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    feedRecyclerView.setLayoutManager(mLayoutManager);
-                    feedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                    mAdapter = new FeedAdapter(dummyEvents, MainActivity.this.getApplicationContext());
-                    feedRecyclerView.setAdapter(mAdapter);
-
-                    getCalendarEvents(PreferenceUtils.getFirebaseToken(MainActivity.this.getApplicationContext()))
-                            .addOnCompleteListener(new OnCompleteListener<Events>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Events> task) {
-                                    if (!task.isSuccessful()) {
-                                        Exception e = task.getException();
-                                        if (e instanceof FirebaseFunctionsException) {
-                                            FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
-                                            FirebaseFunctionsException.Code code = ffe.getCode();
-                                            Object details = ffe.getDetails();
-                                        }
-                                    }
-                                    // Success
-                                    events = task.getResult().getItems();
-
-                                    // Filter events that are too old or too far in the future.
-                                    // Keep events that are within one month of now, or two weeks in the past.
-                                    filterEvents(events);
-
-                                    mDatabase.child("statusUpdates").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            filterAlerts(dataSnapshot);
-
-                                            // Reverse so that recently added alerts are
-                                            // on top of the list instead of the bottom.
-                                            Collections.reverse(alertEvents);
-
-                                            sortCalendarEvents(dummyEvents);
-
-                                            mAdapter.notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
-
-                                    sortCalendarEvents(dummyEvents);
-
-                                    mAdapter.notifyDataSetChanged();
-
-                                }
-                            });
-
-                    mNavView = (NavigationView) findViewById(R.id.nav_view_main);
-                    mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                        @Override
-                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                            int id = item.getItemId();
-                            mNavView.setVisibility(View.GONE);
-                            navButton.setBackgroundColor(mNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
-
-                            if (id == R.id.nav_item_open_channels) {
-                                Intent intent = new Intent(MainActivity.this, OpenChannelActivity.class);
-                                startActivity(intent);
-                                return true;
-
-                            } else if (id == R.id.nav_item_group_channels) {
-                                Intent intent = new Intent(MainActivity.this, GroupChannelActivity.class);
-                                startActivity(intent);
-                                return true;
-
-                            } else if (id == R.id.nav_item_calendar) {
-                                Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
-                                startActivity(intent);
-                                finish();
-                                return true;
-
-                            } else if (id == R.id.nav_item_user_list) {
-                                Intent intent = new Intent(MainActivity.this, UserList.class);
-                                startActivity(intent);
-                                finish();
-                                return true;
-
-                            } else if (id == R.id.nav_item_view_own_profile) {
-                                Intent intent = new Intent(MainActivity.this, ViewOwnProfile.class);
-                                startActivity(intent);
-                                return true;
-
-                            } else if (id == R.id.nav_item_disconnect) {
-                                // Unregister push tokens and disconnect
-                                disconnect();
-                                return true;
-                            }
-
-                            return false;
-                        }
-                    });
-
-                    // Displays the App version in a TextView
-                    String appVersion = String.format(getResources().getString(R.string.all_app_version),
-                            BuildConfig.VERSION_NAME);
-                    ((TextView) findViewById(R.id.text_main_versions)).setText(appVersion);
-
-                    alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
-
-                    navButton = (ImageButton) findViewById(R.id.menu_button_main);
-                    navButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            mNavView.setVisibility(mNavView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                            navButton.setBackgroundColor(mNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
-                            alertNavView.setVisibility(View.GONE);
-                            viewAlertButton.setBackgroundColor(Color.TRANSPARENT);
-                        }
-                    });
-
-                    alertRecyclerView = (RecyclerView) findViewById(R.id.alert_recycler_view);
-                    RecyclerView.LayoutManager mLayoutAlertManager = new LinearLayoutManager(getApplicationContext());
-                    alertRecyclerView.setLayoutManager(mLayoutAlertManager);
-                    alertRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                    alertAdapter = new AlertAdapter(alertEvents);
-                    alertRecyclerView.setAdapter(alertAdapter);
-
-                    viewAlertButton = (ImageButton) findViewById(R.id.alert_view_button);
-                    viewAlertButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            alertNavView.setVisibility(alertNavView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                            viewAlertButton.setBackgroundColor(alertNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
-                            mNavView.setVisibility(View.GONE);
-                            navButton.setBackgroundColor(Color.TRANSPARENT);
-
-                        }
-                    });
-
-                    statusText = (EditText) findViewById(R.id.alert_description);
-                    submitStatusUpdate = (Button) findViewById(R.id.alert_submit);
-                    submitStatusUpdate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String status = (String) statusText.getText().toString();
-
-                            if (!status.equals("")) {
-                                statusUpdate.put("text", status);
-                                statusUpdate.put("createdAt", new Date().getTime());
-
-                                mDatabase.child("statusUpdates").push().setValue(statusUpdate);
-
-                                statusText.setText("");
-                            }
-                        }
-                    });
                 }
             }
         });
 
     }
+
 
     @Override
     public void onResume() {
@@ -380,6 +212,256 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initializeFirebaseComponents();
+        setupToolbar();
+        setupFeedView();
+        setupCalendar();
+        setupNavView();
+        setupAlertView();
+        displayAppVersion();
+        navigationButtonListen();
+        userListen();
+        viewAlertButtonListen();
+        submitStatusButtonListen();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        cleanBasicListener();
+    }
+
+    private void submitStatusButtonListen() {
+
+        msubmitStatusUpdateButtonListener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String status = (String) statusText.getText().toString();
+
+                if (!status.equals("")) {
+                    statusUpdate.put("text", status);
+                    statusUpdate.put("createdAt", new Date().getTime());
+
+                    mDatabase.child("statusUpdates").push().setValue(statusUpdate);
+
+                    statusText.setText("");
+                }
+            }
+        };
+        submitStatusUpdate.setOnClickListener(msubmitStatusUpdateButtonListener);
+    }
+
+    private void viewAlertButtonListen() {
+
+        mViewAlertButtonListener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertNavView.setVisibility(alertNavView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                viewAlertButton.setBackgroundColor(alertNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
+                mNavView.setVisibility(View.GONE);
+                navButton.setBackgroundColor(Color.TRANSPARENT);
+
+            }
+        };
+        viewAlertButton.setOnClickListener(mViewAlertButtonListener);
+    }
+
+    private void setupAlertView() {
+        RecyclerView.LayoutManager mLayoutAlertManager = new LinearLayoutManager(getApplicationContext());
+        alertRecyclerView.setLayoutManager(mLayoutAlertManager);
+        alertRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        alertAdapter = new AlertAdapter(alertEvents);
+        alertRecyclerView.setAdapter(alertAdapter);
+    }
+
+    private void navigationButtonListen() {
+
+        mNavButtonListener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNavView.setVisibility(mNavView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                navButton.setBackgroundColor(mNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
+                alertNavView.setVisibility(View.GONE);
+                viewAlertButton.setBackgroundColor(Color.TRANSPARENT);
+            }
+        };
+        navButton.setOnClickListener(mNavButtonListener);
+    }
+
+    private void setupCalendar() {
+
+        mEventItems = getCalendarEvents(PreferenceUtils.getFirebaseToken(MainActivity.this.getApplicationContext()));
+        mEventsListener = new OnCompleteListener<Events>() {
+            @Override
+            public void onComplete(@NonNull Task<Events> task) {
+                if (!task.isSuccessful()) {
+                    Exception e = task.getException();
+                    if (e instanceof FirebaseFunctionsException) {
+                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                        FirebaseFunctionsException.Code code = ffe.getCode();
+                        Object details = ffe.getDetails();
+                    }
+                }
+                // Success
+                events = task.getResult().getItems();
+
+                // Filter events that are too old or too far in the future.
+                // Keep events that are within one month of now, or two weeks in the past.
+                filterEvents(events);
+
+                statusUpdateListen();
+
+                sortCalendarEvents(dummyEvents);
+
+                mAdapter.notifyDataSetChanged();
+
+            }
+        };
+        mEventItems.addOnCompleteListener(mEventsListener);
+    }
+
+    private void statusUpdateListen() {
+
+        mStatusUpdatesRef = mDatabase.child("statusUpdates");
+        mStatusUpdatesListener =  new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                filterAlerts(dataSnapshot);
+
+                // Reverse so that recently added alerts are
+                // on top of the list instead of the bottom.
+                Collections.reverse(alertEvents);
+
+                sortCalendarEvents(dummyEvents);
+
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mStatusUpdatesRef.addValueEventListener(mStatusUpdatesListener);
+    }
+
+    private void displayAppVersion() {
+        // Displays the App version in a TextView
+        String appVersion = String.format(getResources().getString(R.string.all_app_version),
+                BuildConfig.VERSION_NAME);
+        ((TextView) findViewById(R.id.text_main_versions)).setText(appVersion);
+    }
+
+    private void setupNavView() {
+        mNavView = findViewById(R.id.nav_view_main);
+        mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                mNavView.setVisibility(View.GONE);
+                navButton.setBackgroundColor(mNavView.getVisibility() == View.VISIBLE ? Color.DKGRAY : Color.TRANSPARENT);
+
+                if (id == R.id.nav_item_open_channels) {
+                    Intent intent = new Intent(MainActivity.this, OpenChannelActivity.class);
+                    startActivity(intent);
+                    return true;
+
+                } else if (id == R.id.nav_item_group_channels) {
+                    Intent intent = new Intent(MainActivity.this, GroupChannelActivity.class);
+                    startActivity(intent);
+                    return true;
+
+                } else if (id == R.id.nav_item_calendar) {
+                    Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+
+                } else if (id == R.id.nav_item_user_list) {
+                    Intent intent = new Intent(MainActivity.this, UserList.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+
+                } else if (id == R.id.nav_item_view_own_profile) {
+                    Intent intent = new Intent(MainActivity.this, ViewOwnProfile.class);
+                    startActivity(intent);
+                    return true;
+
+                } else if (id == R.id.nav_item_disconnect) {
+                    // Unregister push tokens and disconnect
+                    disconnect();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void setupFeedView() {
+        feedRecyclerView = findViewById(R.id.feed_recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        feedRecyclerView.setLayoutManager(mLayoutManager);
+        feedRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mAdapter = new FeedAdapter(dummyEvents, MainActivity.this.getApplicationContext());
+        feedRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void setupToolbar() {
+        mToolbar = findViewById(R.id.main_activity_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void initializeFirebaseComponents() {
+        mFunctions = FirebaseFunctions.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
+        firebaseUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    private void userListen() {
+
+        if(firebaseUID != null)
+        {
+            mSouthKernUserRef = mDatabase.child("southkernUsers").child(firebaseUID);
+            mSouthKernUserListener = new ValueEventListener(){
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    userMetaData = (HashMap) dataSnapshot.getValue();
+
+                    // Save user to shared preferences
+                    PreferenceUtils.setUser(MainActivity.this.getApplicationContext(), userMetaData);
+
+                    alertCreationLayout = (RelativeLayout) findViewById(R.id.alert_creator);
+                    if (userMetaData.get("user_type") != null) {
+                        if (userMetaData.get("user_type").equals("admin")) {
+                            alertCreationLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            mSouthKernUserRef.addListenerForSingleValueEvent(mSouthKernUserListener);
+        }
+    }
+
+    private void cleanBasicListener() {
+        // Clean up value listener
+        // [START clean_basic_listen]
+        mSouthKernUserRef.removeEventListener(mSouthKernUserListener);
+        mStatusUpdatesRef.removeEventListener(mStatusUpdatesListener);
+        // [END clean_basic_listen]
     }
 
     /**
