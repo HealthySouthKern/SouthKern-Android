@@ -291,6 +291,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         return status;
     }
+
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(LoginActivity.this)
                 .setMessage(message)
