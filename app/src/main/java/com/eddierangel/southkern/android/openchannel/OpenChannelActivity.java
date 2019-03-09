@@ -19,7 +19,7 @@ public class OpenChannelActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_channel);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_open_channel);
+        Toolbar toolbar = findViewById(R.id.toolbar_open_channel);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

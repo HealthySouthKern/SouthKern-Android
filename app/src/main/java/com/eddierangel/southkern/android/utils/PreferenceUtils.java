@@ -14,6 +14,7 @@ public class PreferenceUtils {
 
     public static final String PREFERENCE_KEY_USER_ID = "userId";
     public static final String PREFERENCE_KEY_NICKNAME = "nickname";
+    public static final String PREFERENCE_KEY_PROFILE_IMAGE = "profileImage";
     public static final String PREFERENCE_KEY_FIREBASE_TOKEN = "firebaseToken";
     public static final String PREFERENCE_KEY_SENDBIRD_TOKEN = "sendbirdToken";
     public static final String PREFERENCE_KEY_CONNECTED = "connected";
@@ -62,6 +63,15 @@ public class PreferenceUtils {
     public static void setNickname(Context context, String nickname) {
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putString(PREFERENCE_KEY_NICKNAME, nickname).apply();
+    }
+
+    public static void setProfileImage(Context context, String imageUrl){
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putString(PREFERENCE_KEY_PROFILE_IMAGE, imageUrl).apply();
+    }
+
+    public static String getProfileImage(Context context){
+        return getSharedPreferences(context).getString(PREFERENCE_KEY_PROFILE_IMAGE, "");
     }
 
     public static String getNickname(Context context) {
