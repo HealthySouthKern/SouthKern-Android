@@ -223,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
         setupCalendar();
         setupNavView();
         setupAlertView();
-        displayAppVersion();
         navigationButtonListen();
         userListen();
         viewAlertButtonListen();
@@ -350,13 +349,6 @@ public class MainActivity extends AppCompatActivity {
         mStatusUpdatesRef.addValueEventListener(mStatusUpdatesListener);
     }
 
-    private void displayAppVersion() {
-        // Displays the App version in a TextView
-        String appVersion = String.format(getResources().getString(R.string.all_app_version),
-                BuildConfig.VERSION_NAME);
-        ((TextView) findViewById(R.id.text_main_versions)).setText(appVersion);
-    }
-
     private void setupNavView() {
         mNavView = findViewById(R.id.nav_view_main);
         mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -390,6 +382,11 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (id == R.id.nav_item_view_own_profile) {
                     Intent intent = new Intent(MainActivity.this, ViewOwnProfile.class);
+                    startActivity(intent);
+                    return true;
+
+                } else if (id == R.id.nav_item_settings) {
+                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                     startActivity(intent);
                     return true;
 

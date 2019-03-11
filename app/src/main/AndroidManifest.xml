@@ -3,10 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.eddierangel.southkern.android">
 
-    <uses-permission-sdk-23  android:name="android.permission.INTERNET"
-        android:required="true"/>
-    <uses-permission-sdk-23  android:name="android.permission.ACCESS_NETWORK_STATE"
-        android:required="true"/>
+    <uses-permission-sdk-23
+        android:name="android.permission.INTERNET"
+        android:required="true" />
+    <uses-permission-sdk-23
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        android:required="true" />
 
     <application
         android:name=".main.BaseApplication"
@@ -18,37 +20,43 @@
         <activity android:name=".main.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.UserCreation"/>
-        <activity android:name=".main.CalendarActivity"/>
-        <activity android:name=".main.SubmissionManager"/>
-        <activity android:name=".openchannel.OpenChatFeed"/>
-        <activity android:name=".main.UserList"/>
-        <activity android:name=".utils.ReconnectionManager"/>
+        <activity android:name=".main.UserCreation" />
+        <activity android:name=".main.CalendarActivity" />
+        <activity android:name=".main.SubmissionManager" />
+        <activity android:name=".openchannel.OpenChatFeed" />
+        <activity android:name=".main.UserList" />
+        <activity android:name=".utils.ReconnectionManager" />
         <!-- Facebook start -->
         <meta-data
-            tools:replace="android:value"
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:value="@string/facebook_app_id"
+            tools:replace="android:value" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
         <!-- Facebook end -->
-        <activity android:launchMode='singleTask' android:name=".main.MainActivity"
-            android:label="@string/select_channel_type"/>
+        <activity
+            android:name=".main.MainActivity"
+            android:label="@string/select_channel_type"
+            android:launchMode="singleTask" />
         <activity android:name=".utils.PhotoViewerActivity" />
         <activity
             android:name=".utils.MediaPlayerActivity"
@@ -72,9 +80,17 @@
         <activity android:name=".groupchannel.GroupChannelActivity" />
         <activity
             android:name=".main.ViewOwnProfile"
-            android:parentActivityName=".main.MainActivity"/>
+            android:parentActivityName=".main.MainActivity" />
         <activity android:name=".main.ViewProfile" />
-
+        <activity
+            android:name=".main.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".main.MainActivity"
+            android:theme="@style/SettingsTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eddierangel.southkern.android.main.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
