@@ -82,6 +82,12 @@ import java.util.Random;
 import java.util.TimeZone;
 
 // TODO: Add Documentation to Public Interface
+/**
+ * Lets a user view the calendar.
+ * <p>
+ * This class loads calendar events with a cloud function and lets users view them.
+ * Admins can manage events. This will take them to SubmissionManager.
+ */
 public class CalendarActivity extends AppCompatActivity {
 
     private Events events;

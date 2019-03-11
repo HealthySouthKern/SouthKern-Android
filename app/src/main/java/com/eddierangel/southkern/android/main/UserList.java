@@ -59,6 +59,11 @@ import java.util.List;
 import java.util.Map;
 
 // TODO: Add Documentation to Public Interface
+/**
+ * Lets a user view a list of users.
+ * <p>
+ * This class gets the list of users that can be sorted and displays them for the user to view.
+ */
 public class UserList extends AppCompatActivity {
 
     private FirebaseFunctions mFunctions;

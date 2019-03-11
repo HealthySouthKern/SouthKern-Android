@@ -7,6 +7,11 @@ import android.os.Handler;
 import com.eddierangel.southkern.android.R;
 
 // TODO: Add Documentation to Public Interface
+/**
+ * The starting screen of the app
+ * <p>
+ * This class activates after BaseApplication, displays our splash screen image, then goes to LoginActivity.
+ */
 public class SplashScreen extends Activity {
 
     /** Duration of wait*/

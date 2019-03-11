@@ -48,6 +48,13 @@ import java.util.Map;
 
 
 // TODO: Add Documentation to Public Interface
+/**
+ * Handles the login flow.
+ * <p>
+ * This class will log a user in, and if the user doesn't exist it will create one. It will direct the
+ * user to UserCreation to finish up.
+ * Connects to sendbird with said user, and if successful directs the user to MainActivity.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";

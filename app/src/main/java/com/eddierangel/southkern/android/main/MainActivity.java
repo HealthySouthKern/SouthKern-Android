@@ -61,6 +61,12 @@ import java.util.Map;
 import com.eddierangel.southkern.android.utils.InternetCheck;
 
 // TODO: Add Documentation to Public Interface
+/**
+ * Main feed and hub screen of the app.
+ * <p>
+ * This class sets the user at the main feed, with options to go into the different features of the app.
+ * It shows notifications, allows access to chat, the users profile, the list of users, and the calendar.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;

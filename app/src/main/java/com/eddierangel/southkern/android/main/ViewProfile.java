@@ -31,6 +31,12 @@ import java.util.Map;
 
 
 // TODO: Add Documentation to Public Interface
+/**
+ * Lets a user view the profile of another user.
+ * <p>
+ * This class is loaded with the userID of a user from a previous activity in the intent.
+ * It calls a cloud function to get the rest of the user's info, then displays it.
+ */
 public class ViewProfile extends AppCompatActivity {
 
     private FirebaseFunctions mFunctions;

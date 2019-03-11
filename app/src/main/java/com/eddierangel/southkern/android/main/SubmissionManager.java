@@ -54,6 +54,11 @@ import java.util.HashMap;
 import java.util.List;
 
 // TODO: Add Documentation to Public Interface
+/**
+ * Lets a user create, edit, and delete events.
+ * <p>
+ * This class lets a user create, edit, and delete an event, provided they are authorized.
+ */
 public class SubmissionManager extends AppCompatActivity {
     private Event eventToView;
     private Calendar service;

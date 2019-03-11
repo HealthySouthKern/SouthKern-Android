@@ -28,6 +28,12 @@ import java.util.HashMap;
 
 
 // TODO: Add Documentation to Public Interface
+/**
+ * Lets a user view and edit their own profile.
+ * <p>
+ * This class loads the user's info to be displayed from PrefenceUtils, then displays it.
+ * Users can update the displayed information and click a button to apply these changes.
+ */
 public class ViewOwnProfile extends AppCompatActivity {
 
     private ImageButton backButton;

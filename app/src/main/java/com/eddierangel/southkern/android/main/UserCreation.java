@@ -42,7 +42,11 @@ import java.util.Iterator;
 
 import retrofit2.Call;
 
-
+/**
+ * Collects data to fill in the user.
+ * <p>
+ * This class gets information about new users by using twitter or facebook,
+ */
 public class UserCreation extends AppCompatActivity {
 
     private TextInputEditText mUserPosition, mUserOrganization;
