@@ -58,16 +58,6 @@
     android:visibility="gone"
     app:menu="@menu/nav_view">
 
-    <TextView
-        android:id="@+id/text_main_versions"
-        android:text="@string/all_app_version"
-        android:textSize="12sp"
-        android:textColor="#8e8e8e"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
 </android.support.design.widget.NavigationView>
 
     <android.support.design.widget.NavigationView

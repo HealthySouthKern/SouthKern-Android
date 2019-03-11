@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.eddierangel.southkern.android.R;
-import com.eddierangel.southkern.android.openchannel.OpenChannelListFragment;
 
 
 // TODO: Add Documentation to Public Interface
