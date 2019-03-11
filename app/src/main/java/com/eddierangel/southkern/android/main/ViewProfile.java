@@ -54,7 +54,7 @@ public class ViewProfile extends AppCompatActivity {
                 .call(data)
                 .continueWith(new Continuation<HttpsCallableResult, Object>() {
                     @Override
-                    public Object then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                    public Object then(@NonNull Task<HttpsCallableResult> task) {
 
                         return task.getResult().getData();
                     }
@@ -74,7 +74,7 @@ public class ViewProfile extends AppCompatActivity {
 
         // Initialize mFunctions
         mFunctions = FirebaseFunctions.getInstance();
-        backButton = (ImageButton) findViewById(R.id.menu_button_back);
+        backButton = findViewById(R.id.menu_button_back);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,23 +114,23 @@ public class ViewProfile extends AppCompatActivity {
                             String position = userMetaData.get("user_position");
                             String role = userMetaData.get("user_type");
 
-                            final ImageView profileImage = (ImageView)findViewById(R.id.profile_image);
+                            final ImageView profileImage = findViewById(R.id.profile_image);
                             if (userPicture != null) {
                                 if (!userPicture.isEmpty()) {
                                     ImageUtils.displayImageFromUrl(ViewProfile.this, userPicture, profileImage);
                                 }
                             }
 
-                            TextView userName = (TextView)findViewById(R.id.text_user_real_name);
+                            TextView userName = findViewById(R.id.text_user_real_name);
                             userName.setText(name);
 
-                            TextView userOrganization = (TextView)findViewById(R.id.text_user_organization);
+                            TextView userOrganization = findViewById(R.id.text_user_organization);
                             userOrganization.setText(organization);
 
-                            TextView userPosition = (TextView)findViewById(R.id.text_user_position);
+                            TextView userPosition = findViewById(R.id.text_user_position);
                             userPosition.setText(position);
 
-                            TextView userRole = (TextView)findViewById(R.id.text_user_role);
+                            TextView userRole = findViewById(R.id.text_user_role);
                             if (role != null) {
                                 userRole.setText(role.substring(0, 1).toUpperCase() + role.substring(1));
                             }
