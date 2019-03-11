@@ -20,12 +20,12 @@
     <string name="google_calendar_id">jfschmiechen@gmail.com</string>
 
     <!-- Twitter -->
-    <string name="twitter_consumer_key">FYD1uYcQX3ITHi9WJDABmxcWz </string>
-    <string name="twitter_consumer_secret">RpmZ1pbO9gsoE3hALrvJyE35R0vzQ9PhPAj0Dpk5iYZRr0Zos6</string>
+    <string name="twitter_consumer_key">000000000000000 </string>
+    <string name="twitter_consumer_secret">000000000000000</string>
 
     <!-- Facebook -->
-    <string name="facebook_app_id">220170975490400</string>
-    <string name="fb_login_protocol_scheme">fb220170975490400</string>
+    <string name="facebook_app_id">000000000000000</string>
+    <string name="fb_login_protocol_scheme">000000000000000</string>
 
     <!-- all -->
     <!--En Español -->
