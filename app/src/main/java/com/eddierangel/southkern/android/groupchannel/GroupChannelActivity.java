@@ -12,6 +12,7 @@ import com.eddierangel.southkern.android.R;
 
 
 // TODO: Add Documentation to Public Interface
+// Add a reference to the SendBird Documentation
 public class GroupChannelActivity extends AppCompatActivity{
 
     private static final String TAG = "GroupChannelActivity";

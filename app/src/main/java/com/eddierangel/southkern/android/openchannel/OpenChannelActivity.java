@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import com.eddierangel.southkern.android.R;
 
 // TODO: Add Documentation to Public Interface
+// Add a reference to the SendBird Documentation
 public class OpenChannelActivity extends AppCompatActivity{
 
     @Override
