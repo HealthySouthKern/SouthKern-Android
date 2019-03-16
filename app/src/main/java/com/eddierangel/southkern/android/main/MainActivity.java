@@ -10,7 +10,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +48,7 @@ import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.groupchannel.GroupChannelActivity;
 import com.eddierangel.southkern.android.openchannel.OpenChannelActivity;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
+import com.eddierangel.southkern.android.utils.LogUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         new InternetCheck(new InternetCheck.Consumer() {
             @Override
             public void accept(Boolean internet) {
-                Log.i("connectionTest", "" + internet);
+                LogUtility.i("connectionTest", "" + internet);
                 if (!internet) {
                     Intent intent = new Intent(MainActivity.this, ReconnectionManager.class);
                     startActivityForResult(intent, 1);
