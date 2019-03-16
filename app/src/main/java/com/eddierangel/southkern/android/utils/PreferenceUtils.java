@@ -65,12 +65,12 @@ public class PreferenceUtils {
         editor.putString(PREFERENCE_KEY_NICKNAME, nickname).apply();
     }
 
-    public static void setProfileImage(Context context, String imageUrl){
+    public static void setProfileUrl(Context context, String imageUrl){
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putString(PREFERENCE_KEY_PROFILE_IMAGE, imageUrl).apply();
     }
 
-    public static String getProfileImage(Context context){
+    public static String getProfileUrl(Context context){
         return getSharedPreferences(context).getString(PREFERENCE_KEY_PROFILE_IMAGE, "");
     }
 
