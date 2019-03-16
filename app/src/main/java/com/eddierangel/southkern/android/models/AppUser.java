@@ -6,7 +6,7 @@ import java.util.Objects;
  *  User Object
  *  Uses components from SendBird and Firebase
  * */
-public class User {
+public class AppUser {
 
     private String uid;
     private String name;
@@ -19,8 +19,8 @@ public class User {
     private String sendbirdToken;
 
     /**
-     * The User object is a representation of the several components needed in the Mobile App
-     * This should be used to manage the User state.
+     * The AppUser object is a representation of the several components needed in the Mobile App
+     * This should be used to manage the AppUser state.
      * @param uid
      * @param name
      * @param organization
@@ -31,7 +31,7 @@ public class User {
      * @param firebaseToken
      * @param sendbirdToken
      */
-    public User(String uid, String name, String organization, String userId, String photo, String type, String position, String firebaseToken, String sendbirdToken) {
+    public AppUser(String uid, String name, String organization, String userId, String photo, String type, String position, String firebaseToken, String sendbirdToken) {
         this.uid = uid;
         this.name = name;
         this.organization = organization;
@@ -44,13 +44,13 @@ public class User {
     }
 
     /**
-     * Default Constructor of User for Healthy SouthKern
+     * Default Constructor of AppUser for Healthy SouthKern
      */
-    public User() {
+    public AppUser() {
         this(null,null,null,null,null,null,null,null,null);
     }
 
-    public User(String uid){
+    public AppUser(String uid){
         this(uid,null,null,null,null,null,null,null,null);
     }
 
@@ -129,7 +129,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "AppUser{" +
                 "name='" + name + '\'' +
                 ", organization='" + organization + '\'' +
                 ", userId='" + userId + '\'' +
@@ -140,8 +140,8 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
+        if (!(o instanceof AppUser)) return false;
+        AppUser user = (AppUser) o;
         return Objects.equals(getUid(), user.getUid());
     }
 

@@ -1,7 +1,8 @@
 package com.eddierangel.southkern.android.utils;
 
-import android.support.constraint.BuildConfig;
 import android.util.Log;
+
+import com.eddierangel.southkern.android.BuildConfig;
 
 /**
  * A Log Utility that wraps Androids native Log

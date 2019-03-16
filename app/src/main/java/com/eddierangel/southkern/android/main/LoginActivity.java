@@ -12,18 +12,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,6 +37,7 @@ import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
@@ -47,7 +47,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-// TODO: Add Documentation to Public Interface
+/**
+ *  Main Entry point into App
+ * */
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -59,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private OnCompleteListener mUserWithTokenListener;
+    private OnSuccessListener<GetTokenResult> mGetTokenListener;
     private FirebaseFunctions mFunctions;
     private DatabaseReference mDatabase;
     private Boolean firstTimeLogin, ranOnlyOnce = true;
@@ -88,7 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                             if (!firstTimeLogin) {
                                 String userId = PreferenceUtils.getUserId(LoginActivity.this);
                                 String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
-                                connectToSendBird(userId, mFirebaseAuth.getCurrentUser().getDisplayName(), sendbirdToken);
+                                connectToSendBird(userId, mFirebaseAuth.getCurrentUser().getDisplayName(),
+                                        mFirebaseAuth.getCurrentUser().getPhotoUrl().toString(), sendbirdToken);
                             }
                         }
                     }
@@ -139,110 +144,146 @@ public class LoginActivity extends AppCompatActivity {
 
         if(checkPermissions())
         {
-            Log.i(TAG,"@string/internet_permission_granted");
+            LogUtility.i(TAG,"@string/internet_permission_granted");
         } else {
             requestPermissions();
         }
 
         initializeFirebaseComponents();
-
         setContentView(R.layout.activity_login);
 
         mLoginLayout = findViewById(R.id.layout_login);
-
-        // A loading indicator
         mProgressBar = findViewById(R.id.progress_bar_login);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseLogin();
+    }
+
+    private void firebaseLogin() {
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // user is signed in
-                    PreferenceUtils.setUserId(LoginActivity.this, user.getEmail());
-                    PreferenceUtils.setNickname(LoginActivity.this, user.getDisplayName());
-                    PreferenceUtils.setProfileImage(LoginActivity.this, user.getPhotoUrl().toString());
+                final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
-                    // Show the loading indicator
-                    showProgressBar(true);
-                    // Retrieve firebase token from user.
-                    user.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
-                        @Override
-                        public void onSuccess(GetTokenResult result) {
-                            // Prevent any unnecessary calls
-                            if (ranOnlyOnce) {
-                                ranOnlyOnce = false;
-                                String idToken = result.getToken();
+                // Valid User Logged In
+                if (firebaseUser != null) {
+                    setAppUserInfo(firebaseUser);
 
-                                // save token to shared store.
-                                PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), idToken);
-                                firebaseUserId = user.getUid();
-
-                                final String userId = user.getEmail();
-                                final String userName = user.getDisplayName();
-
-                                /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
-                                getSendbirdUserWithToken(userId, userName, idToken)
-                                        .addOnCompleteListener(new OnCompleteListener<HashMap>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<HashMap> task) {
-                                                if (!task.isSuccessful()) {
-                                                    Exception e = task.getException();
-                                                    if (e instanceof FirebaseFunctionsException) {
-                                                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
-                                                        FirebaseFunctionsException.Code code = ffe.getCode();
-                                                        Object details = ffe.getDetails();
-                                                    }
-
-                                                    // ...
-                                                }
-                                                // success
-                                                // save sendbird token to shared store
-                                                String sendbirdToken;
-                                                try {
-                                                    sendbirdToken = (String) task.getResult().get("token");
-                                                    Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
-                                                    PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
-                                                    firstTimeLogin = firstLogin;
-
-
-                                                    if (firstLogin) {
-                                                        // Get generated profile url from sendbird and set as temporary profile picture
-                                                        generatedProfileUrl = (String) task.getResult().get("userPicture");
-
-                                                        // It is the users first time logging in -> show them UserCreation form
-                                                        Intent intent = new Intent(LoginActivity.this, UserCreation.class);
-                                                        startActivityForResult(intent, 1);
-                                                    }
-                                                    if (!firstLogin && task.getResult().get("nickname") != null) {
-                                                        // This isn't the users first rodeo -> connect and show them main feed
-                                                        connectToSendBird(userId, userName, sendbirdToken);
-                                                    }
-
-                                                } catch (Exception e) {
-                                                    Log.e("sendbirdtokenErr", "" + e);
-                                                }
-                                            }
-                                        });
-                            }
-                        }
-                    });
                 } else {
                     // user is signed out
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false)
-                                    .setTheme(R.style.LoginTheme)
-                                    .setLogo(R.drawable.bhc_logo_color_centered)
-                                    .setAvailableProviders(Arrays.asList(
-                                            new AuthUI.IdpConfig.EmailBuilder().build(),
-                                            new AuthUI.IdpConfig.GoogleBuilder().build()))
-                                    .build(),
-                            RC_SIGN_IN);
+                    startFirebaseSignInActivity();
                 }
             }
         };
+    }
+
+    private void startFirebaseSignInActivity() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
+                        .setTheme(R.style.LoginTheme)
+                        .setLogo(R.drawable.bhc_logo_color_centered)
+                        .setAvailableProviders(Arrays.asList(
+                                new AuthUI.IdpConfig.EmailBuilder().build(),
+                                new AuthUI.IdpConfig.GoogleBuilder().build(),
+                                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                                new AuthUI.IdpConfig.TwitterBuilder().build())).build(),
+                RC_SIGN_IN);
+    }
+
+    private void setAppUserInfo(FirebaseUser firebaseUser) {
+        // Set Values
+        PreferenceUtils.setUserId(LoginActivity.this, firebaseUser.getEmail());
+        PreferenceUtils.setNickname(LoginActivity.this, firebaseUser.getDisplayName());
+        PreferenceUtils.setProfileUrl(LoginActivity.this, firebaseUser.getPhotoUrl().toString());
+
+        // Show the loading indicator
+        showProgressBar(true);
+
+        // Retrieve firebase token from user.
+        getFirebaseToken(firebaseUser);
+    }
+
+    private void getFirebaseToken(final FirebaseUser firebaseUser) {
+
+        mGetTokenListener = new OnSuccessListener<GetTokenResult>() {
+            @Override
+            public void onSuccess(GetTokenResult result) {
+                // Prevent any unnecessary calls
+                if (ranOnlyOnce) {
+                    ranOnlyOnce = false;
+                    getFirebaseResults(result, firebaseUser);
+                }
+            }
+        };
+        firebaseUser.getIdToken(true).addOnSuccessListener(mGetTokenListener);
+    }
+
+    private void getFirebaseResults(GetTokenResult result, FirebaseUser firebaseUser) {
+
+        String idToken = result.getToken();
+        // save token to shared store.
+        PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), idToken);
+        firebaseUserId = firebaseUser.getUid();
+
+        final String userId = firebaseUser.getEmail();
+        final String userName = firebaseUser.getDisplayName();
+        final String profileUrl = firebaseUser.getPhotoUrl().toString();
+
+        /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
+        Task<HashMap> userWithToken = getSendbirdUserWithToken(userId, userName, idToken);
+        mUserWithTokenListener = new OnCompleteListener<HashMap>() {
+            @Override
+            public void onComplete(@NonNull Task<HashMap> task) {
+                if (!task.isSuccessful()) {
+                    Exception e = task.getException();
+                    if (e instanceof FirebaseFunctionsException) {
+                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                        FirebaseFunctionsException.Code code = ffe.getCode();
+                        Object details = ffe.getDetails();
+                    }
+
+                    // ...
+                }
+                // success
+                // save sendbird token to shared store
+                setSendBirdInfo(task, userId, userName, profileUrl);
+            }
+        };
+        userWithToken.addOnCompleteListener(mUserWithTokenListener);
+    }
+
+    private void setSendBirdInfo(@NonNull Task<HashMap> task, String userId, String userName, String profileUrl) {
+
+        String sendbirdToken;
+        try {
+            sendbirdToken = (String) task.getResult().get("token");
+            Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
+            PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
+            firstTimeLogin = firstLogin;
+
+            if (firstLogin) {
+                // Get generated profile url from sendbird and set as temporary profile picture
+                // this is only used if they do not have a social media profile picture
+                generatedProfileUrl = (String) task.getResult().get("userPicture");
+
+                // It is the users first time logging in -> show them UserCreation form
+                Intent intent = new Intent(LoginActivity.this, UserCreation.class);
+                startActivityForResult(intent, 1);
+            }
+            if (!firstLogin && task.getResult().get("nickname") != null) {
+                // This isn't the users first rodeo -> connect and show them main feed
+                connectToSendBird(userId, userName, profileUrl, sendbirdToken);
+            }
+
+        } catch (Exception e) {
+            LogUtility.e("sendbirdtokenErr", "" + e);
+        }
     }
 
     private void initializeFirebaseComponents() {
@@ -321,11 +362,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
                         && perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
                     // All Permissions Granted
-                    Log.i(TAG, "@string/internet_permission_granted");
+                    LogUtility.i(TAG, "@string/internet_permission_granted");
 
                 } else {
                     // Permission Denied
-                    Log.i(TAG, "@string/internet_permission_denied");
+                    LogUtility.i(TAG, "@string/internet_permission_denied");
                     Toast.makeText(this, "@string/internet_permission_denied", Toast.LENGTH_SHORT)
                             .show();
                 }
@@ -344,6 +385,9 @@ public class LoginActivity extends AppCompatActivity {
             if (requestCode == 1) {
                 if (resultCode == Activity.RESULT_OK) {
                     final String userId = PreferenceUtils.getUserId(LoginActivity.this);
+                    final String user_name = PreferenceUtils.getNickname(LoginActivity.this);
+                    final String profileUrl = PreferenceUtils.getProfileUrl(LoginActivity.this);
+                    final String firebaseToken = PreferenceUtils.getFirebaseToken(LoginActivity.this);
                     String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
                     result = (HashMap<String, String>) data.getSerializableExtra("userData");
 
@@ -352,21 +396,23 @@ public class LoginActivity extends AppCompatActivity {
                     userData = result;
                     userData.put("uid", firebaseUserId);
                     userData.put("user_id", userId);
-                    userData.put("user_name", mFirebaseAuth.getCurrentUser().getDisplayName());
+                    userData.put("user_name", user_name);
                     userData.put("sendbirdToken", sendbirdToken);
-                    userData.put("firebaseToken", PreferenceUtils.getFirebaseToken(LoginActivity.this));
-                    userData.put("user_picture", PreferenceUtils.getProfileImage(LoginActivity.this));
+                    userData.put("firebaseToken", firebaseToken);
+                    userData.put("user_picture", profileUrl);
 
                     // If the user did not opt to integrate social media then give them a generated profile url.
-                    if (userData.get("user_picture") == null) {
+                    if (userData.get("user_picture") == null || userData.get("user_picture") == "") {
                         userData.put("user_picture", generatedProfileUrl);
                     }
 
+                    //Cache UserData
                     PreferenceUtils.setUser(LoginActivity.this.getApplicationContext(), userData);
 
+                    //Persist UserData
                     mDatabase.child("southkernUsers").child(firebaseUserId).setValue(userData);
 
-                    connectToSendBird(userId, mFirebaseAuth.getCurrentUser().getDisplayName(), sendbirdToken);
+                    connectToSendBird(userId, user_name, profileUrl, sendbirdToken);
                 }
             }
 
@@ -374,24 +420,24 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Attempts to connect a user to SendBird.
-     * @param userId    The unique ID of the user.
+     * @param userId    The email address of the user.
      * @param userName  The user's name, which will be displayed in chats.
      * @param sendbirdToken The user's token that we will use to connect to sendbird securely.
      */
-    private void connectToSendBird(final String userId, final String userName, final String sendbirdToken) {
-        Log.i(TAG, "@string/attempt_sendbird_connection");
+    private void connectToSendBird(final String userId, final String userName, final String profileUrl, final String sendbirdToken) {
+        LogUtility.i(TAG, "@string/attempt_sendbird_connection");
         showProgressBar(true);
         if (mFirebaseAuth.getCurrentUser() != null) {
 
             SendBird.connect(userId, sendbirdToken, new SendBird.ConnectHandler() {
                 @Override
-                public void onConnected(User user, SendBirdException e) {
+                public void onConnected(User sendbirdUser, SendBirdException e) {
                     // Callback received; hide the progress bar.
                     showProgressBar(false);
 
                     if (e != null) {
                         // Error!
-                        Log.e(TAG, "@string/sendbird_login_error" + e.getCode() + " " + e);
+                        LogUtility.e(TAG, "@string/sendbird_login_error" + e.getCode() + " " + e);
 
                         // Show login failure snackbar
                         if (e.getCode() != 400302) {
@@ -410,7 +456,7 @@ public class LoginActivity extends AppCompatActivity {
                             tempUser.put("uid", firebaseUserId);
                             tempUser.put("user_id", userId);
                             tempUser.put("user_name", userName);
-                            tempUser.put("user_picture", mFirebaseAuth.getCurrentUser().getPhotoUrl().toString());
+                            tempUser.put("user_picture", profileUrl);
 
                             mDatabase.child("southkernUsers").child(firebaseUserId).setValue(tempUser);
 
@@ -420,7 +466,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onResult(SendBirdException e) {
                                     if (e != null) {
-                                        Log.e(TAG, "@string/sendbird_delete_metadata_error"+ " " + e);
+                                        LogUtility.e(TAG, "@string/sendbird_delete_metadata_error"+ " " + e);
                                     }
                                 }
                             });
@@ -431,18 +477,20 @@ public class LoginActivity extends AppCompatActivity {
                         // During the first time login user information such as id and nickname are already set.
                         // Just update tokens.
                         mDatabase.child("southkernUsers").child(firebaseUserId).child("sendbirdToken").setValue(sendbirdToken);
-                        mDatabase.child("southkernUsers").child(firebaseUserId).child("firebaseToken").setValue(PreferenceUtils.getFirebaseToken(LoginActivity.this));
+                        mDatabase.child("southkernUsers").child(firebaseUserId).child("firebaseToken")
+                                .setValue(PreferenceUtils.getFirebaseToken(LoginActivity.this));
                     }
 
                     PreferenceUtils.setConnected(LoginActivity.this, true);
                     PreferenceUtils.setUserId(LoginActivity.this.getApplicationContext(), userId);
                     PreferenceUtils.setNickname(LoginActivity.this.getApplicationContext(), userName);
+                    PreferenceUtils.setProfileUrl(LoginActivity.this.getApplicationContext(), profileUrl);
 
                     // Update the user's nickname
                     if (userData != null) {
-                        updateCurrentUserInfo(userData.get("user_name"));
+                        updateCurrentUserInfo(userData.get("user_name"),userData.get("user_picture"));
                     } else {
-                        updateCurrentUserInfo(userName);
+                        updateCurrentUserInfo(userName, profileUrl);
                     }
                     updateCurrentUserPushToken();
 
@@ -459,35 +507,68 @@ public class LoginActivity extends AppCompatActivity {
      * Update the user's push token.
      */
     private void updateCurrentUserPushToken() {
-        // Register Firebase Token
-        SendBird.registerPushTokenForCurrentUser(FirebaseInstanceId.getInstance().getToken(),
-            new SendBird.RegisterPushTokenWithStatusHandler() {
-                @Override
-                public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
-                    if (e != null) {
-                        // Error!
-                        Toast.makeText(LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
 
-                    Toast.makeText(LoginActivity.this, "Push token registered.", Toast.LENGTH_SHORT).show();
-                }
-            });
+        // Register Firebase Token
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Exception ffe = task.getException();
+                            if (ffe instanceof FirebaseFunctionsException) {
+
+                                FirebaseFunctionsException.Code code = ((FirebaseFunctionsException) ffe).getCode();
+                                Object details = code;
+                                LogUtility.d(TAG, "updateCurrentUserPushToken" + details.toString());
+                            }
+
+                            // ...
+                            // success
+                            String firebaseInstanceId;
+                            try {
+                                firebaseInstanceId = (String) task.getResult().getToken();
+                                SendBird.registerPushTokenForCurrentUser(firebaseInstanceId,
+                                        new SendBird.RegisterPushTokenWithStatusHandler() {
+                                            @Override
+                                            public void onRegistered(SendBird.PushTokenRegistrationStatus
+                                                                 pushTokenRegistrationStatus, SendBirdException sendbirdException) {
+                                                if (sendbirdException != null) {
+                                                    // Error!
+                                                    LogUtility.d(TAG, "RegisterPushTokenWithStatusHandler: " + sendbirdException.getMessage());
+                                                    Toast.makeText(LoginActivity.this,
+                                                            "" + sendbirdException.getCode() + ":" + sendbirdException.getMessage(),
+                                                            Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
+
+                                                Toast.makeText(LoginActivity.this, "Push token registered.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                            } catch (Exception e) {
+                                LogUtility.e(TAG, "sendbirdtokenErr: " + e.getMessage());
+                            }
+                        }
+                        }
+                });
+
+
     }
 
     /**
      * Updates the user's nickname.
      * @param userNickname  The new nickname of the user.
      */
-    private void updateCurrentUserInfo(String userNickname) {
+    private void updateCurrentUserInfo(String userNickname, String profileUrl) {
 
-        SendBird.updateCurrentUserInfo(userNickname, SendBird.getCurrentUser().getProfileUrl(), new SendBird.UserInfoUpdateHandler() {
+        SendBird.updateCurrentUserInfo(userNickname, profileUrl, new SendBird.UserInfoUpdateHandler() {
             @Override
-            public void onUpdated(SendBirdException e) {
-                if (e != null) {
+            public void onUpdated(SendBirdException sendbirdException) {
+                if (sendbirdException != null) {
                     // Error!
+                    LogUtility.d(TAG, "RegisterPushTokenWithStatusHandler: " + sendbirdException.getMessage());
                     Toast.makeText(
-                            LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(),
+                            LoginActivity.this, "" + sendbirdException.getCode() + ":" + sendbirdException.getMessage(),
                             Toast.LENGTH_SHORT)
                             .show();
 
@@ -528,7 +609,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(checkPermissions())
         {
-            Log.i(TAG,"@string/internet_permission_granted");
+            LogUtility.i(TAG,"@string/internet_permission_granted");
         } else {
             requestPermissions();
         }

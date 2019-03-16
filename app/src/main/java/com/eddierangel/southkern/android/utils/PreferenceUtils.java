@@ -20,6 +20,7 @@ public class PreferenceUtils {
     public static final String PREFERENCE_KEY_CONNECTED = "connected";
     public static final String PREFERENCE_KEY_FIREBASE_USER = "firebaseUser";
     public static final String PREFERENCE_KEY_FACEBOOK_TOKEN = "facebookToken";
+    public static final String PREFERENCE_KEY_PREFERENCE_FILE = "HealthySouthKern";
 
     // Prevent instantiation
     private PreferenceUtils() {
@@ -27,7 +28,7 @@ public class PreferenceUtils {
     }
 
     public static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences("sendbird", Context.MODE_PRIVATE);
+        return context.getSharedPreferences(PREFERENCE_KEY_PREFERENCE_FILE, Context.MODE_PRIVATE);
     }
 
     public static void setFacebookToken(Context context, String token) {
@@ -65,12 +66,12 @@ public class PreferenceUtils {
         editor.putString(PREFERENCE_KEY_NICKNAME, nickname).apply();
     }
 
-    public static void setProfileImage(Context context, String imageUrl){
+    public static void setProfileUrl(Context context, String imageUrl){
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putString(PREFERENCE_KEY_PROFILE_IMAGE, imageUrl).apply();
     }
 
-    public static String getProfileImage(Context context){
+    public static String getProfileUrl(Context context){
         return getSharedPreferences(context).getString(PREFERENCE_KEY_PROFILE_IMAGE, "");
     }
 
