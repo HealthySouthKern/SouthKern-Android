@@ -36,6 +36,7 @@
     <string name="my_profile">Mi Perfil</string>
     <string name="settings">Ajustes</string>
     <string name="disconnect">Desonectar</string>
+    <string name="sign_off">Cerrar Sesión</string>
 
     <!-- login/logout -->
     <string name="login_user_id">ID de usuario</string>

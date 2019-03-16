@@ -17,16 +17,16 @@
 
 
     <!-- Google Calendar -->
-    <string name="google_calendar_client_id">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
-    <string name="google_calendar_id">jfschmiechen@gmail.com</string>
+    <string name="google_calendar_client_id" translatable="false">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
+    <string name="google_calendar_id" translatable="false">jfschmiechen@gmail.com</string>
 
     <!-- Twitter -->
-    <string name="twitter_consumer_key">000000000000000 </string>
-    <string name="twitter_consumer_secret">000000000000000</string>
+    <string name="twitter_consumer_key" translatable="false">00000</string>
+    <string name="twitter_consumer_secret" translatable="false">00000</string>
 
     <!-- Facebook -->
-    <string name="facebook_app_id">000000000000000</string>
-    <string name="fb_login_protocol_scheme">000000000000000</string>
+    <string name="facebook_application_id" translatable="false">00000</string>
+    <string name="fb_login_protocol_scheme" translatable="false">00000</string>
 
     <!-- all -->
     <string name="all_app_version">Healthy South Kern v%1$s</string>
@@ -48,6 +48,7 @@
     <string name="my_profile">My Profile</string>
     <string name="settings">Settings</string>
     <string name="disconnect">Disconnect</string>
+    <string name="sign_off">Sign Off</string>
 
     <!-- login/logout -->
     <string name="login_user_id">User ID</string>
