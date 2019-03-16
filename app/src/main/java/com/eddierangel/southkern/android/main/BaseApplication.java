@@ -8,9 +8,10 @@ import com.sendbird.android.SendBird;
 
 import io.fabric.sdk.android.Fabric;
 
-// TODO: Add Documentation to Public Interface
+
 public class BaseApplication extends Application {
 
+    // TODO: String.xml
     private static final String APP_ID = "91EEEE6D-8D4A-4FA4-9A52-0B8E2DDD64D0"; // SouthKernTest01
 
     @Override
