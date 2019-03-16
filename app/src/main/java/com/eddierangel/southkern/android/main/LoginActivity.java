@@ -19,11 +19,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -139,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(checkPermissions())
         {
-            Log.i(TAG,"@string/internet_permission_granted");
+            LogUtility.i(TAG,"@string/internet_permission_granted");
         } else {
             requestPermissions();
         }
@@ -220,7 +220,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     }
 
                                                 } catch (Exception e) {
-                                                    Log.e("sendbirdtokenErr", "" + e);
+                                                    LogUtility.e("sendbirdtokenErr", "" + e);
                                                 }
                                             }
                                         });
@@ -321,11 +321,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
                         && perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
                     // All Permissions Granted
-                    Log.i(TAG, "@string/internet_permission_granted");
+                    LogUtility.i(TAG, "@string/internet_permission_granted");
 
                 } else {
                     // Permission Denied
-                    Log.i(TAG, "@string/internet_permission_denied");
+                    LogUtility.i(TAG, "@string/internet_permission_denied");
                     Toast.makeText(this, "@string/internet_permission_denied", Toast.LENGTH_SHORT)
                             .show();
                 }
@@ -379,7 +379,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param sendbirdToken The user's token that we will use to connect to sendbird securely.
      */
     private void connectToSendBird(final String userId, final String userName, final String sendbirdToken) {
-        Log.i(TAG, "@string/attempt_sendbird_connection");
+        LogUtility.i(TAG, "@string/attempt_sendbird_connection");
         showProgressBar(true);
         if (mFirebaseAuth.getCurrentUser() != null) {
 
@@ -391,7 +391,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (e != null) {
                         // Error!
-                        Log.e(TAG, "@string/sendbird_login_error" + e.getCode() + " " + e);
+                        LogUtility.e(TAG, "@string/sendbird_login_error" + e.getCode() + " " + e);
 
                         // Show login failure snackbar
                         if (e.getCode() != 400302) {
@@ -420,7 +420,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onResult(SendBirdException e) {
                                     if (e != null) {
-                                        Log.e(TAG, "@string/sendbird_delete_metadata_error"+ " " + e);
+                                        LogUtility.e(TAG, "@string/sendbird_delete_metadata_error"+ " " + e);
                                     }
                                 }
                             });
@@ -528,7 +528,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(checkPermissions())
         {
-            Log.i(TAG,"@string/internet_permission_granted");
+            LogUtility.i(TAG,"@string/internet_permission_granted");
         } else {
             requestPermissions();
         }
