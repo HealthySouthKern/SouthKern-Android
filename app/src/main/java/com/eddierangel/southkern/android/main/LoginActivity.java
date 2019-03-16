@@ -348,6 +348,9 @@ public class LoginActivity extends AppCompatActivity {
             if (requestCode == 1) {
                 if (resultCode == Activity.RESULT_OK) {
                     final String userId = PreferenceUtils.getUserId(LoginActivity.this);
+                    final String user_name = PreferenceUtils.getNickname(LoginActivity.this);
+                    final String profileUrl = PreferenceUtils.getProfileUrl(LoginActivity.this);
+                    final String firebaseToken = PreferenceUtils.getFirebaseToken(LoginActivity.this);
                     String sendbirdToken = PreferenceUtils.getSendbirdToken(LoginActivity.this);
                     result = (HashMap<String, String>) data.getSerializableExtra("userData");
 
@@ -356,22 +359,23 @@ public class LoginActivity extends AppCompatActivity {
                     userData = result;
                     userData.put("uid", firebaseUserId);
                     userData.put("user_id", userId);
-                    userData.put("user_name", mFirebaseAuth.getCurrentUser().getDisplayName());
+                    userData.put("user_name", user_name);
                     userData.put("sendbirdToken", sendbirdToken);
-                    userData.put("firebaseToken", PreferenceUtils.getFirebaseToken(LoginActivity.this));
-                    userData.put("user_picture", PreferenceUtils.getProfileUrl(LoginActivity.this));
+                    userData.put("firebaseToken", firebaseToken);
+                    userData.put("user_picture", profileUrl);
 
                     // If the user did not opt to integrate social media then give them a generated profile url.
                     if (userData.get("user_picture") == null || userData.get("user_picture") == "") {
                         userData.put("user_picture", generatedProfileUrl);
                     }
 
+                    //Cache UserData
                     PreferenceUtils.setUser(LoginActivity.this.getApplicationContext(), userData);
 
+                    //Persist UserData
                     mDatabase.child("southkernUsers").child(firebaseUserId).setValue(userData);
 
-                    connectToSendBird(userId, mFirebaseAuth.getCurrentUser().getDisplayName(),
-                            mFirebaseAuth.getCurrentUser().getPhotoUrl().toString(), sendbirdToken);
+                    connectToSendBird(userId, user_name, profileUrl, sendbirdToken);
                 }
             }
 
@@ -379,7 +383,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Attempts to connect a user to SendBird.
-     * @param userId    The unique ID of the user.
+     * @param userId    The email address of the user.
      * @param userName  The user's name, which will be displayed in chats.
      * @param sendbirdToken The user's token that we will use to connect to sendbird securely.
      */
@@ -390,7 +394,7 @@ public class LoginActivity extends AppCompatActivity {
 
             SendBird.connect(userId, sendbirdToken, new SendBird.ConnectHandler() {
                 @Override
-                public void onConnected(com.sendbird.android.User sendbirdUser, SendBirdException e) {
+                public void onConnected(User sendbirdUser, SendBirdException e) {
                     // Callback received; hide the progress bar.
                     showProgressBar(false);
 
