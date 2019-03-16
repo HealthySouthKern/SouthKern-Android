@@ -47,7 +47,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-// TODO: Add Documentation to Public Interface
+/**
+ *  Main Entry point into App
+ * */
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -59,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private OnCompleteListener mUserWithTokenListener;
+    private OnSuccessListener<GetTokenResult> mGetTokenListener;
     private FirebaseFunctions mFunctions;
     private DatabaseReference mDatabase;
     private Boolean firstTimeLogin, ranOnlyOnce = true;
@@ -146,107 +150,139 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         initializeFirebaseComponents();
-
         setContentView(R.layout.activity_login);
 
         mLoginLayout = findViewById(R.id.layout_login);
-
-        // A loading indicator
         mProgressBar = findViewById(R.id.progress_bar_login);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseLogin();
+    }
+
+    private void firebaseLogin() {
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
+                // Valid User Logged In
                 if (firebaseUser != null) {
-                    // user is signed in
-                    PreferenceUtils.setUserId(LoginActivity.this, firebaseUser.getEmail());
-                    PreferenceUtils.setNickname(LoginActivity.this, firebaseUser.getDisplayName());
-                    PreferenceUtils.setProfileUrl(LoginActivity.this, firebaseUser.getPhotoUrl().toString());
+                    setAppUserInfo(firebaseUser);
 
-                    // Show the loading indicator
-                    showProgressBar(true);
-                    // Retrieve firebase token from user.
-                    firebaseUser.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
-                        @Override
-                        public void onSuccess(GetTokenResult result) {
-                            // Prevent any unnecessary calls
-                            if (ranOnlyOnce) {
-                                ranOnlyOnce = false;
-                                String idToken = result.getToken();
-
-                                // save token to shared store.
-                                PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), idToken);
-                                firebaseUserId = firebaseUser.getUid();
-
-                                final String userId = firebaseUser.getEmail();
-                                final String userName = firebaseUser.getDisplayName();
-                                final String profileUrl = firebaseUser.getPhotoUrl().toString();
-
-                                /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
-                                getSendbirdUserWithToken(userId, userName, idToken)
-                                        .addOnCompleteListener(new OnCompleteListener<HashMap>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<HashMap> task) {
-                                                if (!task.isSuccessful()) {
-                                                    Exception e = task.getException();
-                                                    if (e instanceof FirebaseFunctionsException) {
-                                                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
-                                                        FirebaseFunctionsException.Code code = ffe.getCode();
-                                                        Object details = ffe.getDetails();
-                                                    }
-
-                                                    // ...
-                                                }
-                                                // success
-                                                // save sendbird token to shared store
-                                                String sendbirdToken;
-                                                try {
-                                                    sendbirdToken = (String) task.getResult().get("token");
-                                                    Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
-                                                    PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
-                                                    firstTimeLogin = firstLogin;
-
-
-                                                    if (firstLogin) {
-                                                        // Get generated profile url from sendbird and set as temporary profile picture
-                                                        // this is only used if they do not have a social media profile picture
-                                                        generatedProfileUrl = (String) task.getResult().get("userPicture");
-
-                                                        // It is the users first time logging in -> show them UserCreation form
-                                                        Intent intent = new Intent(LoginActivity.this, UserCreation.class);
-                                                        startActivityForResult(intent, 1);
-                                                    }
-                                                    if (!firstLogin && task.getResult().get("nickname") != null) {
-                                                        // This isn't the users first rodeo -> connect and show them main feed
-                                                        connectToSendBird(userId, userName, profileUrl, sendbirdToken);
-                                                    }
-
-                                                } catch (Exception e) {
-                                                    LogUtility.e("sendbirdtokenErr", "" + e);
-                                                }
-                                            }
-                                        });
-                            }
-                        }
-                    });
                 } else {
                     // user is signed out
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false)
-                                    .setTheme(R.style.LoginTheme)
-                                    .setLogo(R.drawable.bhc_logo_color_centered)
-                                    .setAvailableProviders(Arrays.asList(
-                                            new AuthUI.IdpConfig.EmailBuilder().build(),
-                                            new AuthUI.IdpConfig.GoogleBuilder().build()))
-                                    .build(),
-                            RC_SIGN_IN);
+                    startFirebaseSignInActivity();
                 }
             }
         };
+    }
+
+    private void startFirebaseSignInActivity() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
+                        .setTheme(R.style.LoginTheme)
+                        .setLogo(R.drawable.bhc_logo_color_centered)
+                        .setAvailableProviders(Arrays.asList(
+                                new AuthUI.IdpConfig.EmailBuilder().build(),
+                                new AuthUI.IdpConfig.GoogleBuilder().build()))
+                        .build(),
+                RC_SIGN_IN);
+    }
+
+    private void setAppUserInfo(FirebaseUser firebaseUser) {
+        // Set Values
+        PreferenceUtils.setUserId(LoginActivity.this, firebaseUser.getEmail());
+        PreferenceUtils.setNickname(LoginActivity.this, firebaseUser.getDisplayName());
+        PreferenceUtils.setProfileUrl(LoginActivity.this, firebaseUser.getPhotoUrl().toString());
+
+        // Show the loading indicator
+        showProgressBar(true);
+
+        // Retrieve firebase token from user.
+        getFirebaseToken(firebaseUser);
+    }
+
+    private void getFirebaseToken(final FirebaseUser firebaseUser) {
+
+        mGetTokenListener = new OnSuccessListener<GetTokenResult>() {
+            @Override
+            public void onSuccess(GetTokenResult result) {
+                // Prevent any unnecessary calls
+                if (ranOnlyOnce) {
+                    ranOnlyOnce = false;
+                    getFirebaseResults(result, firebaseUser);
+                }
+            }
+        };
+        firebaseUser.getIdToken(true).addOnSuccessListener(mGetTokenListener);
+    }
+
+    private void getFirebaseResults(GetTokenResult result, FirebaseUser firebaseUser) {
+
+        String idToken = result.getToken();
+        // save token to shared store.
+        PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), idToken);
+        firebaseUserId = firebaseUser.getUid();
+
+        final String userId = firebaseUser.getEmail();
+        final String userName = firebaseUser.getDisplayName();
+        final String profileUrl = firebaseUser.getPhotoUrl().toString();
+
+        /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
+        Task<HashMap> userWithToken = getSendbirdUserWithToken(userId, userName, idToken);
+        mUserWithTokenListener = new OnCompleteListener<HashMap>() {
+            @Override
+            public void onComplete(@NonNull Task<HashMap> task) {
+                if (!task.isSuccessful()) {
+                    Exception e = task.getException();
+                    if (e instanceof FirebaseFunctionsException) {
+                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                        FirebaseFunctionsException.Code code = ffe.getCode();
+                        Object details = ffe.getDetails();
+                    }
+
+                    // ...
+                }
+                // success
+                // save sendbird token to shared store
+                setSendBirdInfo(task, userId, userName, profileUrl);
+            }
+        };
+        userWithToken.addOnCompleteListener(mUserWithTokenListener);
+    }
+
+    private void setSendBirdInfo(@NonNull Task<HashMap> task, String userId, String userName, String profileUrl) {
+
+        String sendbirdToken;
+        try {
+            sendbirdToken = (String) task.getResult().get("token");
+            Boolean firstLogin = (Boolean) task.getResult().get("firstLogin");
+            PreferenceUtils.setSendbirdToken(LoginActivity.this.getApplicationContext(), sendbirdToken);
+            firstTimeLogin = firstLogin;
+
+            if (firstLogin) {
+                // Get generated profile url from sendbird and set as temporary profile picture
+                // this is only used if they do not have a social media profile picture
+                generatedProfileUrl = (String) task.getResult().get("userPicture");
+
+                // It is the users first time logging in -> show them UserCreation form
+                Intent intent = new Intent(LoginActivity.this, UserCreation.class);
+                startActivityForResult(intent, 1);
+            }
+            if (!firstLogin && task.getResult().get("nickname") != null) {
+                // This isn't the users first rodeo -> connect and show them main feed
+                connectToSendBird(userId, userName, profileUrl, sendbirdToken);
+            }
+
+        } catch (Exception e) {
+            LogUtility.e("sendbirdtokenErr", "" + e);
+        }
     }
 
     private void initializeFirebaseComponents() {
