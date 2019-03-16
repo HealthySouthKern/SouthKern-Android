@@ -2,6 +2,10 @@ package com.eddierangel.southkern.android.models;
 
 import java.util.Objects;
 
+/**
+ *  User Object
+ *  Uses components from SendBird and Firebase
+ * */
 public class User {
 
     private String uid;
@@ -15,7 +19,7 @@ public class User {
     private String sendbirdToken;
 
     /**
-     * The User object is a representation of the several components needed in the Healthy South Kern App
+     * The User object is a representation of the several components needed in the Mobile App
      * This should be used to manage the User state.
      * @param uid
      * @param name
