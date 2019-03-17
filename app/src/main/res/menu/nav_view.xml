@@ -5,19 +5,33 @@
         <item
             android:id="@+id/nav_item_group_channels"
             android:icon="@drawable/ic_group_channels"
-            android:title="Group Channels" />
+            android:title="@string/group_channels" />
         <item
             android:id="@+id/nav_item_open_channels"
             android:icon="@drawable/ic_open_channels"
-            android:title="Open Channels" />
+            android:title="@string/open_channels" />
+        <item
+            android:id="@+id/nav_item_calendar"
+            android:icon="@drawable/baseline_event_black_36dp"
+            android:title="@string/calendar" />
+        <item
+            android:id="@+id/nav_item_user_list"
+            android:icon="@drawable/baseline_book_black_36dp"
+            android:title="@string/address_book" />
+        <item
+            android:id="@+id/nav_item_view_own_profile"
+            android:icon="@drawable/baseline_assignment_ind_black_36dp"
+            android:title="@string/my_profile" />
+        <item
+            android:id="@+id/nav_item_settings"
+            android:icon="@drawable/baseline_settings_black_36"
+            android:title="@string/settings" />
 
     </group>
-
-    <group android:id="@+id/nav_group_actions"
-        android:checkableBehavior="single">
+    <group android:checkableBehavior="none">
         <item
-            android:id="@+id/nav_item_disconnect"
-            android:icon="@drawable/ic_disconnect"
-            android:title="Disconnect" />
+            android:id="@+id/nav_item_sign_off"
+            android:icon="@drawable/baseline_exit_to_app_black_48dp"
+            android:title="@string/sign_off" />
     </group>
 </menu>

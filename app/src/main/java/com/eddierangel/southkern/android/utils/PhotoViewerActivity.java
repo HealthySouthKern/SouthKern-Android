@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.eddierangel.southkern.android.R;
 
+// TODO: Add Documentation to Public Interface
 public class PhotoViewerActivity extends AppCompatActivity {
 
     @Override

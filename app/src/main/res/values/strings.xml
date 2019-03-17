@@ -1,8 +1,35 @@
 <resources>
-    <string name="app_name">SouthKern</string>
+    <string name="app_name">Healthy South Kern</string>
+
+    <!-- Permission Statuses -->
+    <string name="internet_permission_granted">Internet Permission Granted</string>
+    <string name="internet_permission_denied">Internet Permission Denied</string>
+
+    <!-- SendBird -->
+    <string name="attempt_sendbird_connection">Attempting connection to SendBird</string>
+    <string name="sendbird_login_error">SendBird Login Error</string>
+    <string name="sendbird_login_failed">Login to SendBird failed. Reconnecting…</string>
+    <string name="sendbird_delete_metadata_error">Delete Metadata Error</string>
+    <string name="sendbird_udpate_nickname_failed">Update user nickname failed</string>
+
+    <!-- FireBase -->
+    <string name="push_token_registered">Push token registered.</string>
+
+
+    <!-- Google Calendar -->
+    <string name="google_calendar_client_id" translatable="false">458185576063-lddeepif5cpdje1s1kdr14psid732gvr.apps.googleusercontent.com </string>
+    <string name="google_calendar_id" translatable="false">jfschmiechen@gmail.com</string>
+
+    <!-- Twitter -->
+    <string name="twitter_consumer_key" translatable="false">00000</string>
+    <string name="twitter_consumer_secret" translatable="false">00000</string>
+
+    <!-- Facebook -->
+    <string name="facebook_application_id" translatable="false">00000</string>
+    <string name="fb_login_protocol_scheme" translatable="false">00000</string>
 
     <!-- all -->
-    <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>
+    <string name="all_app_version">Healthy South Kern v%1$s</string>
 
     <string name="all_create">Create</string>
     <string name="all_invite">Invite</string>
@@ -14,11 +41,26 @@
     <string name="main_drawer_open">Open navigation drawer</string>
     <string name="main_drawer_close">Close navigation drawer</string>
     <string name="select_channel_type">Select channel type</string>
+    <string name="address_book">Address Book</string>
+    <string name="calendar">Calendar</string>
+    <string name="open_channels">Open Channels</string>
+    <string name="group_channels">Group Channels</string>
+    <string name="my_profile">My Profile</string>
+    <string name="settings">Settings</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="sign_off">Sign Off</string>
 
-    <!-- login -->
+    <!-- login/logout -->
     <string name="login_user_id">User ID</string>
     <string name="login_user_nickname">Nickname</string>
     <string name="login_connect">Connect</string>
+    <string name="logout_text">Log Out</string>
+
+    <!-- profile texts -->
+    <string name="profile_user_real_name">Name:</string>
+    <string name="profile_user_organization">Organization:</string>
+    <string name="profile_user_position">Position in Organization:</string>
+    <string name="profile_user_role">Role:</string>
 
     <!-- Open Channel List -->
     <string name="open_channel_list_participant_count">%1$d participants</string>
@@ -32,6 +74,9 @@
     <string name="create_group_channel">Create Group Channel</string>
     <string name="member_list">Members</string>
     <string name="invite_member">Invite members</string>
+
+    <!-- User List -->
+    <string name="search_hint">Search for people</string>
 
     <!-- Content descriptions -->
     <string name="open_channel_chat_content_desc_profile">Profile image</string>
@@ -48,6 +93,105 @@
     <!-- Message Status -->
     <string name="message_sending">Sending</string>
     <string name="message_failed">Failed</string>
+
+    <!-- Calendar Dialogues -->
+    <string name="delete_capital">DELETE</string>
+    <string name="approve_capital">APPROVE</string>
+    <string name="edit_event">Edit event</string>
+    <string name="edit_name_event">Edit the name of the event</string>
+    <string name="edit_location_event">Edit event location</string>
+    <string name="edit_description_event">Edit event description</string>
+    <string name="edit_start_event">Edit event start time</string>
+    <string name="edit_end_event">Edit event end time</string>
+    <string name="save_changes">Save changes</string>
+    <string name="view_event">View event</string>
+    <string name="view_event_name">Name of the event</string>
+    <string name="view_event_location">Event location</string>
+    <string name="view_event_description">Event description</string>
+    <string name="close_event_dialogue">Close</string>
+    <string name="create_event">Create event</string>
+    <string name="create_event_end">Select event end time</string>
+    <string name="create_event_finish">Create</string>
+
+    <!-- submissions -->
+    <string name="no_submissions">No submissions have been made.</string>
+    <string name="submissions_finished">Finished</string>
+
+    <!-- main feed -->
+    <string name="current_week">This</string>
+    <string name="next_week">Next</string>
+    <string name="today">Today</string>
+    <string name="community">What is going on in the community?</string>
+    <string name="community_post">Post status update</string>
+
+    <!-- general -->
+    <string name="reconnecting">Internet connection lost. Reconnecting.</string>
+
+    <!-- Strings related to Settings -->
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_view_user">ViewUserActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="pref_title_notifications">Notifications</string>
+    <string name="pref_header_about">About</string>
+
 
 
 </resources>

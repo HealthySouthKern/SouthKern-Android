@@ -21,6 +21,7 @@ import com.eddierangel.southkern.android.R;
 import java.util.List;
 
 
+// TODO: Add Documentation to Public Interface
 public class OpenChannelListFragment extends Fragment {
 
     public static final String EXTRA_OPEN_CHANNEL_URL = "OPEN_CHANNEL_URL";
@@ -52,11 +53,11 @@ public class OpenChannelListFragment extends Fragment {
 
         ((OpenChannelActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_open_channels));
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_open_channel_list);
+        mRecyclerView = rootView.findViewById(R.id.recycler_open_channel_list);
         mChannelListAdapter = new OpenChannelListAdapter(getContext());
 
         // Set color?
-        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout_open_channel_list);
+        mSwipeRefresh = rootView.findViewById(R.id.swipe_layout_open_channel_list);
 
         // Swipe down to refresh channel list.
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -67,7 +68,7 @@ public class OpenChannelListFragment extends Fragment {
             }
         });
 
-        mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_open_channel_list);
+        mCreateChannelFab = rootView.findViewById(R.id.fab_open_channel_list);
         mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

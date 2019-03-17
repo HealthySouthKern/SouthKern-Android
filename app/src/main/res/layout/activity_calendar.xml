@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f3f4"
+    tools:context="com.eddierangel.southkern.android.main.MainActivity">
+
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/calendar_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/Toolbar">
+
+            <ImageButton
+                android:id="@+id/menu_button_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/fui_transparent"
+                app:srcCompat="@drawable/baseline_arrow_back_white_18dp" />
+
+            <ImageView
+                android:id="@+id/image_calendar_logo"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="65dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/bhc_logo_color_splash" />
+
+            <ImageButton
+                android:id="@+id/alert_view_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:translationX="-65dp"
+                android:background="@color/fui_transparent"
+                app:srcCompat="@drawable/baseline_announcement_24" />
+
+        </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view_alerts"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/alert_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp" />
+
+        </android.support.design.widget.NavigationView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="70dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v4.widget.ContentLoadingProgressBar
+                android:id="@+id/progressBarCalendar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/manage_submissions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Manage Event Submissions"
+                    android:visibility="gone" />
+
+                <com.alamkanak.weekview.WeekView
+                    android:id="@+id/weekView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:columnGap="8dp"
+                    app:dayBackgroundColor="#05000000"
+                    app:eventTextColor="@android:color/white"
+                    app:headerColumnBackground="#ffffffff"
+                    app:headerColumnPadding="8dp"
+                    app:headerColumnTextColor="#8f000000"
+                    app:headerRowBackgroundColor="#ffefefef"
+                    app:headerRowPadding="12dp"
+                    app:hourHeight="60dp"
+                    app:noOfVisibleDays="3"
+                    app:textSize="12sp"
+                    app:todayBackgroundColor="#1848adff" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+

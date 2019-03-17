@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'io.fabric'
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.eddierangel.southkern.android"
-        minSdkVersion 16
-        targetSdkVersion 25
-        versionCode getVersionCode()
-        versionName getVersionName()
+        minSdkVersion 24
+        targetSdkVersion 28
+        versionCode 11
+        versionName '1.1.2'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -20,40 +20,47 @@ android {
     }
     productFlavors {
     }
-}
-
-repositories {
-    maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
+    sourceSets {
+        main { java.srcDirs = ['src/main/java', 'src/androidTest/java', 'src/test/java'] }
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     // Required for local unit tests (JUnit 4 framework)
-    testCompile 'junit:junit:4.12'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     // SendBird
-    compile 'com.sendbird.sdk:sendbird-android-sdk:3.0.38'
-
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.74'
     // Android support libraries
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
-    compile 'com.android.support:design:27.0.2'
-    compile 'com.android.support:cardview-v7:27.0.2'
-    compile 'com.android.support:support-v4:27.0.2'
-    
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
     // External libraries
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'org.jsoup:jsoup:1.10.2'
-    
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'org.jsoup:jsoup:1.10.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     // Firebase
-    compile 'com.google.firebase:firebase-messaging:11.8.0'
-    compile 'com.google.firebase:firebase-core:11.8.0'
-    compile 'com.google.firebase:firebase-auth:11.8.0'
-    compile 'com.firebaseui:firebase-ui-auth:3.2.2'
+    implementation 'com.google.firebase:firebase-messaging:17.4.0'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-auth:16.2.0'
+    implementation 'com.google.firebase:firebase-database:16.1.0'
+    implementation 'com.google.firebase:firebase-functions:16.3.0'
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+    // Facebook
+    implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
+    // Twitter
+    implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
+    // Google Calendar
+    implementation 'com.google.api-client:google-api-client:1.23.0'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    implementation 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'
+    implementation 'com.github.alamkanak:android-week-view:1.2.6'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 apply plugin: 'com.google.gms.google-services'
-
