@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFunctions mFunctions;
     private DatabaseReference mDatabase;
     private Boolean firstTimeLogin, ranOnlyOnce = true;
-    private String firebaseUserId, generatedProfileUrl;
+    private String uniqueId, generatedProfileUrl;
     private static final int RC_SIGN_IN = 9;
 
     private static final int REQUEST_PERMISSION_ALL = 1;
@@ -226,17 +226,17 @@ public class LoginActivity extends AppCompatActivity {
 
     private void getFirebaseResults(GetTokenResult result, FirebaseUser firebaseUser) {
 
-        String idToken = result.getToken();
+        String authUIToken = result.getToken();
         // save token to shared store.
-        PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), idToken);
-        firebaseUserId = firebaseUser.getUid();
+        PreferenceUtils.setFirebaseToken(LoginActivity.this.getApplicationContext(), authUIToken);
+        uniqueId = firebaseUser.getUid();
 
         final String userId = firebaseUser.getEmail();
         final String userName = firebaseUser.getDisplayName();
         final String profileUrl = firebaseUser.getPhotoUrl().toString();
 
         /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
-        Task<HashMap> userWithToken = getSendbirdUserWithToken(userId, userName, idToken);
+        Task<HashMap> userWithToken = getSendbirdUserWithToken(userId, userName, authUIToken);
         mUserWithTokenListener = new OnCompleteListener<HashMap>() {
             @Override
             public void onComplete(@NonNull Task<HashMap> task) {
@@ -282,7 +282,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            LogUtility.e("sendbirdtokenErr", "" + e);
+            LogUtility.e(TAG, "setSendBirdInfo: " + e.getMessage());
         }
     }
 
@@ -394,7 +394,7 @@ public class LoginActivity extends AppCompatActivity {
                     // Don't bother checking if the user exists since if they don't we will create them anyway.
                     // Get data from the first time login form (user creation form) and store with relative information.
                     userData = result;
-                    userData.put("uid", firebaseUserId);
+                    userData.put("uid", uniqueId);
                     userData.put("user_id", userId);
                     userData.put("user_name", user_name);
                     userData.put("sendbirdToken", sendbirdToken);
@@ -410,7 +410,7 @@ public class LoginActivity extends AppCompatActivity {
                     PreferenceUtils.setUser(LoginActivity.this.getApplicationContext(), userData);
 
                     //Persist UserData
-                    mDatabase.child("southkernUsers").child(firebaseUserId).setValue(userData);
+                    mDatabase.child("southkernUsers").child(uniqueId).setValue(userData);
 
                     connectToSendBird(userId, user_name, profileUrl, sendbirdToken);
                 }
@@ -453,12 +453,12 @@ public class LoginActivity extends AppCompatActivity {
                         // to firebase. Once all accounts are migrated we can safely remove this check.
                         if (!SendBird.getCurrentUser().getMetaData().isEmpty()) {
                             Map<String, String> tempUser = SendBird.getCurrentUser().getMetaData();
-                            tempUser.put("uid", firebaseUserId);
+                            tempUser.put("uid", uniqueId);
                             tempUser.put("user_id", userId);
                             tempUser.put("user_name", userName);
                             tempUser.put("user_picture", profileUrl);
 
-                            mDatabase.child("southkernUsers").child(firebaseUserId).setValue(tempUser);
+                            mDatabase.child("southkernUsers").child(uniqueId).setValue(tempUser);
 
                             // Delete old meta data once userMetaData has been ported to firebase. This is important
                             // since if we don't delete the old data we will keep overwriting firebase data with old sendbird data.
@@ -476,8 +476,8 @@ public class LoginActivity extends AppCompatActivity {
                         // If userData is null then it is safe to assume this is not their first time logging in.
                         // During the first time login user information such as id and nickname are already set.
                         // Just update tokens.
-                        mDatabase.child("southkernUsers").child(firebaseUserId).child("sendbirdToken").setValue(sendbirdToken);
-                        mDatabase.child("southkernUsers").child(firebaseUserId).child("firebaseToken")
+                        mDatabase.child("southkernUsers").child(uniqueId).child("sendbirdToken").setValue(sendbirdToken);
+                        mDatabase.child("southkernUsers").child(uniqueId).child("firebaseToken")
                                 .setValue(PreferenceUtils.getFirebaseToken(LoginActivity.this));
                     }
 
@@ -526,7 +526,7 @@ public class LoginActivity extends AppCompatActivity {
                             // success
                             String firebaseInstanceId;
                             try {
-                                firebaseInstanceId = (String) task.getResult().getToken();
+                                firebaseInstanceId = task.getResult().getToken();
                                 SendBird.registerPushTokenForCurrentUser(firebaseInstanceId,
                                         new SendBird.RegisterPushTokenWithStatusHandler() {
                                             @Override
@@ -546,12 +546,11 @@ public class LoginActivity extends AppCompatActivity {
                                         });
 
                             } catch (Exception e) {
-                                LogUtility.e(TAG, "sendbirdtokenErr: " + e.getMessage());
+                                LogUtility.e(TAG, "firebaseInstanceId Failed: " + e.getMessage());
                             }
                         }
                         }
                 });
-
 
     }
 
