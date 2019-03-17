@@ -198,6 +198,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setAppUserInfo(FirebaseUser firebaseUser) {
         // Set Values
+        // TODO Guard Against Null
         PreferenceUtils.setUserId(LoginActivity.this, firebaseUser.getEmail());
         PreferenceUtils.setNickname(LoginActivity.this, firebaseUser.getDisplayName());
         PreferenceUtils.setProfileUrl(LoginActivity.this, firebaseUser.getPhotoUrl().toString());

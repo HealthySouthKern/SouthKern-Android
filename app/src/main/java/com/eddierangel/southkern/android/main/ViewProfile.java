@@ -101,6 +101,8 @@ public class ViewProfile extends AppCompatActivity {
                     mDatabase.child("southkernUsers").child(userData.get("uid")).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            // TODO Guard Aginst Null
                             userMetaData = (Map<String, String>) dataSnapshot.getValue();
 
                             // Moved settexts inside of callback of fetchUserwithID since we need to use this data

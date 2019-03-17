@@ -309,6 +309,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 // Success
+                // TODO: Guard Against Null
                 events = task.getResult().getItems();
 
                 // Filter events that are too old or too far in the future.
