@@ -1,7 +1,7 @@
 package com.eddierangel.southkern.android.utils;
 
 import android.util.Log;
-
+import com.crashlytics.android.Crashlytics;
 import com.eddierangel.southkern.android.BuildConfig;
 
 /**
@@ -9,6 +9,9 @@ import com.eddierangel.southkern.android.BuildConfig;
  * This utility will leverage the BuildConfig.DEBUG flag to protect statements
  * in the LogUtility class so they print only on debug builds of the application.
  * @see <a href="https://developer.android.com/reference/android/util/Log">Log</a>
+ *
+ * Incorporated Crashlytics on Error and Debug
+ * @see <a href="https://firebase.google.com/docs/reference/android/com/crashlytics/sdk/android/crashlytics/Crashlytics">Crashlytics</a>
  *
  * */
 public class LogUtility {
@@ -37,7 +40,7 @@ public class LogUtility {
      * @param args  the string to be converted
      * */
     public static void e(String format, Object... args) {
-        Log.e(TAG, getLogString(format, args));
+        Crashlytics.log(Log.ERROR,TAG, getLogString(format, args));
     }
 
     /**
@@ -76,7 +79,7 @@ public class LogUtility {
      * @param args  the string to be converted
      * */
     public static void e(String tag,String format, Object... args) {
-        Log.e(tag, getLogString(format, args));
+        Crashlytics.log(Log.ERROR,tag, getLogString(format, args));
     }
 
     /**
@@ -117,7 +120,7 @@ public class LogUtility {
     public static void d(String tag,String format, Object... args) {
         if (!BuildConfig.DEBUG) return;
 
-        Log.d(tag, getLogString(format, args));
+        Crashlytics.log(Log.DEBUG,tag,getLogString(format, args));
     }
 
     /**
