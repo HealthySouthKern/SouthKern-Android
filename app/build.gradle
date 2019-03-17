@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "com.eddierangel.southkern.android"
         minSdkVersion 24
-        targetSdkVersion 27
-        versionCode 9
-        versionName '1.1.0'
+        targetSdkVersion 28
+        versionCode 10
+        versionName '1.1.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

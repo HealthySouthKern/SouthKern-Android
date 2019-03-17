@@ -14,8 +14,22 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBarOverlay">true</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Style</item>
+        <item name="android:actionMenuTextColor">@style/ActionBar.TitleTextStyle</item>
+    </style>
+    <!-- style for the action bar backgrounds -->
+    <style name="ActionBar.Style" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>
+        <item name="android:subtitleTextStyle">@style/ActionBar.TitleTextStyle</item>
+        <item name="titleTextStyle">@style/ActionBar.TitleTextStyle</item>
+        <item name="subtitleTextStyle">@style/ActionBar.TitleTextStyle</item>
+    </style>
+
+    <!-- Text -->
+    <style name="ActionBar.TitleTextStyle" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Toolbar">
