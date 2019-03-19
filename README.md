@@ -6,10 +6,10 @@
 </p>
 
 <p align="center">
-  BHC in your pocket. Built with Firebase.
+  BHC in your pocket. Built with SendBird and Firebase.
 </p>
   <p align="center">
-  Coming Soon iOS!
+  Coming Soon on iOS!
 </p>
 
 <p align="center">
@@ -71,7 +71,7 @@ A few of the things you can do with BHC:
 
 Feel free to send us feedback on [Twitter](https://twitter.com/bhcsouthkern) or [file an issue](info@healthysouthkern.org). Feature requests are always welcome.
 
-If there's anything you'd like to chat about, please feel free to email [BHC group](edward.rangel@bakersfieldcollege.edu)!
+If there's anything you'd like to chat about, please feel free to email [BHC](edward.rangel@bakersfieldcollege.edu)!
 
 ## Contributors
 

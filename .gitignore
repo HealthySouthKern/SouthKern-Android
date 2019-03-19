@@ -1,6 +1,7 @@
 # Built application files
 *.apk
 *.ap_
+*.aab
 
 # Files for the ART/Dalvik VM
 *.dex
@@ -46,6 +47,8 @@ captures/
 .idea/copyright/profiles_settings.xml
 .idea/encodings.xml
 .idea/vcs.xml
+.idea/caches
+.idea/caches/build_file_checksums.ser
 
 
 # OS-specific files

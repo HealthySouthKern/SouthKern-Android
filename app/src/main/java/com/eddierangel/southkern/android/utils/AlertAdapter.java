@@ -1,7 +1,6 @@
 package com.eddierangel.southkern.android.utils;
 
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 // TODO: Add Documentation to Public Interface
 public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder> {
@@ -24,7 +22,6 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
-    private Calendar tempCalendar = Calendar.getInstance();
     private static ClickListener clickListener;
 
     public interface ClickListener {
@@ -33,7 +30,7 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public TextView description, location, date, time;
+        public TextView description,  date, time;
 
         public MyViewHolder(View view) {
             super(view);
@@ -46,7 +43,9 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder
 
         @Override
         public void onClick(View v) {
-            clickListener.onItemClick(getAdapterPosition(), v);
+            if (clickListener != null) {
+                clickListener.onItemClick(getAdapterPosition(), v);
+            }
         }
 
         @Override

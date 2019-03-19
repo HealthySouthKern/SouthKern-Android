@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -80,26 +81,6 @@ public class UserList extends AppCompatActivity {
     private RecyclerView addressRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
-    private Task<HashMap> fetchUserList(String firebaseToken) {
-        // Create the arguments to the callable function.
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", firebaseToken);
-
-        return mFunctions
-                .getHttpsCallable("fetchUserList")
-                .call(data)
-                .continueWith(new Continuation<HttpsCallableResult, HashMap>() {
-                    @Override
-                    public HashMap then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        // This continuation runs on either success or failure, but if the task
-                        // has failed then getResult() will throw an Exception which will be
-                        // propagated down.
-                        Log.i("usertest2", "" + ((List<Object>) task.getResult().getData()).get(0));
-                        return (HashMap) ((List<Object>) task.getResult().getData()).get(0);
-                    }
-                });
-    }
-
     private void sortUserListOrganization(List<Object> userList) {
         Collections.sort(userList, new Comparator<Object>() {
             @Override
@@ -107,11 +88,8 @@ public class UserList extends AppCompatActivity {
                 HashMap firstUser = (HashMap) firstUserObj;
                 HashMap secondUser = (HashMap) secondUserObj;
 
-                HashMap firstMetaData = (HashMap) firstUser.get("metadata");
-                HashMap secondMetaData = (HashMap) secondUser.get("metadata");
-
-                firstTempHolder = (String) firstMetaData.get("user_organization");
-                secondTempHolder = (String) secondMetaData.get("user_organization");
+                firstTempHolder = (String) firstUser.get("user_organization");
+                secondTempHolder = (String) secondUser.get("user_organization");
 
                 if (firstTempHolder != null && secondTempHolder != null) {
                     int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
@@ -133,10 +111,9 @@ public class UserList extends AppCompatActivity {
                 HashMap firstUser = (HashMap) firstUserObj;
                 HashMap secondUser = (HashMap) secondUserObj;
 
-                firstTempHolder = (String) firstUser.get("nickname");
-                secondTempHolder = (String) secondUser.get("nickname");
+                firstTempHolder = (String) firstUser.get("user_name");
+                secondTempHolder = (String) secondUser.get("user_name");
                 if (firstTempHolder != null && secondTempHolder != null) {
-                    Log.i("tempholders", firstTempHolder.length() + " | " + secondTempHolder.length());
 
                     boolean containsFirst = firstTempHolder.toLowerCase().contains(part.toLowerCase());
                     boolean containsSecond = secondTempHolder.toLowerCase().contains(part.toLowerCase());
@@ -167,8 +144,8 @@ public class UserList extends AppCompatActivity {
                 HashMap firstUser = (HashMap) firstUserObj;
                 HashMap secondUser = (HashMap) secondUserObj;
 
-                firstTempHolder = (String) firstUser.get("nickname");
-                secondTempHolder = (String) secondUser.get("nickname");
+                firstTempHolder = (String) firstUser.get("user_name");
+                secondTempHolder = (String) secondUser.get("user_name");
 
                 int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
                 return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
@@ -204,85 +181,80 @@ public class UserList extends AppCompatActivity {
                     mFunctions = FirebaseFunctions.getInstance();
                     mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
 
+                    mDatabase.child("southkernUsers").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // Success
+                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                userList.add(child.getValue());
+                            }
+                            originalUserList = userList;
 
-                    fetchUserList(PreferenceUtils.getFirebaseToken(UserList.this.getApplicationContext()))
-                            .addOnCompleteListener(new OnCompleteListener<HashMap>() {
+                            userListControls.setVisibility(View.VISIBLE);
+
+                            addressRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                            addressRecyclerView.setLayoutManager(mLayoutManager);
+                            addressRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                            mAdapter = new AddressAdapter(userList, UserList.this.getApplicationContext());
+                            addressRecyclerView.setAdapter(mAdapter);
+
+                            ((AddressAdapter) mAdapter).setOnItemClickListener(new AddressAdapter.ClickListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<HashMap> task) {
-                                    if (!task.isSuccessful()) {
-                                        Exception e = task.getException();
-                                        if (e instanceof FirebaseFunctionsException) {
-                                            FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
-                                            FirebaseFunctionsException.Code code = ffe.getCode();
-                                            Object details = ffe.getDetails();
+                                public void onItemClick(int position, View v) {
+                                    HashMap user = (HashMap) userList.get(position);
+                                    Intent intent = new Intent(UserList.this, ViewProfile.class);
+                                    intent.putExtra("userId", (String) user.get("user_id"));
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void onItemLongClick(int position, View v) {
+                                    Log.d("onItemLongClick pos = ", "" + position);
+                                }
+
+                            });
+
+                            mDatabase.child("statusUpdates").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
+                                        HashMap statusObj = (HashMap) mSnapshot.getValue();
+                                        Event tempEvent = new Event();
+                                        tempEvent.setDescription((String) statusObj.get("text"));
+                                        tempEvent.setSummary("Status update");
+
+                                        EventDateTime dummyTime = new EventDateTime();
+                                        Long dateTime = Long.parseLong(statusObj.get("createdAt").toString());
+                                        DateTime createdAtTime = new DateTime(dateTime);
+                                        dummyTime.setDate(createdAtTime);
+                                        tempEvent.setStart(dummyTime);
+
+                                        if (!alertEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
+                                            alertEvents.add(tempEvent);
                                         }
+
                                     }
 
-                                    Log.i("usertest", "" + task.getResult().get("users"));
-                                    // Success
-                                    userList = (List<Object>) task.getResult().get("users"); // new ArrayList<Object>(((HashMap<Object, Object>) task.getResult().get("users")).values());
-                                    originalUserList = userList;
+                                    Collections.reverse(alertEvents);
 
-                                    userListControls.setVisibility(View.VISIBLE);
+                                    mAdapter.notifyDataSetChanged();
+                                }
 
-                                    addressRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
-                                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                                    addressRecyclerView.setLayoutManager(mLayoutManager);
-                                    addressRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                    mAdapter = new AddressAdapter(userList, UserList.this.getApplicationContext());
-                                    addressRecyclerView.setAdapter(mAdapter);
-
-                                    ((AddressAdapter) mAdapter).setOnItemClickListener(new AddressAdapter.ClickListener() {
-                                        @Override
-                                        public void onItemClick(int position, View v) {
-                                            HashMap user = (HashMap) userList.get(position);
-                                            Intent intent = new Intent(UserList.this, ViewProfile.class);
-                                            intent.putExtra("userId", (String) user.get("user_id"));
-                                            startActivity(intent);
-                                        }
-
-                                        @Override
-                                        public void onItemLongClick(int position, View v) {
-                                            Log.d("onItemLongClick pos = ", "" + position);
-                                        }
-
-                                    });
-
-                                    mDatabase.child("statusUpdates").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                            for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
-                                                HashMap statusObj = (HashMap) mSnapshot.getValue();
-                                                Event tempEvent = new Event();
-                                                tempEvent.setDescription((String) statusObj.get("text"));
-                                                tempEvent.setSummary("Status update");
-
-                                                EventDateTime dummyTime = new EventDateTime();
-                                                Long dateTime = Long.parseLong(statusObj.get("createdAt").toString());
-                                                DateTime createdAtTime = new DateTime(dateTime);
-                                                dummyTime.setDate(createdAtTime);
-                                                tempEvent.setStart(dummyTime);
-
-                                                if (!alertEvents.contains(tempEvent) && tempEvent.getStart().getDate().getValue() > (twoWeekTime / 2)) {
-                                                    alertEvents.add(tempEvent);
-                                                }
-
-                                            }
-
-                                            Collections.reverse(alertEvents);
-
-                                            mAdapter.notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
                                 }
                             });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
                     sortName.setOnClickListener(new View.OnClickListener() {
                         @Override

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import com.eddierangel.southkern.android.R;
 
 // TODO: Add Documentation to Public Interface
+// Add a reference to the SendBird Documentation
 public class OpenChannelActivity extends AppCompatActivity{
 
     @Override
@@ -19,7 +20,7 @@ public class OpenChannelActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_channel);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_open_channel);
+        Toolbar toolbar = findViewById(R.id.toolbar_open_channel);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

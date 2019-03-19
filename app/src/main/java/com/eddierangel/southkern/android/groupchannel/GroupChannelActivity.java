@@ -9,18 +9,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.eddierangel.southkern.android.R;
-import com.eddierangel.southkern.android.openchannel.OpenChannelListFragment;
 
 
 // TODO: Add Documentation to Public Interface
+// Add a reference to the SendBird Documentation
 public class GroupChannelActivity extends AppCompatActivity{
+
+    private static final String TAG = "GroupChannelActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_channel);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_group_channel);
+        Toolbar toolbar = findViewById(R.id.toolbar_group_channel);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

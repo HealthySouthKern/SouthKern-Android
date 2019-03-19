@@ -7,11 +7,6 @@
     android:layout_height="match_parent"
     android:background="#f2f3f4"
     tools:context="com.eddierangel.southkern.android.main.MainActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:orientation="vertical">
 
 
     <android.support.design.widget.AppBarLayout
@@ -71,12 +66,11 @@
 
         </android.support.design.widget.NavigationView>
 
-        <Button
-            android:id="@+id/manage_submissions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Manage Event Submissions"
-            android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="70dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -90,31 +84,38 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center" />
 
-        <com.alamkanak.weekview.WeekView
-            android:id="@+id/weekView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            app:columnGap="8dp"
-            app:dayBackgroundColor="#05000000"
-            app:eventTextColor="@android:color/white"
-            app:headerColumnBackground="#ffffffff"
-            app:headerColumnPadding="8dp"
-            app:headerColumnTextColor="#8f000000"
-            app:headerRowBackgroundColor="#ffefefef"
-            app:headerRowPadding="12dp"
-            app:hourHeight="60dp"
-            app:noOfVisibleDays="3"
-            app:textSize="12sp"
-            app:todayBackgroundColor="#1848adff" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/manage_submissions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Manage Event Submissions"
+                    android:visibility="gone" />
+
+                <com.alamkanak.weekview.WeekView
+                    android:id="@+id/weekView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:columnGap="8dp"
+                    app:dayBackgroundColor="#05000000"
+                    app:eventTextColor="@android:color/white"
+                    app:headerColumnBackground="#ffffffff"
+                    app:headerColumnPadding="8dp"
+                    app:headerColumnTextColor="#8f000000"
+                    app:headerRowBackgroundColor="#ffefefef"
+                    app:headerRowPadding="12dp"
+                    app:hourHeight="60dp"
+                    app:noOfVisibleDays="3"
+                    app:textSize="12sp"
+                    app:todayBackgroundColor="#1848adff" />
+            </LinearLayout>
 
         </RelativeLayout>
-
-
-        <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/recycler_calendar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
 
     </LinearLayout>
 
