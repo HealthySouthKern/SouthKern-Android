@@ -22,9 +22,9 @@ android {
     }
 }
 
-repositories {
-    maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
-}
+//repositories {
+    //maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
+//}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
