@@ -1,18 +1,93 @@
-SendBird Android Sample UI
-===========
-The Sendbird Android Sample UI is a fully functional messaging app. In **Open Channels**, users can freely enter and chat with anyone within a channel. **Group Channels** can be created by inviting others into a private 1:1 chat or a group chat among multiple friends.
+<h1 align="center"> Building Healthy Communities App </h1> <br>
+<p align="center">
+  <a href="https://www.healthysouthkern.org">
+    <img alt="BHC" title="BHC" src="https://docs.google.com/uc?id=0Bxpf6hnE1MxYZlQxbHIweVJLMkNjYlpnX2l1YkljMkRhN0RN" width="250">
+  </a>
+</p>
 
+<p align="center">
+  BHC in your pocket. Built with SendBird and Firebase.
+</p>
+  <p align="center">
+  Coming Soon on iOS!
+</p>
 
+<p align="center">
+  <a href="">
+    <img alt="Download on the App Store" title="App Store" src="http://i.imgur.com/0n2zqHD.png" width="140">
+</a>
+
+ <a href="https://play.google.com/store/apps/details?id=com.eddierangel.southkern.android&ah=wpZEbn4e8TKbMdNAnc8bSIzzd5w">
+    <img alt="Get it on Google Play" title="Google Play" src="http://i.imgur.com/mtGRPuM.png" width="140">
+  </a>
+</p>
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of Contents
 
-  1. [Installation](#installation)
-  1. [Integrating the sample into your own app](#integrating-the-sample-into-your-own-app)
-  1. [Previous versions](#previous-versions)
-  1. [Contributing](#contributing)
-  
-## Installation
+- [Introduction](#introduction)
+- [Features](#features)
+- [Feedback](#feedback)
+- [Contributors](#contributors)
+- [Build Process](#build-process)
+- [Backers](#backers-)
+- [Sponsors](#sponsors-)
+- [Acknowledgments](#acknowledgments)
 
-You can open the sample project from **Android Studio**.
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Introduction
+
+**Available for Android.**
+
+<p align="center">
+  <img src ="https://docs.google.com/uc?id=1FKWDZoTaWq7YVb3mA6k8zGCIT6teSmgP" width=350>
+</p>
+
+## Features
+
+A few of the things you can do with BHC:
+
+* Sign in with Google
+* View activity feed
+* Create your own group channel with others
+* Join an open channel
+* Update and delete reminders
+* Look over calendar feed
+* Edit your profile
+* Automatic notifications
+* Easily search for contacts
+
+<p align="center">
+  <img src = "https://docs.google.com/uc?id=1ZTLod1L3AS3Sr4Egk0sm4ONv0JA704xy" width=350>
+</p>
+
+<p align="center">
+  <img src = "https://docs.google.com/uc?id=1KQAVU-2NwlVRUGKix_vbs1A1EisCnmEg" width=350>
+</p>
+
+## Feedback
+
+Feel free to send us feedback on [Twitter](https://twitter.com/bhcsouthkern) or [file an issue](info@healthysouthkern.org). Feature requests are always welcome.
+
+If there's anything you'd like to chat about, please feel free to email [BHC](edward.rangel@bakersfieldcollege.edu)!
+
+## Contributors
+
+This project is brought to you by these incredible contributors:
+
+* Eddie Rangel
+* James Schmiechen
+* Noah West
+* Alan Marin
+* Diana Balderas
+
+## Build Process
+
+- Follow the [SendBird Guide](https://facebook.github.io/react-native/docs/getting-started.html) for getting started building a project with native code. **A Mac is required if you wish to develop for iOS.**
+
+You can also open the sample project from **Android Studio**.
 
 Build and run the Sample UI project to play around with Open Channels and Group Channels.
 
@@ -31,18 +106,10 @@ Build and run the Sample UI project to play around with Open Channels and Group 
 
 If you wish to use parts of the sample for messaging in your own app, you must create a new SendBird application from the **[SendBird Dashboard](https://dashboard.sendbird.com)**. If you do not yet have an account, you can log in with Google, GitHub, or create a new account.
 
-After you create a SendBird application in the Dashboard, replace `APP_ID` in `BaseApplication` with your own App ID. You will then be able to manage the users and channels, as well as general settings of your messaging app, through your Dashboard.
+**Development Keys**: After you create a SendBird application in the Dashboard, replace `APP_ID` in `BaseApplication` with your own App ID. You will then be able to manage the users and channels, as well as general settings of your messaging app, through your Dashboard.
 
 > All users within the same SendBird application are able to communicate with each other, across all platforms. This means users using iOS, Android, web clients, etc. can all chat with one another. However, users in different SendBird applications cannot talk to each other.
 
-**For more information, please refer to our [documentation](https://docs.sendbird.com/android).**
+## Acknowledgments
 
-
-## Previous versions
-
-To view the version 2 sample, checkout the `v2` branch instead of `master.`
-
-
-## Contributing
-
-The SendBird Android Sample UI is fully open-source. All contributions and suggestions are welcome!
+Thanks to everyone who made an effort on building this amazing project for the community.
