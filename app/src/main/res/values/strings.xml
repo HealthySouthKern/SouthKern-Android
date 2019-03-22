@@ -21,12 +21,12 @@
     <string name="google_calendar_id">jfschmiechen@gmail.com</string>
 
     <!-- Twitter -->
-    <string name="twitter_consumer_key">000000000000000 </string>
-    <string name="twitter_consumer_secret">000000000000000</string>
+    <string name="twitter_consumer_key">KBTW1JU8TXR2c8bDKNsplOYoN</string>
+    <string name="twitter_consumer_secret">f5Gg2xddiSz1NNzJZT8bJVNHBVDHA3SS9ky20UWJjIyIxrXtj9</string>
 
     <!-- Facebook -->
-    <string name="facebook_app_id">000000000000000</string>
-    <string name="fb_login_protocol_scheme">000000000000000</string>
+    <string name="facebook_app_id">296130564334095</string>
+    <string name="fb_login_protocol_scheme">fb296130564334095</string>
 
     <!-- all -->
     <string name="all_app_version">Healthy South Kern v%1$s</string>
