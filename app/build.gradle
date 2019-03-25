@@ -20,18 +20,12 @@ android {
     }
     productFlavors {
     }
-<<<<<<< HEAD
+
 }
 
-//repositories {
-    //maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
-//}
-=======
     sourceSets {
         main { java.srcDirs = ['src/main/java', 'src/androidTest/java', 'src/test/java'] }
     }
-}
->>>>>>> 807c91f38dadec020cd34a6254eef558c9ce358a
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
