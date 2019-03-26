@@ -63,6 +63,8 @@ import com.eddierangel.southkern.android.utils.InternetCheck;
 // TODO: Add Documentation to Public Interface
 public class MainActivity extends AppCompatActivity {
 
+    final String TAG = "MainActivity";
+
     private Toolbar mToolbar;
     private NavigationView mNavView, alertNavView;
     private ImageButton navButton, viewAlertButton;
@@ -390,9 +392,8 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
 
-                } else if (id == R.id.nav_item_disconnect) {
-                    // Unregister push tokens and disconnect
-                    disconnect();
+                } else if (id == R.id.nav_item_sign_off) {
+                    signOut();
                     return true;
                 }
 
@@ -461,12 +462,27 @@ public class MainActivity extends AppCompatActivity {
         // [END clean_basic_listen]
     }
 
+    public void signOut() {
+        // [START auth_fui_signout]
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            disconnect();
+                        }else{
+                            LogUtility.e(TAG, "Sign Out was not successful.");
+                        }
+                    }
+                });
+        // [END auth_fui_signout]
+    }
+
     /**
      * Unregisters all push tokens for the current user so that they do not receive any notifications,
      * then disconnects from SendBird.
      */
     private void disconnect() {
-        AuthUI.getInstance().signOut(this);
 
         SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
             @Override
