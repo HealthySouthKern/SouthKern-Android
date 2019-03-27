@@ -12,25 +12,26 @@
             android:title="@string/open_channels" />
         <item
             android:id="@+id/nav_item_calendar"
-            android:icon="@drawable/baseline_event_black_18dp"
-            android:title="Calendar" />
-        <item
-            android:id="@+id/nav_item_view_own_profile"
-            android:icon="@drawable/ic_open_channels"
-            android:title="My Profile" />
+            android:icon="@drawable/baseline_event_black_36dp"
             android:title="@string/calendar" />
         <item
             android:id="@+id/nav_item_user_list"
             android:icon="@drawable/baseline_book_black_36dp"
             android:title="@string/address_book" />
+        <item
+            android:id="@+id/nav_item_view_own_profile"
+            android:icon="@drawable/baseline_assignment_ind_black_36dp"
+            android:title="@string/my_profile" />
+        <item
+            android:id="@+id/nav_item_settings"
+            android:icon="@drawable/baseline_settings_black_36"
+            android:title="@string/settings" />
 
     </group>
-
-    <group android:id="@+id/nav_group_actions"
-        android:checkableBehavior="single">
+    <group android:checkableBehavior="none">
         <item
-            android:id="@+id/nav_item_disconnect"
-            android:icon="@drawable/ic_disconnect"
-            android:title="@string/disconnect" />
+            android:id="@+id/nav_item_sign_off"
+            android:icon="@drawable/baseline_exit_to_app_black_48dp"
+            android:title="@string/sign_off" />
     </group>
 </menu>

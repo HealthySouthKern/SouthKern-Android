@@ -9,6 +9,32 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
+    <style name="SettingsTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionBarStyle">@style/ActionBar.Style</item>
+    </style>
+    <!-- style for the action bar backgrounds -->
+    <style name="ActionBar.Style" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="background">@color/colorPrimary</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="titleTextStyle">@style/ActionBar.TitleTextStyle</item>
+        <item name="homeAsUpIndicator">@drawable/baseline_arrow_back_white_18dp</item>
+    </style>
+
+    <!-- Text -->
+    <style name="ActionBar.TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
     <style name="Toolbar">
         <item name="android:textColorPrimary">#ffffff</item>
     </style>

@@ -59,8 +59,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void load() {
         try {
-            File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
-            appDir.mkdirs();
+            File appDir = new File(mContext.getFilesDir(), SendBird.getApplicationId());
 
             File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".data");
 
@@ -97,8 +96,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 String md5 = TextUtils.generateMD5(data);
 
                 // Save the data into file.
-                File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
-                appDir.mkdirs();
+                File appDir = new File(mContext.getFilesDir(), SendBird.getApplicationId());
 
                 File hashFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".hash");
                 File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".data");
