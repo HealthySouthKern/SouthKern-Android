@@ -38,6 +38,7 @@ import com.eddierangel.southkern.android.utils.CalendarAuthorization;
 import com.eddierangel.southkern.android.utils.EventManager;
 import com.eddierangel.southkern.android.utils.EventParser;
 import com.eddierangel.southkern.android.utils.InternetCheck;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.eddierangel.southkern.android.utils.ReconnectionManager;
 import com.google.android.gms.tasks.Continuation;
@@ -200,7 +201,7 @@ public class CalendarActivity extends AppCompatActivity {
                     createEventDialogue = new Dialog(CalendarActivity.this);
                     editEventDialogue = new Dialog(CalendarActivity.this);
                     viewEventDialogue = new Dialog(CalendarActivity.this);
-                    Log.i("userdata", "" + userData);
+                    LogUtility.i(TAG, "OnCreate: InternetCheck: userdata: " + userData);
                     if (userData.get("user_type") != null) {
                         if (userData.get("user_type").equals("admin")) {
                             Credential credential;
@@ -219,7 +220,7 @@ public class CalendarActivity extends AppCompatActivity {
                                         .setApplicationName(APPLICATION_NAME)
                                         .build();
                             } catch (Exception e) {
-                                Log.e(TAG, "OnCreate: InternetCheck: credential failed: " + e);
+                                LogUtility.e(TAG, "OnCreate: InternetCheck: credential failed: " + e);
                                 e.printStackTrace();
                             }
                         }
@@ -298,7 +299,7 @@ public class CalendarActivity extends AppCompatActivity {
                                                 try {
                                                     deleteEvent.execute(params);
                                                 } catch (Exception e) {
-                                                    Log.e(TAG, "onCreate: deleteEvent: delete event err: " + e);
+                                                    LogUtility.e(TAG, "onCreate: deleteEvent: delete event err: " + e);
                                                     e.printStackTrace();
                                                 }
                                             }
@@ -394,19 +395,19 @@ public class CalendarActivity extends AppCompatActivity {
                                     try {
                                         insertEvent.execute(params);
                                     } catch (Exception e) {
-                                        Log.e(TAG, "onCreate: insertEvent: insert event err: " + e);
+                                        LogUtility.e(TAG, "onCreate: insertEvent: insert event err: " + e);
                                         e.printStackTrace();
                                     }
                                 } else {
                                     Event.Creator dummyCreator = new Event.Creator();
                                     dummyCreator.setDisplayName(userData.get("user_name"));
                                     dummyEvent.setCreator(dummyCreator);
-                                    Log.i(TAG, "onCreate: setCreator: created sub: " + dummyCreator);
+                                    LogUtility.i(TAG, "onCreate: setCreator: created sub: " + dummyCreator);
                                     mDatabase.child("submissions").child(name).setValue(dummyEvent).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             //Failed
-                                            Log.i(TAG, "onCreate: database: " + e);
+                                            LogUtility.i(TAG, "onCreate: database: " + e);
                                             e.printStackTrace();
                                         }
                                     });
@@ -488,7 +489,7 @@ public class CalendarActivity extends AppCompatActivity {
                             try {
                                 updateEvent.execute(params);
                             } catch (Exception e) {
-                                Log.e(TAG, "onCreate: updateEvent: update error: " + e);
+                                LogUtility.e(TAG, "onCreate: updateEvent: update error: " + e);
                                 e.printStackTrace();
                             }
 
@@ -598,10 +599,10 @@ public class CalendarActivity extends AppCompatActivity {
                                         mDatabase.child("submissions").addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                Log.i(TAG, "onCreate: onDataChange: databaseval: " + dataSnapshot.getValue());
+                                                LogUtility.i(TAG, "onCreate: onDataChange: databaseval: " + dataSnapshot.getValue());
                                                 listOfSubmissions.clear();
                                                 for (DataSnapshot mSnapshot : dataSnapshot.getChildren()) {
-                                                    Log.i(TAG, "onCreate: onDataChange: databaseval2: " + mSnapshot.getValue());
+                                                    LogUtility.i(TAG, "onCreate: onDataChange: databaseval2: " + mSnapshot.getValue());
                                                     Event event = EventParser.parseSingleEvent(mSnapshot.getValue());
                                                     if (event.getCreator().getDisplayName().equals(username)) {
                                                         listOfSubmissions.add(event);
@@ -698,7 +699,7 @@ public class CalendarActivity extends AppCompatActivity {
                                     WeekViewEvent weekEvent = new WeekViewEvent();
                                     for (Field field : aClass.getDeclaredFields()) {
                                         field.setAccessible(true);
-                                        Log.i(TAG, "onCreate: field: " + field.getName());
+                                        LogUtility.i(TAG, "onCreate: field: " + field.getName());
                                         switch (field.getName()) {
                                             case "end":
                                                 java.util.Calendar endCalendar = new GregorianCalendar();
@@ -715,7 +716,7 @@ public class CalendarActivity extends AppCompatActivity {
                                                     date = simpleDateFormat.parse(end);
                                                     endMillis = date.getTime();
                                                 } catch (ParseException e) {
-                                                    Log.e(TAG, "onCreate: getTime (720): err: " + e);
+                                                    LogUtility.e(TAG, "onCreate: getTime (720): err: " + e);
                                                 }
                                                 endCalendar.setTimeInMillis(endMillis);
                                                 weekEvent.setEndTime(endCalendar);
@@ -735,7 +736,7 @@ public class CalendarActivity extends AppCompatActivity {
                                                     startDate = simpleDateFormatStart.parse(start);
                                                     startMillis = startDate.getTime();
                                                 } catch (ParseException e) {
-                                                    Log.e(TAG, "onCreate: getTime (740): err: " + e);
+                                                    LogUtility.e(TAG, "onCreate: getTime (740): err: " + e);
                                                 }
                                                 startCalendar.setTimeInMillis(startMillis);
                                                 weekEvent.setStartTime(startCalendar);
@@ -757,7 +758,7 @@ public class CalendarActivity extends AppCompatActivity {
                                                 }
 
                                                 // Decided to forgo porting colors from google calendar events to save time
-//                                        Log.i(TAG, "color: " + event.getColorId());
+//                                        LogUtility.i(TAG, "color: " + event.getColorId());
 //                                        if (event.getColorId() != null) {
 //                                            weekEvent.setColor(Color.parseColor(event.getColorId()));
 //                                        }

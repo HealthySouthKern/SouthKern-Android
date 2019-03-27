@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.ImageUtils;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -144,7 +145,7 @@ public class ViewProfile extends AppCompatActivity {
                     });
                 }
                 catch (Exception e) {
-                    Log.e(TAG, "onCreate: InsideTaskComplete: Error getting user or creating map");
+                    LogUtility.e(TAG, "onCreate: InsideTaskComplete: Error getting user or creating map");
                 }
             }
         });

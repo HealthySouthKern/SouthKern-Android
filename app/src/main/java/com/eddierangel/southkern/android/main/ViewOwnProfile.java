@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.ImageUtils;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,7 +64,7 @@ public class ViewOwnProfile extends AppCompatActivity {
             profileImageUrl = user.get("user_picture");
         }
         catch (Exception e) {
-            Log.e(TAG, "onCreate: getMetaData: User Missing Metadata");
+            LogUtility.e(TAG, "onCreate: getMetaData: User Missing Metadata");
         }
 
 
@@ -75,7 +76,7 @@ public class ViewOwnProfile extends AppCompatActivity {
                 ImageUtils.displayImageFromUrl(ViewOwnProfile.this, profileImageUrl, userProfileImage, new RequestListener() {
                     @Override
                     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
-                        Log.e("error fetching image", "" + e);
+                        LogUtility.e(TAG, "error fetching image" + e);
                         return false;
                     }
 
@@ -87,7 +88,7 @@ public class ViewOwnProfile extends AppCompatActivity {
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "onCreate: load profileImage: null profileImageUrl");
+            LogUtility.e(TAG, "onCreate: load profileImage: null profileImageUrl");
         }
 
         EditText nameEditText = (EditText)findViewById(R.id.text_user_real_name);

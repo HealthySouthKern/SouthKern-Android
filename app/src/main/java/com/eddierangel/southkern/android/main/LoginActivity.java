@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG,"networkChangeReceiver: app: Network connectivity change");
+            LogUtility.d(TAG,"networkChangeReceiver: app: Network connectivity change");
 
             Bundle bundle = intent.getExtras();
 

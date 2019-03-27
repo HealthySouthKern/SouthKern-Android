@@ -94,7 +94,7 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder
                 holder.time.setTextColor(Color.WHITE);
 
             } catch(Exception e) {
-                Log.i(TAG, "onBindViewHolder: status parse err: " + e);
+                LogUtility.i(TAG, "onBindViewHolder: status parse err: " + e);
             }
         }
     }

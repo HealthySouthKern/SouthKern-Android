@@ -109,7 +109,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                 String formattedStartTime = timeFormat.format(parsedStartDate);
                 holder.time.setText(formattedStartTime + " - " + formattedEndTime);
             } catch(Exception e) {
-                Log.i(TAG, "onBindViewHolder: get dates: date parse err: " + e);
+                LogUtility.i(TAG, "onBindViewHolder: get dates: date parse err: " + e);
                 e.printStackTrace();
             }
         }

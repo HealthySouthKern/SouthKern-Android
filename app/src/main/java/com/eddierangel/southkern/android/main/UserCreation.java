@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -45,6 +46,7 @@ import retrofit2.Call;
 
 public class UserCreation extends AppCompatActivity {
 
+    private static final String TAG = "UserCreation";
     private TextInputEditText mUserPosition, mUserOrganization;
     private Button mFinishUserButton;
     private LoginButton facebookButton;
@@ -187,7 +189,7 @@ public class UserCreation extends AppCompatActivity {
                         mFinishUserButton.setEnabled(true);
                         twitterButton.setEnabled(true);
                         facebookButton.setEnabled(true);
-                        Log.d(TAG, "onCreate: failure: Verify Credentials Failure", e);
+                        LogUtility.d(TAG, "onCreate: failure: Verify Credentials Failure " + e);
                     }
                 });
             }
@@ -257,7 +259,7 @@ public class UserCreation extends AppCompatActivity {
                                                 mFinishUserButton.setEnabled(true);
                                                 twitterButton.setEnabled(false);
                                             } catch (Exception e) {
-                                                Log.i("graph err", "" + e);
+                                                LogUtility.i(TAG, "graph err: " + e);
                                                 e.printStackTrace();
                                             }
                                         }
@@ -277,7 +279,7 @@ public class UserCreation extends AppCompatActivity {
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Log.e("Facebook auth error: ", "" + exception);
+                        LogUtility.e(TAG, "onCreate: onError: Facebook auth error: " + exception);
                         mFinishUserButton.setEnabled(true);
                         twitterButton.setEnabled(true);
                         facebookButton.setEnabled(true);

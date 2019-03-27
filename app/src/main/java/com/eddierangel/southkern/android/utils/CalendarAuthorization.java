@@ -63,7 +63,7 @@ public class CalendarAuthorization extends AsyncTask<Object, Void, Credential> {
         try {
             return getCredentials(params);
         } catch (IOException e) {
-            Log.e(TAG, "getCredentials: Credentials IO exception: " + e);
+            LogUtility.e(TAG, "getCredentials: Credentials IO exception: " + e);
             e.printStackTrace();
             return null;
         }
@@ -85,7 +85,7 @@ public class CalendarAuthorization extends AsyncTask<Object, Void, Credential> {
         HashMap mapParams = (HashMap) params[0];
         final Context mContext = (Context) mapParams.get("context");
         NetHttpTransport HTTP_TRANSPORT = (NetHttpTransport) mapParams.get("transport");
-        Log.i(TAG, "getCredentials: params: " + HTTP_TRANSPORT + " : " + mContext);
+        LogUtility.i(TAG, "getCredentials: params: " + HTTP_TRANSPORT + " : " + mContext);
 
         // Load client secrets.
         InputStream in = mContext.getResources().openRawResource(R.raw.credentials);

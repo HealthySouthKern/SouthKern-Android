@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -162,7 +163,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 mChannelList.remove(mChannelList.get(i));
                 mChannelList.add(0, groupChannel);
                 notifyDataSetChanged();
-                Log.v(TAG, "updateOrInsert: Channel replaced.");
+                LogUtility.v(TAG, "updateOrInsert: Channel replaced.");
                 return;
             }
         }

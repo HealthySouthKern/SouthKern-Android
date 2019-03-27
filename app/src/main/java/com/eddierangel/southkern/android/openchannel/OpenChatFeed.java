@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.eddierangel.southkern.android.R;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBirdException;
@@ -43,14 +44,14 @@ public class OpenChatFeed extends AppCompatActivity {
             @Override
             public void onResult(List<OpenChannel> channels, SendBirdException e) {
                 if (e != null) {    // Error.
-                    Log.i(TAG, "onCreate: createOpenChannelListQuery: channelerr: " + e);
+                    LogUtility.i(TAG, "onCreate: createOpenChannelListQuery: channelerr: " + e);
                     return;
                 }
 
                 for (OpenChannel channel : channels) {
                     if (channel.getName().equals(channelName)) {
                         channelURL = channel.getUrl();
-                        Log.i(TAG, "onCreate: getUrl: channelurl: " + channelURL);
+                        LogUtility.i(TAG, "onCreate: getUrl: channelurl: " + channelURL);
                     }
                 }
 

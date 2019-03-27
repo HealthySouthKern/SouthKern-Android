@@ -80,7 +80,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final HashMap user = (HashMap) userList.get(position);
-        Log.i("InsideT4", "" + user);
+        LogUtility.i(TAG, "InsideT4: " + user);
         userProfileUrl = (String) user.get("user_picture");
         userName = (String) user.get("user_name");
         userEmailText = (String) user.get("user_id");

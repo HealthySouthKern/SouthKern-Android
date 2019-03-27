@@ -52,7 +52,7 @@ public class EventManager {
                 return null;
 
             } catch(Exception e) {
-                Log.e(TAG, "doInBackground: patch: insert error: " + e);
+                LogUtility.e(TAG, "doInBackground: patch: insert error: " + e);
                 e.printStackTrace();
                 return null;
             }
@@ -87,13 +87,13 @@ public class EventManager {
             Calendar service = (Calendar) mapParams.get("service");
             Event dummyEvent = (Event) mapParams.get("event");
 
-            Log.i(TAG, "doInBackground: datetimedevent: " + dummyEvent);
+            LogUtility.i(TAG, "doInBackground: datetimedevent: " + dummyEvent);
             try {
                 service.events().insert(calendarID, dummyEvent).execute();
                 callingParams = params[0];
                 return null;
             } catch(Exception e) {
-                Log.e(TAG, "doInBackground: insert: insert error:" + e);
+                LogUtility.e(TAG, "doInBackground: insert: insert error:" + e);
                 e.printStackTrace();
                 return null;
             }
@@ -132,7 +132,7 @@ public class EventManager {
                 callingParams = params[0];
                 return null;
             } catch(Exception e) {
-                Log.e(TAG, "doInBackground: delete: delete error: " + e);
+                LogUtility.e(TAG, "doInBackground: delete: delete error: " + e);
                 e.printStackTrace();
                 return null;
             }
@@ -164,7 +164,7 @@ public class EventManager {
             try {
                 return service.events().list(calendarID).execute();
             } catch(Exception e) {
-                Log.e(TAG, "doInBackground: list: refetch events error: " + e);
+                LogUtility.e(TAG, "doInBackground: list: refetch events error: " + e);
                 e.printStackTrace();
                 return null;
             }
