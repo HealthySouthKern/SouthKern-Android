@@ -73,6 +73,8 @@
                     android:id="@+id/feed_description"
                     android:layout_width="match_parent"
                     android:layout_below="@+id/feed_location"
+                    android:ellipsize="end"
+                    android:maxLines="4"
                     android:layout_height="wrap_content" />
 
             </RelativeLayout>

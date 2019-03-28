@@ -94,13 +94,13 @@ public class UserList extends AppCompatActivity {
                 secondTempHolder = (String) secondUser.get("user_organization");
 
 
-                if (!firstTempHolder.isEmpty() && !secondTempHolder.isEmpty()) {
+                if (firstTempHolder != null && secondTempHolder != null) {
 
 
                     int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
                     return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
 
-                } else if (!firstTempHolder.isEmpty()) {
+                } else if (firstTempHolder != null) {
                     return -1;
                 } else {
                     return 1;
@@ -152,6 +152,14 @@ public class UserList extends AppCompatActivity {
 
                 firstTempHolder = (String) firstUser.get("user_name");
                 secondTempHolder = (String) secondUser.get("user_name");
+
+                if (firstTempHolder == null) {
+                    return -1;
+                }
+
+                if (secondTempHolder == null) {
+                    return 1;
+                }
 
                 int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
                 return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);

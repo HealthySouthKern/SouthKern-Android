@@ -10,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private OnClickListener mNavButtonListener;
     private OnClickListener mViewAlertButtonListener;
     private OnClickListener msubmitStatusUpdateButtonListener;
-    private Task<Events> mEventItems;
+    private Task<List<Event>> mEventItems;
     private RelativeLayout alertCreationLayout;
     private List<Event> events, dummyEvents = new ArrayList<>(), alertEvents = new ArrayList<>();
     private EditText statusText;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private long twoWeekTime = 1209600000;
 
 
-    private Task<Events> getCalendarEvents(String firebaseToken) {
+    private Task<List<Event>> getCalendarEvents(String firebaseToken) {
         // Create the arguments to the callable function.
         Map<String, Object> data = new HashMap<>();
         data.put("firebaseToken", firebaseToken);
@@ -101,13 +102,13 @@ public class MainActivity extends AppCompatActivity {
         return mFunctions
                 .getHttpsCallable("getCalendarEvents")
                 .call(data)
-                .continueWith(new Continuation<HttpsCallableResult, Events>() {
+                .continueWith(new Continuation<HttpsCallableResult, List<Event>>() {
                     @Override
-                    public Events then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                    public List<Event> then(@NonNull Task<HttpsCallableResult> task) throws Exception {
                         // This continuation runs on either success or failure, but if the task
                         // has failed then getResult() will throw an Exception which will be
                         // propagated down.
-                        return EventParser.parse(task.getResult().getData());
+                        return EventParser.parse((List) task.getResult().getData());
                     }
                 });
     }
@@ -162,11 +163,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void filterEvents(List<Event> events) {
-        for (Event event : events) {
-            if (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime &&
-                    event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime) &&
-                    !dummyEvents.contains(event)) {
-                dummyEvents.add(event);
+        if (events != null) {
+            for (Event event : events) {
+                Log.i("EVENT TIME FILTER", "" + (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime));
+                Log.i("EVENT TIME FILTER2", "" + (event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime)));
+                if (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime &&
+                        event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime) &&
+                        !dummyEvents.contains(event)) {
+                    dummyEvents.add(event);
+                }
             }
         }
     }
@@ -297,9 +302,9 @@ public class MainActivity extends AppCompatActivity {
     private void setupCalendar() {
 
         mEventItems = getCalendarEvents(PreferenceUtils.getFirebaseToken(MainActivity.this.getApplicationContext()));
-        mEventsListener = new OnCompleteListener<Events>() {
+        mEventsListener = new OnCompleteListener<List<Event>>() {
             @Override
-            public void onComplete(@NonNull Task<Events> task) {
+            public void onComplete(@NonNull Task<List<Event>> task) {
                 if (!task.isSuccessful()) {
                     Exception e = task.getException();
                     if (e instanceof FirebaseFunctionsException) {
@@ -309,7 +314,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 // Success
-                events = task.getResult().getItems();
+                Log.i("EVENTS_LIST", "" + task.getResult());
+                events = task.getResult();
 
                 // Filter events that are too old or too far in the future.
                 // Keep events that are within one month of now, or two weeks in the past.
@@ -407,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         feedRecyclerView.setLayoutManager(mLayoutManager);
         feedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
+        Log.i("EVENT LIST FEED", "" + dummyEvents);
         mAdapter = new FeedAdapter(dummyEvents, MainActivity.this.getApplicationContext());
         feedRecyclerView.setAdapter(mAdapter);
     }
@@ -457,8 +463,13 @@ public class MainActivity extends AppCompatActivity {
     private void cleanBasicListener() {
         // Clean up value listener
         // [START clean_basic_listen]
-        mSouthKernUserRef.removeEventListener(mSouthKernUserListener);
-        mStatusUpdatesRef.removeEventListener(mStatusUpdatesListener);
+        if (mSouthKernUserListener != null) {
+            mSouthKernUserRef.removeEventListener(mSouthKernUserListener);
+        }
+
+        if (mStatusUpdatesListener != null) {
+            mStatusUpdatesRef.removeEventListener(mStatusUpdatesListener);
+        }
         // [END clean_basic_listen]
     }
 

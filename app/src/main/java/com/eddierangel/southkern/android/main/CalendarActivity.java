@@ -84,7 +84,7 @@ import java.util.TimeZone;
 // TODO: Add Documentation to Public Interface
 public class CalendarActivity extends AppCompatActivity {
 
-    private Events events;
+    private List<Event> events;
     private List<Event> listOfSubmissions = new ArrayList<>();
     private boolean editTimeButtonClicked;
     private WeekView mWeekView;
@@ -112,7 +112,7 @@ public class CalendarActivity extends AppCompatActivity {
     private List<Event> alertEvents = new ArrayList<>();
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-    private Task<Events> getCalendarEvents(String firebaseToken) {
+    private Task<List<Event>> getCalendarEvents(String firebaseToken) {
         // Create the arguments to the callable function.
         Map<String, Object> data = new HashMap<>();
         data.put("firebaseToken", firebaseToken);
@@ -120,20 +120,20 @@ public class CalendarActivity extends AppCompatActivity {
         return mFunctions
                 .getHttpsCallable("getCalendarEvents")
                 .call(data)
-                .continueWith(new Continuation<HttpsCallableResult, Events>() {
+                .continueWith(new Continuation<HttpsCallableResult, List<Event>>() {
                     @Override
-                    public Events then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                    public List<Event> then(@NonNull Task<HttpsCallableResult> task) throws Exception {
                         // This continuation runs on either success or failure, but if the task
                         // has failed then getResult() will throw an Exception which will be
                         // propagated down.
-                        return EventParser.parse(task.getResult().getData());
+                        return EventParser.parse((List) task.getResult().getData());
                     }
                 });
     }
 
     private List<Event> getEvents(int newYear, int newMonth) {
         if (events != null) {
-            List<Event> listOfEvents = events.getItems();
+            List<Event> listOfEvents = events;
             if (!listOfSubmissions.isEmpty()) {
                 listOfEvents.addAll(listOfSubmissions);
             }
@@ -199,7 +199,7 @@ public class CalendarActivity extends AppCompatActivity {
                     createEventDialogue = new Dialog(CalendarActivity.this);
                     editEventDialogue = new Dialog(CalendarActivity.this);
                     viewEventDialogue = new Dialog(CalendarActivity.this);
-                    Log.i("userdata", "" + userData);
+
                     if (userData.get("user_type") != null) {
                         if (userData.get("user_type").equals("admin")) {
                             Credential credential;
@@ -282,10 +282,10 @@ public class CalendarActivity extends AppCompatActivity {
                                                 params.put("calendarID", CALENDAR_ID);
                                                 params.put("id", eventToView.getId());
 
-                                                List<Event> listOfEvents = events.getItems();
+                                                List<Event> listOfEvents = events;
                                                 for (int i = 0; i < listOfEvents.size(); i++) {
                                                     if (listOfEvents.get(i).getId().equals(eventToView.getId())) {
-                                                        events.getItems().remove(i);
+                                                        events.remove(i);
                                                     }
                                                 }
 
@@ -378,7 +378,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                                 // Perform optimistic UI update
                                 if (userData.get("user_type").equals("admin")) {
-                                    events.getItems().add(dummyEvent);
+                                    events.add(dummyEvent);
                                     mWeekView.notifyDatasetChanged();
                                 }
 
@@ -466,10 +466,10 @@ public class CalendarActivity extends AppCompatActivity {
                             }
 
                             // Perform optimistic UI update
-                            List<Event> listOfEvents = events.getItems();
+                            List<Event> listOfEvents = events;
                             for (int i = 0; i < listOfEvents.size(); i++) {
                                 if (listOfEvents.get(i).getId().equals(eventToView.getId())) {
-                                    Event dummyEvent = events.getItems().get(i);
+                                    Event dummyEvent = events.get(i);
                                     dummyEvent.setSummary(newEventName);
                                     dummyEvent.setLocation(newEventLocation);
                                     dummyEvent.setDescription(newEventDescription);
@@ -514,9 +514,9 @@ public class CalendarActivity extends AppCompatActivity {
                     alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
 
                     getCalendarEvents(PreferenceUtils.getFirebaseToken(CalendarActivity.this.getApplicationContext()))
-                            .addOnCompleteListener(new OnCompleteListener<Events>() {
+                            .addOnCompleteListener(new OnCompleteListener<List<Event>>() {
                                 @Override
-                                public void onComplete(@NonNull Task<Events> task) {
+                                public void onComplete(@NonNull Task<List<Event>> task) {
                                     if (!task.isSuccessful()) {
                                         Exception e = task.getException();
                                         if (e instanceof FirebaseFunctionsException) {
@@ -526,15 +526,20 @@ public class CalendarActivity extends AppCompatActivity {
                                         }
                                     }
                                     // Success
-                                    events = task.getResult();
+                                    Log.i("EVENTS RESULT", "" + task.getResult());
+                                    events = (List<Event>) task.getResult();
+
+                                    Log.i("EVENTS CALENDAR", "" + events);
 
                                     // Set time on calendar to the time of the first event. This stops the calendar from starting at weird times such
                                     // as 1 AM which could cause confusion.
-                                    String start = events.getItems().get(0).getStart().getDate().toString();
-                                    String hours = start.substring(11, 13);
-                                    String minutes = start.substring(14, 16);
-                                    double timeToStart = Double.parseDouble(hours + "." + minutes);
-                                    mWeekView.goToHour(timeToStart - 2.0);
+                                    if (events != null) {
+                                        String start = events.get(0).getStart().getDate().toString();
+                                        String hours = start.substring(11, 13);
+                                        String minutes = start.substring(14, 16);
+                                        double timeToStart = Double.parseDouble(hours + "." + minutes);
+                                        mWeekView.goToHour(timeToStart - 2.0);
+                                    }
 
                                     mLogo.setVisibility(View.VISIBLE);
                                     mWeekView.setVisibility(View.VISIBLE);
@@ -591,7 +596,7 @@ public class CalendarActivity extends AppCompatActivity {
                                     });
 
                                     if (userData.get("user_type").equals("admin")) {
-                                        submissionButton.setVisibility(View.VISIBLE);
+                                        //submissionButton.setVisibility(View.VISIBLE);
                                     } else {
                                         final String username = userData.get("user_name");
                                         mDatabase.child("submissions").addValueEventListener(new ValueEventListener() {
@@ -634,7 +639,7 @@ public class CalendarActivity extends AppCompatActivity {
                             // because of this, we do not allow gray events to be edited.
                             if (event.getColor() == Color.GRAY) return;
                             // TODO: add validation to the case where event does not have a name. (event.getName() returns null reference)
-                            for (Event eventObj : events.getItems()) {
+                            for (Event eventObj : events) {
                                 if (event.getName().equals(eventObj.getSummary())) {
                                     eventToView = eventObj;
                                 }
@@ -658,7 +663,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 editEventDescription.setText(eventToView.getDescription());
                                 selectTimeButtonEdit.setText("Ending at " + sdt);
 
-                                editEventDialogue.show();
+                                //editEventDialogue.show();
                             } else {
                                 viewEventName = (TextView) viewEventDialogue.findViewById(R.id.event_name_view);
                                 viewEventLocation = (TextView) viewEventDialogue.findViewById(R.id.event_location_view);
@@ -668,7 +673,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 viewEventLocation.setText(eventToView.getLocation());
                                 viewEventDescription.setText(eventToView.getDescription());
 
-                                viewEventDialogue.show();
+                                //viewEventDialogue.show();
                             }
                         }
                     };
@@ -677,13 +682,12 @@ public class CalendarActivity extends AppCompatActivity {
                     WeekView.EmptyViewLongPressListener emptyViewLongPressListener = new WeekView.EmptyViewLongPressListener() {
                         @Override
                         public void onEmptyViewLongPress(java.util.Calendar time) {
-                            timePressed = time;
-                            createEventDialogue.show();
+                            //timePressed = time;
+                            //createEventDialogue.show();
                         }
                     };
                     mWeekView.setEmptyViewLongPressListener(emptyViewLongPressListener);
 
-                    /* TODO: assign event id to weekview id. its possible two events will have the same name. */
                     MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
                         @Override
                         public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
@@ -692,12 +696,12 @@ public class CalendarActivity extends AppCompatActivity {
                             Event dummyEvent = new Event();
                             if (events != null) {
                                 List<Event> listOfEvents = getEvents(newYear, newMonth);
+                                Log.i("RETRIEVED EVENTS", ""  + listOfEvents);
                                 Class aClass = dummyEvent.getClass();
                                 for (Event event : listOfEvents) {
                                     WeekViewEvent weekEvent = new WeekViewEvent();
                                     for (Field field : aClass.getDeclaredFields()) {
                                         field.setAccessible(true);
-                                        Log.i("field", "" + field.getName());
                                         switch (field.getName()) {
                                             case "end":
                                                 java.util.Calendar endCalendar = new GregorianCalendar();
@@ -717,6 +721,7 @@ public class CalendarActivity extends AppCompatActivity {
                                                     Log.e("err", "" + e);
                                                 }
                                                 endCalendar.setTimeInMillis(endMillis);
+                                                Log.i("WEEK EVENT TIME", "" + endCalendar);
                                                 weekEvent.setEndTime(endCalendar);
 
                                             case "start":
@@ -737,13 +742,13 @@ public class CalendarActivity extends AppCompatActivity {
                                                     Log.e("err", "" + e);
                                                 }
                                                 startCalendar.setTimeInMillis(startMillis);
+                                                Log.i("WEEK EVENT TIME", "" + startCalendar);
+
                                                 weekEvent.setStartTime(startCalendar);
 
                                             case "id":
                                                 if (event.getEtag() != null) {
                                                     weekEvent.setId(Long.parseLong(event.getEtag().replace("\"", "")));
-                                                } else {
-                                                    weekEvent.setId(new Random().nextInt(20000) + 1000);
                                                 }
 
                                             case "name":
@@ -765,6 +770,7 @@ public class CalendarActivity extends AppCompatActivity {
                                     }
                                     filteredEvents.add(weekEvent);
                                 }
+                                Log.i("FILTERED EVENTS", "" + filteredEvents);
                                 return filteredEvents;
                             } else {
                                 return filteredEvents;
@@ -780,7 +786,7 @@ public class CalendarActivity extends AppCompatActivity {
     // UI handlers
 
     public void handleEventChange(Events refetchedEvents) {
-        events = refetchedEvents;
+        events = refetchedEvents.getItems();
         mWeekView.notifyDatasetChanged();
     }
 
