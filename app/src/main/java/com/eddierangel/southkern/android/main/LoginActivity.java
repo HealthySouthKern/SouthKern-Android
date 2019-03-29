@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -78,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            LogUtility.d(TAG,"networkChangeReceiver: app: Network connectivity change");
 
             Bundle bundle = intent.getExtras();
 

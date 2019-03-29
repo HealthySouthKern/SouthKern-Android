@@ -37,6 +37,8 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
+    final String TAG = "SettingsActivity";
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.

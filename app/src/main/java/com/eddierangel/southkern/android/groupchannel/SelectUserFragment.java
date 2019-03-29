@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class SelectUserFragment extends Fragment{
 
+    private static final String TAG = "SelectUserFragment";
+
     private LinearLayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
     private SelectableUserListAdapter mListAdapter;

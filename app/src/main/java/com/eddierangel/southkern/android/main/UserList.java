@@ -28,6 +28,7 @@ import com.eddierangel.southkern.android.utils.AlertAdapter;
 import com.eddierangel.southkern.android.utils.EventAdapter;
 import com.eddierangel.southkern.android.utils.FeedAdapter;
 import com.eddierangel.southkern.android.utils.InternetCheck;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.eddierangel.southkern.android.utils.ReconnectionManager;
 import com.google.android.gms.tasks.Continuation;
@@ -61,6 +62,7 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class UserList extends AppCompatActivity {
 
+    private static final String TAG = "UserList";
     private FirebaseFunctions mFunctions;
     private List<Object> userList = new ArrayList<>();
     private List<Object> originalUserList = new ArrayList<>();
@@ -211,7 +213,7 @@ public class UserList extends AppCompatActivity {
 
                                 @Override
                                 public void onItemLongClick(int position, View v) {
-                                    Log.d("onItemLongClick pos = ", "" + position);
+                                    LogUtility.d(TAG, "onCreate: onItemLongClick pos = " + position);
                                 }
 
                             });

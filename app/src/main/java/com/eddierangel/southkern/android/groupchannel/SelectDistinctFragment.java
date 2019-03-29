@@ -17,6 +17,8 @@ import com.eddierangel.southkern.android.R;
  */
 public class SelectDistinctFragment extends Fragment{
 
+    private static final String TAG = "SelectDistinctFragment";
+
     private CheckBox mCheckBox;
     private DistinctSelectedListener mListener;
 

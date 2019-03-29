@@ -11,6 +11,9 @@ import io.fabric.sdk.android.Fabric;
 
 public class BaseApplication extends Application {
 
+    private static final String TAG = "BaseApplication";
+
+    // TODO: What else can be or should be defined here?
     // TODO: String.xml
     private static final String APP_ID = "91EEEE6D-8D4A-4FA4-9A52-0B8E2DDD64D0"; // SouthKernTest01
 

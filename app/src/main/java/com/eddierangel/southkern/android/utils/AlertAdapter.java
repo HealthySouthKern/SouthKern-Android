@@ -18,6 +18,7 @@ import java.util.List;
 
 // TODO: Add Documentation to Public Interface
 public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder> {
+    public static final String TAG = "AlertAdapter";
     private List<Event> eventList;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -93,7 +94,7 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.MyViewHolder
                 holder.time.setTextColor(Color.WHITE);
 
             } catch(Exception e) {
-                Log.i("status parse err", "" + e);
+                LogUtility.i(TAG, "onBindViewHolder: status parse err: " + e);
             }
         }
     }
