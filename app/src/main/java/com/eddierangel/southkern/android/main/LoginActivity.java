@@ -199,10 +199,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setAppUserInfo(FirebaseUser firebaseUser) {
+
+        // Get profile picture url from firebase database.
+        String profileURL = mDatabase.child("southkernUsers").child(firebaseUser.getUid()).child("user_picture").toString();
+
         // Set Values
         PreferenceUtils.setUserId(LoginActivity.this, firebaseUser.getEmail());
         PreferenceUtils.setNickname(LoginActivity.this, firebaseUser.getDisplayName());
-        PreferenceUtils.setProfileUrl(LoginActivity.this, firebaseUser.getPhotoUrl().toString());
+        PreferenceUtils.setProfileUrl(LoginActivity.this, profileURL);
 
         // Show the loading indicator
         showProgressBar(true);
@@ -235,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final String userId = firebaseUser.getEmail();
         final String userName = firebaseUser.getDisplayName();
-        final String profileUrl = firebaseUser.getPhotoUrl().toString();
+        final String profileUrl = mDatabase.child("southkernUsers").child(firebaseUser.getUid()).child("user_picture").toString();
 
         /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
         Task<HashMap> userWithToken = getSendbirdUserWithToken(userId, userName, authUIToken);

@@ -224,6 +224,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
             public void onClick(View view) {
                 Intent intent = new Intent(context, OpenChatFeed.class);
                 intent.putExtra("name", event.getSummary());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
@@ -231,6 +232,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        if (eventList != null) {
+            return eventList.size();
+        } else {
+            return 0;
+        }
     }
 }
