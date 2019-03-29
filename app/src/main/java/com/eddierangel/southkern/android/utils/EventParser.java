@@ -15,6 +15,8 @@ import java.util.List;
 
 public class EventParser {
 
+    private static final String TAG = "EventParser";
+
     /*
      * The parse function takes in an object that is returned from an API call to a public google calendar. The events from the calendar are not
      * returned as the correct type. So we use reflection to turn the incorrectly typed object into the correct type which is
@@ -32,7 +34,7 @@ public class EventParser {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         EventDateTime eventDateTimeEnd = new EventDateTime();
         EventDateTime eventDateTimeStart = new EventDateTime();
-        private static final String TAG = "EventParser";
+
 
 
         Log.i("EVENT_LIST_PARSE", "" + eventList);
@@ -95,7 +97,7 @@ public class EventParser {
 
         //HashMap map = (HashMap) obj;
         HashMap tempEvent = (HashMap) obj;
-        LogUtility.i(TAG, "parseSingleEvent: databasemap: " + map);
+        LogUtility.i(TAG, "parseSingleEvent: databasemap: " + tempEvent.toString());
 
 
         Event dummyEvent = new Event();
