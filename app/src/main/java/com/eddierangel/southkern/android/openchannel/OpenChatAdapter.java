@@ -32,6 +32,7 @@ import java.util.List;
 
 class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "OpenChatAdapter";
     private static final int VIEW_TYPE_USER_MESSAGE = 10;
     private static final int VIEW_TYPE_FILE_MESSAGE = 20;
     private static final int VIEW_TYPE_ADMIN_MESSAGE = 30;

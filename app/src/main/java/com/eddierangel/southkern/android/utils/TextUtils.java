@@ -11,6 +11,7 @@ import java.util.List;
 
 // TODO: Add Documentation to Public Interface
 public class TextUtils {
+    private static final String TAG = "TextUtils";
     public static String getGroupChannelTitle(GroupChannel channel) {
         List<Member> members = channel.getMembers();
 

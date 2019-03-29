@@ -24,6 +24,7 @@ import android.widget.*;
 import com.eddierangel.southkern.android.main.MainActivity;
 import com.eddierangel.southkern.android.main.ViewOwnProfile;
 import com.eddierangel.southkern.android.main.ViewProfile;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.google.gson.Gson;
 import com.sendbird.android.*;
 import com.eddierangel.southkern.android.R;
@@ -40,7 +41,7 @@ import java.util.List;
 // TODO: Add Documentation to Public Interface
 public class OpenChatFragment extends Fragment {
 
-    private static final String LOG_TAG = OpenChatFragment.class.getSimpleName();
+    private static final String TAG = "OpenChatFragment";
 
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_OPEN_CHAT";
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_OPEN_CHAT";
@@ -164,7 +165,7 @@ public class OpenChatFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == INTENT_REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
-                Log.d(LOG_TAG, "data is null!");
+                LogUtility.d(TAG, "onActivityResult: data is null!");
                 return;
             }
             showUploadConfirmDialog(data.getData());
@@ -183,17 +184,17 @@ public class OpenChatFragment extends Fragment {
         SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
             @Override
             public void onReconnectStarted() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectStarted()");
+                LogUtility.d(TAG, "onResume: addConectionHandler: CONNECTION: OpenChatFragment onReconnectStarted()");
             }
 
             @Override
             public void onReconnectSucceeded() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectSucceeded()");
+                LogUtility.d(TAG, "onResume: onReconnectSucceeded: CONNNECTION: OpenChatFragment onReconnectSucceeded()");
             }
 
             @Override
             public void onReconnectFailed() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectFailed()");
+                LogUtility.d(TAG, "onResume: onReconnectFailed: CONNECTION: OpenChatFragment onReconnectFailed()");
             }
         });
 
@@ -324,7 +325,7 @@ public class OpenChatFragment extends Fragment {
                 if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
                     loadNextMessageList(30);
                 }
-                Log.v(LOG_TAG, "onScrollStateChanged");
+                LogUtility.v(TAG, "setUpRecyclerView: addOnScrollStateChanged: onScrollStateChanged");
             }
         });
     }
@@ -440,12 +441,12 @@ public class OpenChatFragment extends Fragment {
      * @param channelUrl The URL of the channel to enter.
      */
     private void enterChannel(final String channelUrl) {
-        Log.i("channelurl2", "" + channelUrl);
+        LogUtility.i(TAG, "enterChannel: channelurl2: " + channelUrl);
         OpenChannel.getChannel(channelUrl, new OpenChannel.OpenChannelGetHandler() {
             @Override
             public void onResult(final OpenChannel openChannel, SendBirdException e) {
                 if (e != null) {
-                    Log.i("channelcreateerr", "" + e);
+                    LogUtility.i(TAG, "enterChannel: channelcreateerr" + e);
                     // Error!
                     if (openChannel == null) {
                         OpenChannel.createChannel(channelName, null, null, null, new OpenChannel.OpenChannelCreateHandler() {
@@ -511,7 +512,7 @@ public class OpenChatFragment extends Fragment {
             public void onSent(UserMessage userMessage, SendBirdException e) {
                 if (e != null) {
                     // Error!
-                    Log.e(LOG_TAG, e.toString());
+                    LogUtility.e(TAG, "sendUserMessage: " + e.toString());
                     Toast.makeText(
                             getActivity(),
                             "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)

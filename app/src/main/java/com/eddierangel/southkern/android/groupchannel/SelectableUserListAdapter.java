@@ -23,6 +23,8 @@ import java.util.List;
 
 public class SelectableUserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "SelectableUserListAdapter";
+
     private List<User> mUsers;
     private Context mContext;
     private static List<String> mSelectedUserIds;

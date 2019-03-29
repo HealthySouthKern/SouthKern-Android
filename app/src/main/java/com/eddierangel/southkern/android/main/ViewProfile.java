@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.eddierangel.southkern.android.R;
 import com.eddierangel.southkern.android.utils.ImageUtils;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +34,7 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class ViewProfile extends AppCompatActivity {
 
+    private static final String TAG = "ViewProfile";
     private FirebaseFunctions mFunctions;
     private HashMap<String, String> userData;
     private Map<String, String> userMetaData;
@@ -143,7 +145,7 @@ public class ViewProfile extends AppCompatActivity {
                     });
                 }
                 catch (Exception e) {
-                    Log.e("InsideTaskComplete", "Error getting user or creating map");
+                    LogUtility.e(TAG, "onCreate: InsideTaskComplete: Error getting user or creating map");
                 }
             }
         });

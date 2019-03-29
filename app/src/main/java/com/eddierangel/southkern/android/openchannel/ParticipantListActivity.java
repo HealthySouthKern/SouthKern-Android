@@ -24,6 +24,7 @@ import java.util.List;
 
 public class ParticipantListActivity extends AppCompatActivity {
 
+    private static final String TAG = "ParticipantListActivity";
     private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;

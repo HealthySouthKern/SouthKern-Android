@@ -17,6 +17,7 @@ import java.util.List;
 
 // TODO: Add Documentation to Public Interface
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHolder> {
+    private static final String TAG = "AddressAdapter";
     private List<Object> userList;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -79,7 +80,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.MyViewHo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final HashMap user = (HashMap) userList.get(position);
-        Log.i("InsideT4", "" + user);
+        LogUtility.i(TAG, "InsideT4: " + user);
         userProfileUrl = (String) user.get("user_picture");
         userName = (String) user.get("user_name");
         userEmailText = (String) user.get("user_id");
