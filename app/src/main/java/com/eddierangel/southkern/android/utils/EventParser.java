@@ -15,6 +15,8 @@ import java.util.List;
 
 public class EventParser {
 
+    private static final String TAG = "EventParser";
+
     /*
      * The parse function takes in an object that is returned from an API call to a public google calendar. The events from the calendar are not
      * returned as the correct type. So we use reflection to turn the incorrectly typed object into the correct type which is
@@ -29,6 +31,7 @@ public class EventParser {
         List<Event> reflectedEventList = new ArrayList<>();
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
 
         Log.i("EVENT_LIST_PARSE", "" + eventList);
@@ -78,11 +81,15 @@ public class EventParser {
     }
 
     public static Event parseSingleEvent(Object obj) {
+
         //HashMap map = (HashMap) obj;
         HashMap tempEvent = (HashMap) obj;
+        LogUtility.i(TAG, "parseSingleEvent: databasemap: " + tempEvent.toString());
+
 
         Event dummyEvent = new Event();
         HashMap dummyMap = new HashMap();
+
         EventDateTime eventDateTime = new EventDateTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -118,76 +125,8 @@ public class EventParser {
 
         dummyEvent.setEtag((String) tempEvent.get("id"));
 
-//        Class propertiesClass = dummyProperties.getClass();
-//        Class organizerClass = dummyOrganizer.getClass();
-//        Class creatorClass = dummyCreator.getClass();
-//        Class secondClass = dummyEvent.getClass();
-//        for (Field innerField : secondClass.getDeclaredFields()) {
-//            innerField.setAccessible(true);
-//            Log.i("databasevalfield", "" + innerField.getName() + " | " + innerField.getType());
-//            if (map.containsKey(innerField.getName())) {
-//                if (innerField.getType().toString().equals("class com.google.api.services.calendar.model.Event$ExtendedProperties")) {
-//                    dummyMap = (HashMap) map.get(innerField.getName());
-//                    for (Field innerSubField : propertiesClass.getDeclaredFields()) {
-//                        innerSubField.setAccessible(true);
-//                        if (dummyMap.containsKey(innerSubField.getName())) {
-//                            dummyProperties.set(innerSubField.getName(), dummyMap.get(innerSubField.getName()));
-//                        }
-//                    }
-//                    dummyEvent.setExtendedProperties(dummyProperties);
-//                } else if (innerField.getType().toString().equals("class com.google.api.services.calendar.model.Event$Organizer")) {
-//                    dummyMap = (HashMap) map.get(innerField.getName());
-//                    for (Field innerSubField : organizerClass.getDeclaredFields()) {
-//                        innerSubField.setAccessible(true);
-//                        if (dummyMap.containsKey(innerSubField.getName())) {
-//                            dummyOrganizer.set(innerSubField.getName(), dummyMap.get(innerSubField.getName()));
-//                        }
-//                    }
-//                    dummyEvent.setOrganizer(dummyOrganizer);
-//                } else if (innerField.getType().toString().equals("class com.google.api.services.calendar.model.Event$Creator")) {
-//                    dummyMap = (HashMap) map.get(innerField.getName());
-//                    for (Field innerSubField : creatorClass.getDeclaredFields()) {
-//                        innerSubField.setAccessible(true);
-//                        if (dummyMap.containsKey(innerSubField.getName())) {
-//                            dummyCreator.set(innerSubField.getName(), dummyMap.get(innerSubField.getName()));
-//                        }
-//                    }
-//                    dummyEvent.setCreator(dummyCreator);
-//                } else if (innerField.getType().toString().equals("class com.google.api.client.util.DateTime")) {
-//                    try {
-//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//                        Timestamp datetime = new Timestamp(simpleDateFormat.parse((String) map.get(innerField.getName())).getTime());
-//                        DateTime date = new DateTime(datetime);
-//                        dummyEvent.setUpdated(date);
-//                    } catch (Exception e) {
-//                        Log.e("Error parsing event.updated", "" + e);
-//                    }
-//                } else if (innerField.getType().toString().equals("class com.google.api.services.calendar.model.EventDateTime")) {
-//                    try {
-//                        Log.i("databaseparseTime", "" + innerField.getName());
-//                        HashMap dateObj = (HashMap) map.get(innerField.getName());
-//                        HashMap dateTimeObj;
-//                        if (dateObj.get("dateTime") != null) {
-//                            dateTimeObj = (HashMap) dateObj.get("dateTime");
-//                        } else {
-//                            dateTimeObj = (HashMap) dateObj.get("date");
-//                        }
-//                        Long longHolder = (Long) dateTimeObj.get("value");
-//                        Timestamp datetime = new Timestamp(longHolder);
-//                        DateTime date = new DateTime(datetime);
-//                       // Log.i("databasedate", "" + date);
-//                        EventDateTime eventDateTime = new EventDateTime();
-//                        eventDateTime.setDate(date);
-//                        Log.i("databaseeventtime", "" + eventDateTime);
-//                        dummyEvent.set(innerField.getName(), eventDateTime);
-//                    } catch (Exception e) {
-//                        Log.e("Error parsing start time", "" + e);
-//                    }
-//                } else {
-//                    dummyEvent.set(innerField.getName(), map.get(innerField.getName()));
-//                }
-//            }
-//        }
+        LogUtility.i(TAG, "parseSingleEvent: databasedummy: " + dummyEvent);
+
         return dummyEvent;
     }
 }

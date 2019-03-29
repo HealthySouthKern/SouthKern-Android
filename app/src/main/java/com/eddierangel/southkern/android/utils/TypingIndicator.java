@@ -16,6 +16,7 @@ import java.util.List;
 // TODO: Add Documentation to Public Interface
 public class TypingIndicator {
 
+    private static final String TAG = "TypingIndicator";
     List<ImageView> mImageViewList;
     private int mAnimDuration;
 

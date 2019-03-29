@@ -21,6 +21,7 @@ import com.eddierangel.southkern.android.R;
 
 public class CreateOpenChannelActivity extends AppCompatActivity {
 
+    private static final String TAG = "CreateOpenChannelActivity";
     TextInputEditText mNameEditText;
     private boolean enableCreate = false;
     private Button mCreateButton;

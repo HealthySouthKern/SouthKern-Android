@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "UserListAdapter";
+
     private Context mContext;
     private List<User> mUsers;
 

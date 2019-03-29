@@ -38,6 +38,7 @@ import java.util.List;
 // TODO: Add Documentation to Public Interface
 class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final String URL_PREVIEW_CUSTOM_TYPE = "url_preview";
+    private static final String TAG = "GroupChatAdapter";
 
     private static final int VIEW_TYPE_USER_MESSAGE_ME = 10;
     private static final int VIEW_TYPE_USER_MESSAGE_OTHER = 11;

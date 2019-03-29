@@ -15,6 +15,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 // TODO: Add Documentation to Public Interface
 public class ImageUtils {
 
+    private static final String TAG = "ImageUtils";
     // Prevent instantiation
     private ImageUtils() {
 

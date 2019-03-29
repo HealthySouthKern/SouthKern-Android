@@ -17,6 +17,7 @@ import java.util.TimerTask;
 
 public class ReconnectionManager extends AppCompatActivity {
 
+    private static final String TAG = "ReconnectionManager";
     private LinearLayout mLayout;
     private Timer mTimer;
 

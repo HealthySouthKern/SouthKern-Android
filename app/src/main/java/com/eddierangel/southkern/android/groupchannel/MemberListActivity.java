@@ -23,6 +23,8 @@ import java.util.List;
 // Add a reference to the SendBird Documentation
 public class MemberListActivity extends AppCompatActivity{
 
+    private static final String TAG = "MemberListActivity";
+
     private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;

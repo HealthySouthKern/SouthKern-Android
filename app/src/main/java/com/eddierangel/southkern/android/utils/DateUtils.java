@@ -9,6 +9,7 @@ import java.util.Locale;
 
 public class DateUtils {
 
+    public static final String TAG = "DateUtils";
     // This class should not be initialized
     private DateUtils() {
 

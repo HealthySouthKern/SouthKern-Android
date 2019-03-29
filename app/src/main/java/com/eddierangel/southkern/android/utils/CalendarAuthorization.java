@@ -47,6 +47,7 @@ import java.util.List;
  * */
 
 public class CalendarAuthorization extends AsyncTask<Object, Void, Credential> {
+    private static final String TAG = "CalendarAuthorization";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "com/eddierangel/southkern/android/utils/tokens";
 
@@ -62,7 +63,7 @@ public class CalendarAuthorization extends AsyncTask<Object, Void, Credential> {
         try {
             return getCredentials(params);
         } catch (IOException e) {
-            Log.e("Credentials IO exception", "" + e);
+            LogUtility.e(TAG, "getCredentials: Credentials IO exception: " + e);
             e.printStackTrace();
             return null;
         }
@@ -84,7 +85,7 @@ public class CalendarAuthorization extends AsyncTask<Object, Void, Credential> {
         HashMap mapParams = (HashMap) params[0];
         final Context mContext = (Context) mapParams.get("context");
         NetHttpTransport HTTP_TRANSPORT = (NetHttpTransport) mapParams.get("transport");
-        Log.i("params", HTTP_TRANSPORT + " : " + mContext);
+        LogUtility.i(TAG, "getCredentials: params: " + HTTP_TRANSPORT + " : " + mContext);
 
         // Load client secrets.
         InputStream in = mContext.getResources().openRawResource(R.raw.credentials);

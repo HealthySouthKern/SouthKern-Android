@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 // TODO: Add Documentation to Public Interface
 public class UrlPreviewInfo {
+    private static final String TAG = "UrlPreviewInfo";
     private final String mUrl;
     private final String mSiteName;
     private final String mTitle;

@@ -25,7 +25,7 @@ import java.util.List;
 public class OpenChannelListFragment extends Fragment {
 
     public static final String EXTRA_OPEN_CHANNEL_URL = "OPEN_CHANNEL_URL";
-    private static final String LOG_TAG = OpenChannelListFragment.class.getSimpleName();
+    private static final String TAG = "OpenChannelListFragment";
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
