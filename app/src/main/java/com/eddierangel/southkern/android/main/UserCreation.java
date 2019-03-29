@@ -2,7 +2,9 @@ package com.eddierangel.southkern.android.main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,6 +25,11 @@ import com.eddierangel.southkern.android.R;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.Twitter;
@@ -121,6 +128,9 @@ public class UserCreation extends AppCompatActivity {
 
                 if (profileURL != null) {
                     data.put("user_picture", profileURL);
+                    LogUtility.d(TAG, "configureButtons: Attempting to add image to Firebase user");
+                    //Can delete the log tag once it's been tested & confirmed working
+                    putImageInFirebaseUser(profileURL);
                 }
 
                 if (!userOrganization.equals("")) {
@@ -172,6 +182,9 @@ public class UserCreation extends AppCompatActivity {
                         HashMap<String, String> userData = new HashMap<String, String>();
 
                         data.put("user_picture", userResult.data.profileImageUrl);
+                        LogUtility.d(TAG, "configureTwitterButton: Attempting to add twitter image to Firebase user");
+                        //Can delete the log tag once it's been tested & confirmed working
+                        putImageInFirebaseUser(userResult.data.profileImageUrl);
 
                         userData.put("user_name", userResult.data.name);
                         userData.put("user_background_image", userResult.data.profileBackgroundImageUrl);
@@ -229,6 +242,7 @@ public class UserCreation extends AppCompatActivity {
                                     @Override
                                     public void onCompleted(JSONObject object, GraphResponse response) {
                                         profileURL = getImageUrl(response);
+                                        putImageInFirebaseUser(profileURL); //(Put Facebook image into Firebase user) ((Not sure if this one will work))
                                         mFinishUserButton.setEnabled(true);
                                         twitterButton.setEnabled(false);
                                     }
@@ -317,5 +331,23 @@ public class UserCreation extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void putImageInFirebaseUser(String imageURL) {
+        //Added because we get the image from the firebase user in LoginActivity
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(Uri.parse(imageURL))
+                .build();
+
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            LogUtility.d(TAG, "putImageInFirebaseUser: user profile updated");
+                        }
+                    }
+                });
+    }
 
 }
