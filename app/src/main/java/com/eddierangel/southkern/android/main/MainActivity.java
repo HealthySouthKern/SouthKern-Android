@@ -122,7 +122,10 @@ public class MainActivity extends AppCompatActivity {
                 firstTime = firstEvent.getStart().getDate().getValue();
                 secondTime = secondEvent.getStart().getDate().getValue();
 
-                if (firstTime < secondTime) {
+                if (
+                        (new Date().getTime() - firstTime) < (new Date().getTime() - secondTime) &&
+                                (new Date().getTime() - firstTime < 0)
+                ) {
                     return 1;
                 } else {
                     return -1;

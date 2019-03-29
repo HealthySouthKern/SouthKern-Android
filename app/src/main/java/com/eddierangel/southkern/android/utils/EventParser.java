@@ -27,17 +27,19 @@ public class EventParser {
     public static List<Event> parse(List obj) {
         List<HashMap> eventList = obj;
         List<Event> reflectedEventList = new ArrayList<>();
-        Event dummyEvent = new Event();
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        EventDateTime eventDateTimeEnd = new EventDateTime();
-        EventDateTime eventDateTimeStart = new EventDateTime();
 
 
         Log.i("EVENT_LIST_PARSE", "" + eventList);
 
         for (HashMap tempEvent : eventList) {
             Log.i("TEMP EVENT", "" + tempEvent);
+
+            Event dummyEvent = new Event();
+            EventDateTime eventDateTimeEnd = new EventDateTime();
+            EventDateTime eventDateTimeStart = new EventDateTime();
+
 
             try {
                 Timestamp datetime = new Timestamp(simpleDateFormat.parse((String) tempEvent.get("end_date")).getTime());
@@ -60,28 +62,13 @@ public class EventParser {
 
             dummyEvent.setStart(eventDateTimeStart);
 
-            Log.i("EVENT PART", "" + eventDateTimeStart);
-
-
             dummyEvent.setSummary((String) tempEvent.get("title"));
-
-            Log.i("EVENT PART", (String) tempEvent.get("title"));
-
 
             dummyEvent.setDescription((String) tempEvent.get("description"));
 
-            Log.i("EVENT PART", (String) tempEvent.get("excerpt"));
-
-
             dummyEvent.setLocation((String) ((HashMap) tempEvent.get("venue")).get("venue"));
 
-            Log.i("EVENT PART", (String) ((HashMap) tempEvent.get("venue")).get("venue"));
-
-
             dummyEvent.setEtag("" + tempEvent.get("id"));
-
-            Log.i("EVENT PART", "" + tempEvent.get("id"));
-
 
             reflectedEventList.add(dummyEvent);
 
