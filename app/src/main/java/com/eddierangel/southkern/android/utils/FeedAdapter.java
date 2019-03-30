@@ -138,11 +138,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
 
                     } else if (((Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis())) > (twoWeekTime / 2) &&
                             (new Date().getTime() < tempCalendar.getTimeInMillis()) &&
-                            (tempCalendar.getTimeInMillis() > new Date().getTime() + (twoWeekTime / 2))
+                            (tempCalendar.getTimeInMillis() < new Date().getTime() + (twoWeekTime / 2))
                     )) {
                         holder.date.setText(context.getResources().getText(R.string.next_week) + " " + dateDay + " | " + formattedDate);
 
-                    } else if (new Date().getTime() - tempCalendar.getTimeInMillis() < 86400000) { // Less than one day
+                    } else if (Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis()) < 86400000) { // Less than one day
                         holder.date.setText(context.getResources().getText(R.string.today) + " | " + formattedDate);
 
                     } else {
