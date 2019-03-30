@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -78,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            LogUtility.d(TAG,"networkChangeReceiver: app: Network connectivity change");
 
             Bundle bundle = intent.getExtras();
 
@@ -197,10 +199,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setAppUserInfo(FirebaseUser firebaseUser) {
+
+        // Get profile picture url from firebase database.
+        String profileURL = mDatabase.child("southkernUsers").child(firebaseUser.getUid()).child("user_picture").toString();
+
         // Set Values
         PreferenceUtils.setUserId(LoginActivity.this, firebaseUser.getEmail());
         PreferenceUtils.setNickname(LoginActivity.this, firebaseUser.getDisplayName());
-        PreferenceUtils.setProfileUrl(LoginActivity.this, firebaseUser.getPhotoUrl().toString());
+        PreferenceUtils.setProfileUrl(LoginActivity.this, profileURL);
 
         // Show the loading indicator
         showProgressBar(true);
@@ -233,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final String userId = firebaseUser.getEmail();
         final String userName = firebaseUser.getDisplayName();
-        final String profileUrl = firebaseUser.getPhotoUrl().toString();
+        final String profileUrl = mDatabase.child("southkernUsers").child(firebaseUser.getUid()).child("user_picture").toString();
 
         /* Use firebase functions to issue a sendbird token to the user after authorizing with firebase. */
         Task<HashMap> userWithToken = getSendbirdUserWithToken(userId, userName, authUIToken);

@@ -33,6 +33,7 @@ import java.util.Hashtable;
 
 public class FileUtils {
 
+    private static final String TAG = "FileUtils";
     // Prevent instantiation
     private FileUtils() {
 

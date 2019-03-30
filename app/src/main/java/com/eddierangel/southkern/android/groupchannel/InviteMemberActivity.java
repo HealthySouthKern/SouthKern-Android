@@ -28,6 +28,8 @@ import java.util.List;
 
 public class InviteMemberActivity extends AppCompatActivity{
 
+    private static final String TAG = "InviteMemberActivity";
+
     private LinearLayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
     private SelectableUserListAdapter mListAdapter;

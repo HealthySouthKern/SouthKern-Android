@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
@@ -64,7 +65,7 @@ import java.util.List;
 public class GroupChatFragment extends Fragment {
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
 
-    private static final String LOG_TAG = GroupChatFragment.class.getSimpleName();
+    private static final String TAG = "GroupChatFragment";
 
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
     private static final String STATE_CHANNEL_URL = "STATE_CHANNEL_URL";
@@ -114,7 +115,7 @@ public class GroupChatFragment extends Fragment {
             mChannelUrl = getArguments().getString(GroupChannelListFragment.EXTRA_GROUP_CHANNEL_URL);
         }
 
-        Log.d(LOG_TAG, mChannelUrl);
+        LogUtility.d(TAG, "onCreate: " + mChannelUrl);
 
         mChatAdapter = new GroupChatAdapter(getActivity());
         setUpChatListAdapter();
@@ -243,7 +244,7 @@ public class GroupChatFragment extends Fragment {
 
         // Gets channel from URL user requested
 
-        Log.d(LOG_TAG, mChannelUrl);
+        LogUtility.d(TAG, "onResume: " + mChannelUrl);
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -378,7 +379,7 @@ public class GroupChatFragment extends Fragment {
         if (requestCode == INTENT_REQUEST_CHOOSE_MEDIA && resultCode == Activity.RESULT_OK) {
             // If user has successfully chosen the image, show a dialog to confirm upload.
             if (data == null) {
-                Log.d(LOG_TAG, "data is null!");
+                LogUtility.d(TAG, "onActivityResult: data is null!");
                 return;
             }
 
@@ -616,7 +617,7 @@ public class GroupChatFragment extends Fragment {
                     public void onSent(UserMessage userMessage, SendBirdException e) {
                         if (e != null) {
                             // Error!
-                            Log.e(LOG_TAG, e.toString());
+                            LogUtility.e(TAG, "sendUserMessageWithUrl: " + e.toString());
                             Toast.makeText(
                                     getActivity(),
                                     "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
@@ -658,7 +659,7 @@ public class GroupChatFragment extends Fragment {
             public void onSent(UserMessage userMessage, SendBirdException e) {
                 if (e != null) {
                     // Error!
-                    Log.e(LOG_TAG, e.toString());
+                    LogUtility.e(TAG, "sendUserMessage: " + e.toString());
                     Toast.makeText(
                             getActivity(),
                             "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)

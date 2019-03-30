@@ -20,6 +20,7 @@ import java.util.Locale;
 
 // TODO: Add Documentation to Public Interface
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
+    private static final String TAG = "EventAdapter";
     private List<Event> eventList;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -108,7 +109,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                 String formattedStartTime = timeFormat.format(parsedStartDate);
                 holder.time.setText(formattedStartTime + " - " + formattedEndTime);
             } catch(Exception e) {
-                Log.i("date parse err", "" + e);
+                LogUtility.i(TAG, "onBindViewHolder: get dates: date parse err: " + e);
                 e.printStackTrace();
             }
         }

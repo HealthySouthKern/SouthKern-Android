@@ -28,6 +28,7 @@ import com.eddierangel.southkern.android.utils.AlertAdapter;
 import com.eddierangel.southkern.android.utils.EventAdapter;
 import com.eddierangel.southkern.android.utils.FeedAdapter;
 import com.eddierangel.southkern.android.utils.InternetCheck;
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.eddierangel.southkern.android.utils.PreferenceUtils;
 import com.eddierangel.southkern.android.utils.ReconnectionManager;
 import com.google.android.gms.tasks.Continuation;
@@ -61,9 +62,12 @@ import java.util.Map;
 // TODO: Add Documentation to Public Interface
 public class UserList extends AppCompatActivity {
 
+    private static final String TAG = "UserList";
     private FirebaseFunctions mFunctions;
     private List<Object> userList = new ArrayList<>();
     private List<Object> originalUserList = new ArrayList<>();
+    private List<Object> sortedOrgList = new ArrayList<>();
+    private List<Object> sortedNameList = new ArrayList<>();
     private Toolbar mToolbar;
     private ImageButton viewAlertButton;
     private List<Event> alertEvents = new ArrayList<>();
@@ -91,13 +95,17 @@ public class UserList extends AppCompatActivity {
                 firstTempHolder = (String) firstUser.get("user_organization");
                 secondTempHolder = (String) secondUser.get("user_organization");
 
+
                 if (firstTempHolder != null && secondTempHolder != null) {
+
+
                     int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
                     return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
+
                 } else if (firstTempHolder != null) {
-                    return 1;
-                } else {
                     return -1;
+                } else {
+                    return 1;
                 }
             }
         });
@@ -128,7 +136,7 @@ public class UserList extends AppCompatActivity {
 
                     // Match vs Match or No-Match vs No-Match: no sorting is needed
                     return 0;
-                } else if (firstTempHolder != null) {
+                } else if (!firstTempHolder.isEmpty()) {
                     return -1;
                 } else {
                     return 0;
@@ -146,6 +154,14 @@ public class UserList extends AppCompatActivity {
 
                 firstTempHolder = (String) firstUser.get("user_name");
                 secondTempHolder = (String) secondUser.get("user_name");
+
+                if (firstTempHolder == null) {
+                    return -1;
+                }
+
+                if (secondTempHolder == null) {
+                    return 1;
+                }
 
                 int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
                 return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
@@ -178,6 +194,7 @@ public class UserList extends AppCompatActivity {
                     userListControls = (LinearLayout) findViewById(R.id.user_list_controls);
                     alertNavView = (NavigationView) findViewById(R.id.nav_view_alerts);
 
+
                     mFunctions = FirebaseFunctions.getInstance();
                     mDatabase = FirebaseDatabase.getInstance().getReference().getRoot();
 
@@ -189,6 +206,13 @@ public class UserList extends AppCompatActivity {
                                 userList.add(child.getValue());
                             }
                             originalUserList = userList;
+
+                            sortedNameList = userList;
+                            sortedOrgList = userList;
+
+                            sortUserListNickname(sortedNameList);
+                            sortUserListOrganization(sortedOrgList);
+
 
                             userListControls.setVisibility(View.VISIBLE);
 
@@ -211,7 +235,7 @@ public class UserList extends AppCompatActivity {
 
                                 @Override
                                 public void onItemLongClick(int position, View v) {
-                                    Log.d("onItemLongClick pos = ", "" + position);
+                                    LogUtility.d(TAG, "onCreate: onItemLongClick pos = " + position);
                                 }
 
                             });
@@ -259,20 +283,11 @@ public class UserList extends AppCompatActivity {
                     sortName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            sortOrganization.setBackgroundColor(Color.TRANSPARENT);
-                            sortName.setBackgroundColor(Color.GRAY);
 
-                            sortOrg = false;
-                            userList = originalUserList;
-                            if (sortAZ) {
-                                sortAZ = false;
-                                sortUserListNickname(userList);
-                            } else {
-                                sortAZ = true;
-                                sortName.setBackgroundColor(Color.TRANSPARENT);
-                                sortUserListNickname(userList);
-                                Collections.reverse(userList);
-                            }
+                            userList = sortedNameList;
+
+                            Collections.reverse(userList);
+
                             mAdapter.notifyDataSetChanged();
                         }
                     });
@@ -280,23 +295,11 @@ public class UserList extends AppCompatActivity {
                     sortOrganization.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            sortName.setBackgroundColor(Color.TRANSPARENT);
-                            sortOrganization.setBackgroundColor(Color.GRAY);
 
-                            sortAZ = true;
-                            userList = originalUserList;
-                            if (sortOrg) {
-                                sortOrg = false;
-                                sortOrganization.setBackgroundColor(Color.TRANSPARENT);
+                            userList = sortedOrgList;
 
-                                Collections.reverse(userList);
-                                sortUserListOrganization(userList);
-                            } else {
-                                sortOrg = true;
-                                sortOrganization.setBackgroundColor(Color.GRAY);
-                                sortUserListOrganization(userList);
-                                Collections.reverse(userList);
-                            }
+                            Collections.reverse(userList);
+
                             mAdapter.notifyDataSetChanged();
                         }
                     });

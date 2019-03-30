@@ -15,6 +15,8 @@ import com.eddierangel.southkern.android.R;
 // Add a reference to the SendBird Documentation
 public class OpenChannelActivity extends AppCompatActivity{
 
+    private static final String Tag = "OpenChannelActivity";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

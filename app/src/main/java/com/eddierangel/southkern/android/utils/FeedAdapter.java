@@ -32,6 +32,7 @@ import java.util.Random;
 
 // TODO: Add Documentation to Public Interface
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> {
+    private static final String TAG = "FeedAdapter";
     private List<Event> eventList;
     private Context context;
     private SimpleDateFormat baseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -137,11 +138,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
 
                     } else if (((Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis())) > (twoWeekTime / 2) &&
                             (new Date().getTime() < tempCalendar.getTimeInMillis()) &&
-                            (tempCalendar.getTimeInMillis() > new Date().getTime() + (twoWeekTime / 2))
+                            (tempCalendar.getTimeInMillis() < new Date().getTime() + (twoWeekTime / 2))
                     )) {
                         holder.date.setText(context.getResources().getText(R.string.next_week) + " " + dateDay + " | " + formattedDate);
 
-                    } else if (new Date().getTime() - tempCalendar.getTimeInMillis() < 86400000) { // Less than one day
+                    } else if (Math.abs(new Date().getTime() - tempCalendar.getTimeInMillis()) < 86400000) { // Less than one day
                         holder.date.setText(context.getResources().getText(R.string.today) + " | " + formattedDate);
 
                     } else {
@@ -214,7 +215,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
                 holder.time.setTextColor(Color.WHITE);
 
             } catch(Exception e) {
-                Log.i("status parse err", "" + e);
+                LogUtility.i(TAG, "onBindViewHolder: status parse err: " + e);
             }
         }
 
@@ -223,6 +224,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
             public void onClick(View view) {
                 Intent intent = new Intent(context, OpenChatFeed.class);
                 intent.putExtra("name", event.getSummary());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
@@ -230,6 +232,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        if (eventList != null) {
+            return eventList.size();
+        } else {
+            return 0;
+        }
     }
 }

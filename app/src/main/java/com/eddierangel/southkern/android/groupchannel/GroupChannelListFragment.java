@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.eddierangel.southkern.android.utils.LogUtility;
 import com.sendbird.android.*;
 import com.eddierangel.southkern.android.R;
 
@@ -30,6 +31,7 @@ public class GroupChannelListFragment extends Fragment {
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
     public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
     public static final int INTENT_REQUEST_NEW_GROUP_CHANNEL = 302;
+    private static final String TAG = "GroupChannelListFragment";
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -48,7 +50,7 @@ public class GroupChannelListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        Log.d("LIFECYCLE", "GroupChannelListFragment onCreateView()");
+        LogUtility.d(TAG, "LIFECYCLE: GroupChannelListFragment onCreateView()");
 
         View rootView = inflater.inflate(R.layout.fragment_group_channel_list, container, false);
 
@@ -99,7 +101,7 @@ public class GroupChannelListFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
+        LogUtility.d(TAG, "LIFECYLCE: GroupChannelListFragment onResume()");
 
         refreshChannelList(15);
 
@@ -120,7 +122,7 @@ public class GroupChannelListFragment extends Fragment {
 
     @Override
     public void onPause() {
-        Log.d("LIFECYCLE", "GroupChannelListFragment onPause()");
+        LogUtility.d(TAG, "LIFECYCLE: GroupChannelListFragment onPause()");
 
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
         super.onPause();
@@ -128,7 +130,7 @@ public class GroupChannelListFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        Log.d("LIFECYCLE", "GroupChannelListFragment onDetach()");
+        LogUtility.d(TAG, "LIFECYCLE: GroupChannelListFragment onDetach()");
         super.onDetach();
     }
 
@@ -143,7 +145,7 @@ public class GroupChannelListFragment extends Fragment {
                     enterGroupChannel(newChannelUrl);
                 }
             } else {
-                Log.d("GrChLIST", "resultCode not STATUS_OK");
+                LogUtility.d(TAG, "GrChLIST: resultCode not STATUS_OK");
             }
         }
     }
@@ -280,6 +282,7 @@ public class GroupChannelListFragment extends Fragment {
     private void refreshChannelList(int numChannels) {
         mChannelListQuery = GroupChannel.createMyGroupChannelListQuery();
         mChannelListQuery.setLimit(numChannels);
+        mChannelListQuery.setIncludeEmpty(true);
 
         mChannelListQuery.next(new GroupChannelListQuery.GroupChannelListQueryResultHandler() {
             @Override

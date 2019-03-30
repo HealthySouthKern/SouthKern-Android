@@ -21,6 +21,7 @@ import java.util.List;
  */
 class OpenChannelListAdapter extends RecyclerView.Adapter<OpenChannelListAdapter.ChannelHolder> {
 
+    private static final String TAG = "OpenChannelListAdapter";
     private List<OpenChannel> mChannelList;
     private Context mContext;
     private OnItemClickListener mItemClickListener;
