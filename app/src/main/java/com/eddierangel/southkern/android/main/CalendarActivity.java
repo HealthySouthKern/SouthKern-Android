@@ -533,10 +533,8 @@ public class CalendarActivity extends AppCompatActivity {
                                         }
                                     }
                                     // Success
-                                    Log.i("EVENTS RESULT", "" + task.getResult());
                                     events = (List<Event>) task.getResult();
 
-                                    Log.i("EVENTS CALENDAR", "" + events);
 
                                     // Set time on calendar to the time of the first event. This stops the calendar from starting at weird times such
                                     // as 1 AM which could cause confusion.
@@ -703,8 +701,7 @@ public class CalendarActivity extends AppCompatActivity {
                             Event dummyEvent = new Event();
                             if (events != null) {
                                 List<Event> listOfEvents = getEvents(newYear, newMonth);
-                                Log.i("RETRIEVED EVENTS", ""  + listOfEvents);
-                                Class aClass = dummyEvent.getClass();
+                               Class aClass = dummyEvent.getClass();
                                 for (Event event : listOfEvents) {
                                     WeekViewEvent weekEvent = new WeekViewEvent();
                                     for (Field field : aClass.getDeclaredFields()) {
@@ -730,7 +727,6 @@ public class CalendarActivity extends AppCompatActivity {
                                                     LogUtility.e(TAG, "onCreate: getTime (720): err: " + e);
                                                 }
                                                 endCalendar.setTimeInMillis(endMillis);
-                                                Log.i("WEEK EVENT TIME", "" + endCalendar);
                                                 weekEvent.setEndTime(endCalendar);
 
                                             case "start":
@@ -751,7 +747,6 @@ public class CalendarActivity extends AppCompatActivity {
                                                     LogUtility.e(TAG, "onCreate: getTime (740): err: " + e);
                                                 }
                                                 startCalendar.setTimeInMillis(startMillis);
-                                                Log.i("WEEK EVENT TIME", "" + startCalendar);
 
                                                 weekEvent.setStartTime(startCalendar);
 

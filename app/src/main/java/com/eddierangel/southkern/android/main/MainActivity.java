@@ -168,8 +168,6 @@ public class MainActivity extends AppCompatActivity {
     private void filterEvents(List<Event> events) {
         if (events != null) {
             for (Event event : events) {
-                Log.i("EVENT TIME FILTER", "" + (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime));
-                Log.i("EVENT TIME FILTER2", "" + (event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime)));
                 if (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime &&
                         event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime) &&
                         !dummyEvents.contains(event)) {
@@ -317,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 // Success
-                Log.i("EVENTS_LIST", "" + task.getResult());
                 events = task.getResult();
 
                 // Filter events that are too old or too far in the future.
