@@ -123,12 +123,10 @@ public class MainActivity extends AppCompatActivity {
                 secondTime = secondEvent.getStart().getDate().getValue();
 
                 if (
-                        (new Date().getTime() - firstTime) < (new Date().getTime() - secondTime) &&
-                                (new Date().getTime() - firstTime < 0)
-                ) {
-                    return 1;
-                } else {
+                        (Math.abs(new Date().getTime() - firstTime)) < (Math.abs(new Date().getTime() - secondTime))) {
                     return -1;
+                } else {
+                    return 1;
                 }
             }
         });
@@ -322,8 +320,6 @@ public class MainActivity extends AppCompatActivity {
                 filterEvents(events);
 
                 statusUpdateListen();
-
-                sortCalendarEvents(dummyEvents);
 
                 mAdapter.notifyDataSetChanged();
 
