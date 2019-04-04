@@ -119,7 +119,7 @@ public class ViewProfile extends AppCompatActivity {
                             final ImageView profileImage = findViewById(R.id.profile_image);
                             if (userPicture != null) {
                                 if (!userPicture.isEmpty()) {
-                                    ImageUtils.displayImageFromUrl(ViewProfile.this, userPicture, profileImage);
+                                    ImageUtils.displayImageFromUrl(ViewProfile.this.getApplicationContext(), userPicture, profileImage);
                                 }
                             }
 

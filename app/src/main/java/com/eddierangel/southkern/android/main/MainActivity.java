@@ -123,12 +123,10 @@ public class MainActivity extends AppCompatActivity {
                 secondTime = secondEvent.getStart().getDate().getValue();
 
                 if (
-                        (new Date().getTime() - firstTime) < (new Date().getTime() - secondTime) &&
-                                (new Date().getTime() - firstTime < 0)
-                ) {
-                    return 1;
-                } else {
+                        (Math.abs(new Date().getTime() - firstTime)) < (Math.abs(new Date().getTime() - secondTime))) {
                     return -1;
+                } else {
+                    return 1;
                 }
             }
         });
@@ -168,8 +166,6 @@ public class MainActivity extends AppCompatActivity {
     private void filterEvents(List<Event> events) {
         if (events != null) {
             for (Event event : events) {
-                Log.i("EVENT TIME FILTER", "" + (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime));
-                Log.i("EVENT TIME FILTER2", "" + (event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime)));
                 if (new Date().getTime() - event.getStart().getDate().getValue() < twoWeekTime &&
                         event.getStart().getDate().getValue() < new Date().getTime() + (2 * twoWeekTime) &&
                         !dummyEvents.contains(event)) {
@@ -317,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 // Success
-                Log.i("EVENTS_LIST", "" + task.getResult());
                 events = task.getResult();
 
                 // Filter events that are too old or too far in the future.
@@ -325,8 +320,6 @@ public class MainActivity extends AppCompatActivity {
                 filterEvents(events);
 
                 statusUpdateListen();
-
-                sortCalendarEvents(dummyEvents);
 
                 mAdapter.notifyDataSetChanged();
 

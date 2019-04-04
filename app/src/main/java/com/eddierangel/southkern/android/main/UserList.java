@@ -50,6 +50,7 @@ import com.google.firebase.functions.HttpsCallableResult;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -80,13 +81,23 @@ public class UserList extends AppCompatActivity {
     private NavigationView alertNavView;
     private LinearLayout userListControls;
     private DatabaseReference mDatabase;
-    private Boolean sortAZ = true, sortOrg = true;
+    private Boolean sortAZ = true, sortOrg = true, flag = false;
     private String firstTempHolder, secondTempHolder;
     private RecyclerView addressRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
-    private void sortUserListOrganization(List<Object> userList) {
-        Collections.sort(userList, new Comparator<Object>() {
+    private void sortUserListOrganization(List<Object> list) {
+
+        Iterator<Object> iter = list.iterator();
+        while (iter.hasNext()) {
+            Object user = iter.next();
+            HashMap userMap = (HashMap) user;
+            if ((userMap.get("user_organization") == null || userMap.get("user_organization").equals(""))) {
+                iter.remove();
+            }
+        }
+
+        Collections.sort(list, new Comparator<Object>() {
             @Override
             public int compare(Object firstUserObj, Object secondUserObj) {
                 HashMap firstUser = (HashMap) firstUserObj;
@@ -95,18 +106,20 @@ public class UserList extends AppCompatActivity {
                 firstTempHolder = (String) firstUser.get("user_organization");
                 secondTempHolder = (String) secondUser.get("user_organization");
 
+                return firstTempHolder.compareTo(secondTempHolder);
 
-                if (firstTempHolder != null && secondTempHolder != null) {
 
-
-                    int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
-                    return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
-
-                } else if (firstTempHolder != null) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+//                if (firstTempHolder != null && secondTempHolder != null) {
+//
+//
+//                    int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
+//                    return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
+//
+//                } else if (secondTempHolder != null) {
+//                    return 0;
+//                } else {
+//                    return 1;
+//                }
             }
         });
     }
@@ -136,7 +149,7 @@ public class UserList extends AppCompatActivity {
 
                     // Match vs Match or No-Match vs No-Match: no sorting is needed
                     return 0;
-                } else if (!firstTempHolder.isEmpty()) {
+                } else if (firstTempHolder != null) {
                     return -1;
                 } else {
                     return 0;
@@ -145,8 +158,18 @@ public class UserList extends AppCompatActivity {
         };
     }
 
-    private void sortUserListNickname(List<Object> userList) {
-        Collections.sort(userList, new Comparator<Object>() {
+    private void sortUserListNickname(List<Object> list) {
+
+
+        Iterator<Object> iter = list.iterator();
+        while (iter.hasNext()) {
+            Object user = iter.next();
+            if (((HashMap) user).get("user_name") == null) {
+                iter.remove();
+            }
+        }
+
+        Collections.sort(list, new Comparator<Object>() {
             @Override
             public int compare(Object firstUserObj, Object secondUserObj) {
                 HashMap firstUser = (HashMap) firstUserObj;
@@ -155,16 +178,10 @@ public class UserList extends AppCompatActivity {
                 firstTempHolder = (String) firstUser.get("user_name");
                 secondTempHolder = (String) secondUser.get("user_name");
 
-                if (firstTempHolder == null) {
-                    return -1;
-                }
+                return firstTempHolder.compareTo(secondTempHolder);
 
-                if (secondTempHolder == null) {
-                    return 1;
-                }
-
-                int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
-                return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
+//                int res = String.CASE_INSENSITIVE_ORDER.compare(firstTempHolder, secondTempHolder);
+//                return (res != 0) ? res : firstTempHolder.compareTo(secondTempHolder);
             }
         });
     }
@@ -204,15 +221,11 @@ public class UserList extends AppCompatActivity {
                             // Success
                             for (DataSnapshot child : dataSnapshot.getChildren()) {
                                 userList.add(child.getValue());
+                                originalUserList.add(child.getValue());
                             }
-                            originalUserList = userList;
 
                             sortedNameList = userList;
                             sortedOrgList = userList;
-
-                            sortUserListNickname(sortedNameList);
-                            sortUserListOrganization(sortedOrgList);
-
 
                             userListControls.setVisibility(View.VISIBLE);
 
@@ -284,9 +297,19 @@ public class UserList extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
 
-                            userList = sortedNameList;
+                            sortedNameList.clear();
+                            sortedNameList.addAll(originalUserList);
 
-                            Collections.reverse(userList);
+                            sortUserListNickname(sortedNameList);
+
+                            if (flag) {
+                                Collections.reverse(sortedNameList);
+                                flag = false;
+                            } else {
+                                flag = true;
+                            }
+
+                            userList = sortedNameList;
 
                             mAdapter.notifyDataSetChanged();
                         }
@@ -296,10 +319,19 @@ public class UserList extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
 
+                            sortedOrgList.clear();
+                            sortedOrgList.addAll(originalUserList);
+
+                            sortUserListOrganization(sortedOrgList);
+
+                            if (flag) {
+                                Collections.reverse(sortedOrgList);
+                                flag = false;
+                            } else {
+                                flag = true;
+                            }
+
                             userList = sortedOrgList;
-
-                            Collections.reverse(userList);
-
                             mAdapter.notifyDataSetChanged();
                         }
                     });
@@ -325,8 +357,6 @@ public class UserList extends AppCompatActivity {
                         @Override
                         public void afterTextChanged(Editable editable) {
                             final String searchTerm = editable.toString().toLowerCase();
-                            userList = originalUserList;
-
                             Collections.sort(userList, getMoveToFrontComparator(searchTerm));
 
                             mAdapter.notifyDataSetChanged();
