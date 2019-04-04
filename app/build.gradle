@@ -7,8 +7,8 @@ android {
         applicationId "com.eddierangel.southkern.android"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 12
-        versionName '1.2.0'
+        versionCode 13
+        versionName '1.2.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
